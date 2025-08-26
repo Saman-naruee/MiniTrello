@@ -1,0 +1,11 @@
+__pycache__/
+.env
+.venv
+.vscode/
+
+env/
+venv/
+PROJECT_PROMPT.md
+PROJECT_PROMPT_FA.md
+
+.aider*
