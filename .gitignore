@@ -9,3 +9,13 @@ PROJECT_PROMPT.md
 PROJECT_PROMPT_FA.md
 
 .aider*
+
+# but keep the __init__.py so Python still sees the packages
+!**/migrations/__init__.py
+# ignore compiled Python files under migrations
+**/migrations/*.pyc
+**/migrations/*.py
+sqlite3
+
+dump.json
+custom_tools/custom_settings.py

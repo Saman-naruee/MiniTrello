@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Local Apps
+    'accounts',
+    
 ]
 
 MIDDLEWARE = [
@@ -73,12 +78,35 @@ WSGI_APPLICATION = 'MiniTrello.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
+SQLITE3 = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+POSTGRES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME', cast=str),
+        'USER': config('DB_USER', cast=str),
+        'PASSWORD': config('DB_PASSWORD', cast=str),
+        'HOST': config('DB_HOST', cast=str),
+        'PORT': config('DB_PORT', cast=str),
+    }
+}
+
+try:
+    PREFERRED_DB = config('PREFERRED_DB', cast=str)
+    if PREFERRED_DB == 'sqlite3':
+        DATABASES = SQLITE3
+    elif PREFERRED_DB == 'postgres':
+        DATABASES = POSTGRES
+    else:
+        raise ValueError(f"Invalid database preference: {PREFERRED_DB}")
+except config.ConfigError:
+    DATABASES = SQLITE3
+
 
 
 # Password validation
