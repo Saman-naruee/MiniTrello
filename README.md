@@ -44,31 +44,31 @@ cp .env.example .env  # Update with your values
 # Database setup
 python manage.py migrate
 python manage.py createsuperuser
+```
 
 
+## Development
 
-Development
+# Running Locally
 
-Running Locally
-
-
+```bash
 python manage.py runserver
 celery -A MiniTrello worker --loglevel=info
+```
 
-
-Key Development Patterns
+# Key Development Patterns
 
  • Business logic in services.py
  • Celery tasks in tasks.py
  • HTMX partial templates in partials/ directory
  • Alpine.js components in static/js/components/
 
-Adding Translations
+# Adding Translations
 
-
+```bash
 django-admin makemessages -l es  # Example for Spanish
 django-admin compilemessages
-
+```
 
 
 Deployment
@@ -77,8 +77,9 @@ Docker Setup
 
 
 # Use official Dockerfile template from project
+```bash
 docker-compose up --build
-
+```
 
 GitLab CI/CD
 
@@ -91,19 +92,50 @@ Pipeline configurations included for:
 
 Project Structure
 
-
+```bash
 MiniTrello/
-├── accounts/
-├── boards/
-├── cards/
-├── lists/
-├── invitations/
+├── apps/
+│   ├── accounts/
+│   ├── boards/
+│   └── invitations/
 └── config/
     ├── base.py
     ├── dev.py
     ├── staging.py
     └── prod.py
+```
+## If want to create apps in future(for example ai_tools):
 
+# Ensure apps/__init__.py exists so apps is a proper Python package:
+
+```bash
+touch apps/__init__.py
+```
+
+# Update each app's apps.py name attribute to include the apps. prefix, for example:
+
+```bash
+class AccountsConfig(AppConfig):
+    name = 'apps.accounts'
+```
+# Update INSTALLED_APPS in settings.py to reference the new paths, e.g.
+
+```bash
+INSTALLED_APPS = [
+    ...
+    'apps.accounts',
+    'apps.boards',
+    'apps.cards',
+    'apps.lists',
+    'apps.invitations',
+    ...
+]
+```
+
+# Finally run this command:
+```bash
+python manage.py startsubapp apps.app_name # for example ai_tools
+```
 
 Contributing
 
