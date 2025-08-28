@@ -10,11 +10,11 @@ PROJECT_PROMPT_FA.md
 
 .aider*
 
-# but keep the __init__.py so Python still sees the packages
+# Ignore everything in migrations folders
+**/migrations/*
+# But do not ignore __init__.py in those folders
 !**/migrations/__init__.py
-# ignore compiled Python files under migrations
-**/migrations/*.pyc
-**/migrations/*.py
+
 sqlite3
 
 dump.json
