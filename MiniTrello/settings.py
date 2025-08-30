@@ -39,6 +39,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Third-party apps
+    'rest_framework',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+
     # Local Apps
     'apps.accounts',
     'apps.boards',
@@ -157,3 +167,48 @@ AUTH_USER_MODEL = 'accounts.User'
 MAX_BOARDS_PER_USER = 10  # N
 MAX_MEMBERS_PER_BOARD = 20  # M
 MAX_MEMBERSHIPS_PER_USER = 30  # k
+
+# REST Framework settings
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+
+# JWT settings for token expiration
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30), # <-- user will remain logged in for 30 days
+    "ROTATE_REFRESH_TOKENS": True, # <-- for added security
+    "BLACKLIST_AFTER_ROTATION": True,
+}
+
+# JWT settings for authentication with dj-rest-auth
+REST_AUTH = {
+    'USE_JWT': True,
+    'JWT_AUTH_HTTPONLY': False, # <-- if False, Refresh Token will be sent in the response body
+}
+
+# django-allauth settings
+SITE_ID = 1
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = 'optional' # or 'mandatory'
+
+
+# Google provider settings
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': [
+            'profile',
+            'email',
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        },
+        'OAUTH_PKCE_ENABLED': True,
+    }
+}
