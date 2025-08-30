@@ -41,6 +41,8 @@ INSTALLED_APPS = [
 
     # Local Apps
     'apps.accounts',
+    'apps.boards',
+    'apps.invitations',
 
 ]
 
@@ -150,3 +152,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.User'
+
+# Board Limitations
+MAX_BOARDS_PER_USER = 10  # N
+MAX_MEMBERS_PER_BOARD = 20  # M
+MAX_MEMBERSHIPS_PER_USER = 30  # k

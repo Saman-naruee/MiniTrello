@@ -14,7 +14,7 @@ class Board(models.Model):
     ]
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    color = models.ChoiceField(choices=COLOR_CHOICES)
+    color = models.CharField(max_length=20, choices=COLOR_CHOICES)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -58,6 +58,13 @@ class Card(models.Model):
 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+    assignee = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        help_text="User assigned to this card."
+    )
+
     list = models.ForeignKey('List', on_delete=models.CASCADE)
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=PRIORITY_MEDIUM)
     due_date = models.DateField(null=True, blank=True)
