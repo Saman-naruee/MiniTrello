@@ -1,17 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiniTrello - My Boards</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-4">
-        <h1>My Boards</h1>
-        <p>This is a placeholder for the boards list page.</p>
-        <a href="{% url 'Home' %}" class="btn btn-primary">Back to Home</a>
+{% extends 'base.html' %}
+
+{% block title %}MiniTrello - My Boards{% endblock %}
+
+{% block nav_boards_active %}active{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2>My Boards</h2>
+        <button class="btn btn-success">
+            <i class="fas fa-plus me-1"></i> New Board
+        </button>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <div class="card-body">
+        <div class="row">
+            <!-- Sample boards - replace with actual data -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        Project Alpha
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Main project development board</p>
+                        <p class="text-muted small">Created: Aug 15, 2025</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn btn-sm btn-outline-primary">Open Board</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white">
+                        Marketing Campaign
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Q3 marketing initiatives</p>
+                        <p class="text-muted small">Created: Aug 20, 2025</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn btn-sm btn-outline-success">Open Board</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-info text-white">
+                        Personal Tasks
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Personal to-do items</p>
+                        <p class="text-muted small">Created: Aug 25, 2025</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn btn-sm btn-outline-info">Open Board</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
