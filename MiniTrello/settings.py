@@ -75,7 +75,7 @@ ROOT_URLCONF = 'MiniTrello.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -239,3 +239,9 @@ SOCIALACCOUNT_PROVIDERS = {
         'OAUTH_PKCE_ENABLED': True,
     }
 }
+
+IS_USE_API_FOR_PROFILE = False
+PREFFERED_IMPLEMENTATION_FOR_PROJECT_API_OR_WEBPAGES = 'WEB' # or 'API'
+
+# Email backend: For sending emails for django-allauth in terminal, will fix later using a real email service
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

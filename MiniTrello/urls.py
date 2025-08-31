@@ -21,12 +21,20 @@ from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-        # API addresses for login/logout/register
+    
+    # API authentication endpoints
     path('api/auth/', include('dj_rest_auth.urls')),
     path('api/auth/registration/', include('dj_rest_auth.registration.urls')),
-
-    # Google login process URLs
-    # These URLs redirect the user to Google and handle the callback
+    
+    # Google login and social auth
     path('accounts/', include('allauth.urls')),
+    
+    # Custom accounts views
+    path('', include('apps.accounts.urls')),
+    
+    # Boards URLs (placeholder)
+    path('boards/', login_required(TemplateView.as_view(template_name='boards/list.html')), name='boards'),
+    
+    # Home page
     path('', login_required(TemplateView.as_view(template_name='home.html')), name='Home')
 ]
