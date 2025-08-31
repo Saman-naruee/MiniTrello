@@ -1,131 +1,93 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiniTrello - Home</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            padding-top: 20px;
-        }
-        .card {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: 0.3s;
-        }
-        .card:hover {
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-        }
-        .profile-section {
-            background-color: #fff;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .auth-links {
-            margin-top: 20px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'Home' %}">MiniTrello</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'Home' %}">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profile' %}">Profile</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'boards' %}">Boards</a>
-                        </li>
-                    </ul>
-                    <div class="d-flex">
-                        {% if user.is_authenticated %}
-                            <span class="navbar-text me-3">
-                                Welcome, {{ user.email }}!
-                            </span>
-                            <a href="{% url 'account_logout' %}" class="btn btn-outline-danger">Logout</a>
-                        {% else %}
-                            <a href="{% url 'account_login' %}" class="btn btn-outline-primary me-2">Login</a>
-                            <a href="{% url 'account_signup' %}" class="btn btn-primary">Register</a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </nav>
+{% extends 'base.html' %}
 
-        {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            </div>
-        {% endif %}
+{% block title %}MiniTrello - Home{% endblock %}
 
-        <div class="row">
-            <div class="col-md-8">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h2>Welcome to MiniTrello</h2>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Manage your projects and tasks with our simple and intuitive interface.</p>
-                        <a href="{% url 'boards' %}" class="btn btn-primary">View My Boards</a>
-                    </div>
-                </div>
+{% block nav_home_active %}active{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>Welcome to MiniTrello</h2>
             </div>
-            
-            <div class="col-md-4">
+            <div class="card-body">
+                <p class="card-text">Manage your projects and tasks with our simple and intuitive interface.</p>
                 {% if user.is_authenticated %}
-                    <div class="profile-section">
-                        <h3>Your Profile</h3>
-                        <p><strong>Email:</strong> {{ user.email }}</p>
-                        <p><strong>Joined:</strong> {{ user.date_joined|date:"M d, Y" }}</p>
-                        
-                        {% if user.socialaccount_set.all %}
-                            <p><strong>Connected with:</strong> 
-                            {% for account in user.socialaccount_set.all %}
-                                {{ account.provider|title }}
-                            {% endfor %}
-                            </p>
-                        {% endif %}
-                        
-                        <a href="{% url 'profile' %}" class="btn btn-sm btn-outline-secondary">Edit Profile</a>
-                    </div>
+                    <a href="{% url 'boards' %}" class="btn btn-primary">View My Boards</a>
                 {% else %}
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Authentication</h3>
-                        </div>
-                        <div class="card-body">
-                            <p>Please login or register to access your boards.</p>
-                            <div class="auth-links">
-                                <a href="{% url 'account_login' %}" class="btn btn-primary mb-2 w-100">Login</a>
-                                <a href="{% url 'account_signup' %}" class="btn btn-outline-primary mb-2 w-100">Register</a>
-                                <hr>
-                                <a href="{% url 'socialaccount_connections' %}" class="btn btn-danger w-100">
-                                    <i class="fab fa-google me-2"></i> Login with Google
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    <a href="{% url 'account_signup' %}" class="btn btn-success">Get Started</a>
                 {% endif %}
             </div>
         </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Features</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-tasks fa-3x mb-3 text-primary"></i>
+                            <h4>Task Management</h4>
+                            <p>Create and organize tasks with ease</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-users fa-3x mb-3 text-success"></i>
+                            <h4>Collaboration</h4>
+                            <p>Work together with your team</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-chart-line fa-3x mb-3 text-info"></i>
+                            <h4>Progress Tracking</h4>
+                            <p>Monitor your project's progress</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
-</body>
-</html>
+    
+    <div class="col-md-4">
+        {% if user.is_authenticated %}
+            <div class="profile-section">
+                <h3>Your Profile</h3>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Joined:</strong> {{ user.date_joined|date:"M d, Y" }}</p>
+                
+                {% if user.socialaccount_set.all %}
+                    <p><strong>Connected with:</strong> 
+                    {% for account in user.socialaccount_set.all %}
+                        {{ account.provider|title }}
+                    {% endfor %}
+                    </p>
+                {% endif %}
+                
+                <a href="{% url 'profile' %}" class="btn btn-sm btn-outline-secondary">Edit Profile</a>
+            </div>
+        {% else %}
+            <div class="card">
+                <div class="card-header">
+                    <h3>Authentication</h3>
+                </div>
+                <div class="card-body">
+                    <p>Please login or register to access your boards.</p>
+                    <div class="auth-links">
+                        <a href="{% url 'account_login' %}" class="btn btn-primary mb-2 w-100">Login</a>
+                        <a href="{% url 'account_signup' %}" class="btn btn-outline-primary mb-2 w-100">Register</a>
+                        <hr>
+                        <a href="{% url 'socialaccount_connections' %}" class="btn btn-danger w-100">
+                            <i class="fab fa-google me-2"></i> Login with Google
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
