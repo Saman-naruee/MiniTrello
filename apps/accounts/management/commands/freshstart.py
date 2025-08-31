@@ -1,5 +1,3 @@
-# apps/users/management/commands/freshstart.py
-
 import os
 import glob
 from django.core.management.base import BaseCommand
@@ -51,8 +49,13 @@ class Command(BaseCommand):
         else:
             self.stdout.write(self.style.NOTICE('No migration files found to delete.'))
 
+        self.stdout.write(self.style.HTTP_BAD_REQUEST('First: Ensure Drop & Create Database if using Postgres.'))
         self.stdout.write(self.style.SUCCESS('\nProject is ready for a fresh start. Now run:'))
-        self.stdout.write(self.style.HTTP_INFO('First: Ensure Drop & Create Databse if useing Postgres.'))
-        self.stdout.write(self.style.HTTP_INFO('1. python manage.py makemigrations'))
-        self.stdout.write(self.style.HTTP_INFO('2. python manage.py migrate'))
-        self.stdout.write(self.style.HTTP_INFO('3. python manage.py createsuperuser'))
+        try:
+            os.system('python manage.py makemigrations')
+            os.system('python manage.py migrate')
+            os.system('python manage.py createsuperuser')
+        except Exception as e:
+            self.stdout.write(self.style.HTTP_INFO('1. python manage.py makemigrations'))
+            self.stdout.write(self.style.HTTP_INFO('2. python manage.py migrate'))
+            self.stdout.write(self.style.HTTP_INFO('3. python manage.py createsuperuser'))

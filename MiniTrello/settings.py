@@ -44,10 +44,12 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'dj_rest_auth',
     'dj_rest_auth.registration',
+    'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'corsheaders',
 
     # Local Apps
     'apps.accounts',
@@ -57,6 +59,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -173,7 +176,11 @@ MAX_MEMBERSHIPS_PER_USER = 30  # k
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
 }
 
 # JWT settings for token expiration
@@ -194,14 +201,30 @@ REST_AUTH = {
 
 # django-allauth settings
 SITE_ID = 1
+ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'optional' # or 'mandatory'
 
 
+# CORS SETTINGS
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000", # React
+    "http://localhost:8000", # Django
+    "http://localhost:8080"  # Another service
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+
 # Google provider settings
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
+        'APP': {
+            'client_id': config('GOOGLE_CLIENT_ID', cast=str),
+            'secret': config('GOOGLE_CLIENT_SECRET', cast=str),
+            'key': config('GOOGLE_PROJECT_API_KEY', cast=str),
+        },
         'SCOPE': [
             'profile',
             'email',
