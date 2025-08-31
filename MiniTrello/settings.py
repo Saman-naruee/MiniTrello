@@ -217,6 +217,10 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True
 
 
+# Profile endpoint settings
+USE_API_FOR_PROFILE = True  # Set to False to use Django templates instead of DRF
+
+
 # Google provider settings
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
