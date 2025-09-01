@@ -245,3 +245,5 @@ PREFFERED_IMPLEMENTATION_FOR_PROJECT_API_OR_WEBPAGES = 'WEB' # or 'API'
 
 # Email backend: For sending emails for django-allauth in terminal, will fix later using a real email service
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+ACCOUNT_ADAPTER = 'apps.accounts.adapters.CustomAccountAdapter'

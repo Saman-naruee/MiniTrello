@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Account Connections{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h2 class="h4 mb-0">
+            <i class="fas fa-link me-2"></i>Account Connections
+          </h2>
+        </div>
+        <div class="card-body">
+          <p class="text-muted mb-4">
+            Connect your account with these services to enable easier login and access to additional features.
+          </p>
+          
+          {% if form.accounts %}
+          <h3 class="h5 mb-3">Connected Accounts</h3>
+          <div class="list-group mb-4" id="connected-accounts">
+            {% for base_account in form.accounts %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <h4 class="h6 mb-1">{{ base_account.provider|title }}</h4>
+                <p class="text-muted small mb-0">Connected on {{ base_account.date_added|date:"M d, Y" }}</p>
+              </div>
+              <form method="post" action="{% url 'socialaccount_connections' %}"
+                    hx-post="{% url 'socialaccount_connections' %}"
+                    hx-target="#connected-accounts"
+                    hx-swap="outerHTML">
+                {% csrf_token %}
+                <input type="hidden" name="account" value="{{ base_account.id }}">
+                <button type="submit" name="action_remove" 
+                        class="btn btn-sm btn-outline-danger"
+                        hx-confirm="Are you sure you want to disconnect this account?">
+                  <i class="fas fa-unlink me-1"></i>Disconnect
+                </button>
+              </form>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+          
+          <h3 class="h5 mb-3">Available Connections</h3>
+          <div class="row row-cols-1 row-cols-md-2 g-4">
+            {% for provider in socialaccount_providers %}
+            <div class="col">
+              <div class="card h-100">
+                <div class="card-body">
+                  <h4 class="card-title">{{ provider.name|title }}</h4>
+                  <p class="card-text small text-muted">
+                    Connect your account with {{ provider.name }} for easier login.
+                  </p>
+                  <a href="{% provider_login_url provider.id process='connect' %}" 
+                     class="btn btn-outline-primary">
+                    <i class="fab fa-{{ provider.id|lower }} me-1"></i>Connect
+                  </a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="{% url 'account_email' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-envelope me-1"></i>Manage Emails
+          </a>
+          <a href="{% url 'account_change_password' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-key me-1"></i>Change Password
+          </a>
+          <a href="{% url 'Home' %}" class="btn btn-link">Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast for notifications -->
+<div x-data="{ show: false, message: '', type: 'success' }"
+     x-init="
+       window.addEventListener('connectionAction', (e) => {
+         message = e.detail.message;
+         type = e.detail.type || 'success';
+         show = true;
+         setTimeout(() => { show = false }, 5000);
+       });
+     "
+     x-show="show"
+     x-transition
+     @click="show = false"
+     class="position-fixed bottom-0 end-0 p-3"
+     style="z-index: 11; display: none;">
+  <div :class="'toast show bg-' + type + ' text-white'" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <strong class="me-auto">Notification</strong>
+      <button type="button" class="btn-close" @click="show = false"></button>
+    </div>
+    <div class="toast-body" x-text="message"></div>
+  </div>
+</div>
+
+<script>
+  document.body.addEventListener('htmx:afterSwap', function(event) {
+    if (event.detail.xhr.status === 200) {
+      // Dispatch custom event for toast
+      window.dispatchEvent(new CustomEvent('connectionAction', {
+        detail: { 
+          message: 'Account connection has been removed!', 
+          type: 'success' 
+        }
+      }));
+    }
+  });
+</script>
+{% endblock %}
