@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
+from django.views.i18n import set_language
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,6 +35,9 @@ urlpatterns = [
     
     # Boards URLs (placeholder)
     path('boards/', login_required(TemplateView.as_view(template_name='boards/list.html')), name='boards'),
+    
+    # i18n - Language selection
+    path('i18n/setlang/', set_language, name='set_language'),
     
     # Home page
     path('', login_required(TemplateView.as_view(template_name='home.html')), name='Home')
