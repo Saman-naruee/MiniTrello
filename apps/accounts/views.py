@@ -29,7 +29,7 @@ class ProfileView(APIView):
 
 class ProfileWebView(LoginRequiredMixin, TemplateView):
     """Web view for user profile page"""
-    template_name = 'accounts/profile.html'
+    template_name = 'account/profile.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -52,12 +52,12 @@ def profile_router(request):
 
 class LogoutSuccessView(TemplateView):
     """View shown after successful logout"""
-    template_name = 'accounts/logout_success.html'
+    template_name = 'account/logout_success.html'
 
 class LoginView(TemplateView):
     """Custom login view that handles both normal and social auth"""
-    template_name = 'accounts/login.html'
-    
+    template_name = 'account/login.html'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Add any additional context needed for the login page
@@ -65,7 +65,7 @@ class LoginView(TemplateView):
 
 class RegisterView(TemplateView):
     """Custom registration view"""
-    template_name = 'accounts/register.html'
+    template_name = 'account/register.html'
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

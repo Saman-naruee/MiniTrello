@@ -31,7 +31,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     
     # Custom accounts views
-    path('', include('apps.accounts.urls')),
+    path('account/', include('apps.accounts.urls')),
     
     # Boards URLs (placeholder)
     path('boards/', login_required(TemplateView.as_view(template_name='boards/list.html')), name='boards'),

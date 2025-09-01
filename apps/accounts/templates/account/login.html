@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
-
-{% block title %}MiniTrello - Register{% endblock %}
+{% load socialaccount %}
+{% block title %}MiniTrello - Login{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <div class="card">
             <div class="card-header">
-                <h2>Register</h2>
+                <h2>Login</h2>
             </div>
             <div class="card-body">
                 <div x-data="{
                     email: '',
-                    password1: '',
-                    password2: '',
+                    password: '',
+                    remember: false,
                     errors: {},
                     loading: false,
                     
@@ -22,12 +22,12 @@
                         this.errors = {};
                         
                         const formData = new FormData();
-                        formData.append('email', this.email);
-                        formData.append('password1', this.password1);
-                        formData.append('password2', this.password2);
+                        formData.append('login', this.email);
+                        formData.append('password', this.password);
+                        if (this.remember) formData.append('remember', 'on');
                         formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
                         
-                        fetch('{% url 'account_signup' %}', {
+                        fetch('{% url 'account_login' %}', {
                             method: 'POST',
                             body: formData,
                             headers: {
@@ -54,48 +54,49 @@
                         });
                     }
                 }">
-                    <!-- Registration Form with Alpine.js -->
+                    <!-- Login Form with Alpine.js -->
                     <form @submit.prevent="submitForm">
                         {% csrf_token %}
                         
                         <div class="mb-3">
-                            <label for="id_email" class="form-label">Email:</label>
-                            <input type="email" x-model="email" id="id_email" class="form-control" required>
-                            <div x-show="errors.email" class="text-danger mt-1" x-text="errors.email"></div>
+                            <label for="id_login" class="form-label">Email:</label>
+                            <input type="email" x-model="email" id="id_login" class="form-control" required>
+                            <div x-show="errors.login" class="text-danger mt-1" x-text="errors.login"></div>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="id_password1" class="form-label">Password:</label>
-                            <input type="password" x-model="password1" id="id_password1" class="form-control" required>
-                            <div x-show="errors.password1" class="text-danger mt-1" x-text="errors.password1"></div>
+                            <label for="id_password" class="form-label">Password:</label>
+                            <input type="password" x-model="password" id="id_password" class="form-control" required>
+                            <div x-show="errors.password" class="text-danger mt-1" x-text="errors.password"></div>
                         </div>
                         
-                        <div class="mb-3">
-                            <label for="id_password2" class="form-label">Confirm Password:</label>
-                            <input type="password" x-model="password2" id="id_password2" class="form-control" required>
-                            <div x-show="errors.password2" class="text-danger mt-1" x-text="errors.password2"></div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" x-model="remember" id="id_remember" class="form-check-input">
+                            <label for="id_remember" class="form-check-label">Remember Me</label>
                         </div>
                         
                         <div x-show="errors.__all__" class="alert alert-danger" x-text="errors.__all__"></div>
                         
                         <button type="submit" class="btn btn-primary" :disabled="loading">
                             <span x-show="loading" class="spinner-border spinner-border-sm me-1"></span>
-                            Register
+                            Login
                         </button>
+                        <a href="{% url 'account_reset_password' %}" class="btn btn-link">Forgot Password?</a>
                     </form>
                 </div>
                 
                 <hr>
                 
-                <div class="social-register">
-                    <p>Or register with:</p>
+                <div class="social-login">
+                    <p>Or login with:</p>
                     <a href="{% provider_login_url 'google' %}" class="btn btn-danger w-100">
-                        <i class="fab fa-google me-2"></i> Google
+                        <i class="fab fa-google me-2"></i>
+                        <span class="icon-google"></span> Google
                     </a>
                 </div>
                 
                 <div class="mt-3 text-center">
-                    <p>Already have an account? <a href="{% url 'account_login' %}" hx-boost="true">Login here</a></p>
+                    <p>Don't have an account? <a href="{% url 'account_signup' %}" hx-boost="true">Register here</a></p>
                 </div>
             </div>
         </div>
