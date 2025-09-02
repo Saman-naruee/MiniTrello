@@ -1,9 +1,26 @@
 services:
-  minitrello:
-    image: minitrello
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+  db:
+    image: postgres:17
+    container_name: minitrello_db_container
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=minitrello
     ports:
-      - 8000:8000
-      
+      - "5432:5432"
+    volumes:
+      - ./db:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    container_name: minitrello_backend_container
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    environment:
+      - DJANGO_SETTINGS_MODULE=MiniTrello.settings
+      - DEBUG=True
