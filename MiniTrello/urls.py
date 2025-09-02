@@ -33,8 +33,8 @@ urlpatterns = [
     # Custom accounts views
     path('account/', include('apps.accounts.urls')),
     
-    # Boards URLs (placeholder)
-    path('boards/', login_required(TemplateView.as_view(template_name='boards/list.html')), name='boards'),
+    # Boards pages (template-based with htmx)
+    path('boards/', include('apps.boards.urls')),
     
     # i18n - Language selection
     path('i18n/setlang/', set_language, name='set_language'),
