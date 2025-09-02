@@ -1,0 +1,120 @@
+/* Custom styles for MiniTrello Boards */
+
+.board-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.board-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.list-card {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+
+.list-card .card-header {
+    background-color: #e9ecef;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.card-item {
+    background-color: white;
+    border: 1px solid #dee2e6;
+    margin-bottom: 0.5rem;
+}
+
+.card-item:hover {
+    border-color: #007bff;
+}
+
+.priority-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .list-column {
+        min-width: 280px;
+        max-width: 280px;
+    }
+    
+    .container-fluid {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+}
+
+/* Loading states */
+.htmx-request {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+/* Modal transitions */
+.modal.fade {
+    transition: opacity 0.15s linear;
+}
+
+.modal.fade.show {
+    opacity: 1;
+}
+
+/* Custom scrollbar for list container */
+.list-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.list-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.list-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.list-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Board header gradient variations */
+.board-header.blue {
+    background: linear-gradient(135deg, #007bff20, #007bff40);
+    border-bottom: 3px solid #007bff;
+}
+
+.board-header.green {
+    background: linear-gradient(135deg, #28a74520, #28a74540);
+    border-bottom: 3px solid #28a745;
+}
+
+.board-header.yellow {
+    background: linear-gradient(135deg, #ffc10720, #ffc10740);
+    border-bottom: 3px solid #ffc107;
+}
+
+.board-header.red {
+    background: linear-gradient(135deg, #dc354520, #dc354540);
+    border-bottom: 3px solid #dc3545;
+}
+
+.board-header.purple {
+    background: linear-gradient(135deg, #6f42c120, #6f42c140);
+    border-bottom: 3px solid #6f42c1;
+}
+
+.board-header.orange {
+    background: linear-gradient(135deg, #fd7e1420, #fd7e1440);
+    border-bottom: 3px solid #fd7e14;
+}
+
+.board-header.pink {
+    background: linear-gradient(135deg, #e83e8c20, #e83e8c40);
+    border-bottom: 3px solid #e83e8c;
+}
