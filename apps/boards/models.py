@@ -13,7 +13,7 @@ class Board(models.Model):
         ('pink', 'Pink'),
     ]
 
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="owned_boards")
     color = models.CharField(max_length=20, choices=COLOR_CHOICES)
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
@@ -26,7 +26,7 @@ class Board(models.Model):
 
 class List(models.Model):
     title = models.CharField(max_length=255)
-    board = models.ForeignKey(Board, on_delete=models.CASCADE)
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name="lists")
     order = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -65,7 +65,7 @@ class Card(models.Model):
         help_text="User assigned to this card."
     )
 
-    list = models.ForeignKey('List', on_delete=models.CASCADE)
+    list = models.ForeignKey('List', on_delete=models.CASCADE, related_name="cards")
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=PRIORITY_MEDIUM)
     due_date = models.DateField(null=True, blank=True)
     order = models.IntegerField()
