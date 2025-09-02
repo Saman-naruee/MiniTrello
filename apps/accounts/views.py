@@ -71,3 +71,13 @@ class RegisterView(TemplateView):
         context = super().get_context_data(**kwargs)
         # Add any additional context needed for the registration page
         return context
+
+
+from allauth.account.views import SignupView
+from django.contrib.auth import login
+
+class CustomSignupView(SignupView):
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        login(self.request, self.user)
+        return response

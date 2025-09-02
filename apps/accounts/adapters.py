@@ -16,20 +16,14 @@ class CustomAccountAdapter(DefaultAccountAdapter):
 
 
     def send_mail(self, template_prefix, email, context):
-        """
-        Sends an email using a custom template.
-        """
-        template_name = f"account/email/{template_prefix}.html"  # Correct template path
+        if template_prefix == "account/email/email_confirmation_signup":
+            template_prefix = "email_confirmation_signup"
+        template_name = f"account/email/{template_prefix}.html"
         subject = render_to_string(f"account/email/{template_prefix}_subject.txt", context)
         subject = subject.strip()
         body = render_to_string(template_name, context)
-
-        # # Inline CSS (optional - requires premailer)
-        # if 'premailer' in settings.INSTALLED_APPS:
-        #     body = transform(body)
-
         message = EmailMessage(subject, body, settings.DEFAULT_FROM_EMAIL, [email])
-        message.content_subtype = "html"  # Set content type to HTML
+        message.content_subtype = "html"
         message.send()
 
     def ajax_response(self, request, response, redirect_url=None, form=None, data=None):
