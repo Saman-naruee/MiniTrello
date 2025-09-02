@@ -1,296 +1,231 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}MiniTrello - My Boards{% endblock %}
+{% block title %}My Boards - MiniTrello{% endblock %}
 
-{% block nav_boards_active %}active{% endblock %}
+{% block extra_head %}
+<!-- Alpine.js for interactivity -->
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<!-- HTMX for dynamic interactions -->
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{% static 'boards/css/boards.css' %}">
+{% endblock %}
 
 {% block content %}
-<div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h2>My Boards</h2>
-        <button class="btn btn-success" 
-                x-data="{}" 
-                @click="$dispatch('open-modal', {id: 'create-board-modal'})">
-            <i class="fas fa-plus me-1"></i> New Board
-        </button>
-    </div>
-    <div class="card-body">
-        <div class="row" id="boards-container" hx-trigger="boardCreated from:body">
-            <!-- Sample boards - replace with actual data -->
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between">
-                        <span>Project Alpha</span>
-                        <div class="dropdown">
-                            <button class="btn btn-sm text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <button class="dropdown-item" 
-                                            x-data="{}" 
-                                            @click="$dispatch('open-modal', {id: 'edit-board-modal-1', title: 'Project Alpha', color: '#0d6efd'})">
-                                        <i class="fas fa-edit me-2"></i> Edit
-                                    </button>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <button class="dropdown-item text-danger"
-                                            hx-delete="/api/boards/1/"
-                                            hx-confirm="Are you sure you want to delete this board?"
-                                            hx-target="#board-1"
-                                            hx-swap="outerHTML">
-                                        <i class="fas fa-trash me-2"></i> Delete
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Main project development board</p>
-                        <p class="text-muted small">Created: Aug 15, 2025</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn btn-sm btn-outline-primary">Open Board</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-header bg-success text-white d-flex justify-content-between">
-                        <span>Marketing Campaign</span>
-                        <div class="dropdown">
-                            <button class="btn btn-sm text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <button class="dropdown-item" 
-                                            x-data="{}" 
-                                            @click="$dispatch('open-modal', {id: 'edit-board-modal-2', title: 'Marketing Campaign', color: '#198754'})">
-                                        <i class="fas fa-edit me-2"></i> Edit
-                                    </button>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <button class="dropdown-item text-danger"
-                                            hx-delete="/api/boards/2/"
-                                            hx-confirm="Are you sure you want to delete this board?"
-                                            hx-target="#board-2"
-                                            hx-swap="outerHTML">
-                                        <i class="fas fa-trash me-2"></i> Delete
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Q3 marketing initiatives</p>
-                        <p class="text-muted small">Created: Aug 20, 2025</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn btn-sm btn-outline-success">Open Board</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="col-md-4 mb-4">
-                <div class="card h-100">
-                    <div class="card-header bg-info text-white d-flex justify-content-between">
-                        <span>Personal Tasks</span>
-                        <div class="dropdown">
-                            <button class="btn btn-sm text-white" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    <button class="dropdown-item" 
-                                            x-data="{}" 
-                                            @click="$dispatch('open-modal', {id: 'edit-board-modal-3', title: 'Personal Tasks', color: '#0dcaf0'})">
-                                        <i class="fas fa-edit me-2"></i> Edit
-                                    </button>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <button class="dropdown-item text-danger"
-                                            hx-delete="/api/boards/3/"
-                                            hx-confirm="Are you sure you want to delete this board?"
-                                            hx-target="#board-3"
-                                            hx-swap="outerHTML">
-                                        <i class="fas fa-trash me-2"></i> Delete
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text">Personal to-do items</p>
-                        <p class="text-muted small">Created: Aug 25, 2025</p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn btn-sm btn-outline-info">Open Board</a>
-                    </div>
-                </div>
+<div class="container-fluid" x-data="boardsApp()">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h2 mb-0">
+                    <i class="fas fa-trello text-primary me-2"></i>
+                    My Boards
+                </h1>
+                <button 
+                    class="btn btn-primary"
+                    @click="showCreateModal = true"
+                    x-show="!showCreateModal">
+                    <i class="fas fa-plus me-2"></i>Create Board
+                </button>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Create Board Modal with Alpine.js -->
-<div x-data="{ 
-    open: false,
-    title: '',
-    color: '#0079BF',
-    colors: ['#0079BF', '#D29034', '#519839', '#B04632', '#89609E', '#CD5A91', '#4BBF6B', '#00AECC', '#838C91'],
-    error: '',
-    loading: false
-}" 
-    x-show="open"
-    x-on:open-modal.window="if ($event.detail.id === 'create-board-modal') { open = true; title = ''; color = '#0079BF'; error = ''; }"
-    x-on:keydown.escape.window="open = false"
-    x-transition:enter="transition ease-out duration-300"
-    x-transition:enter-start="opacity-0 transform scale-90"
-    x-transition:enter-end="opacity-100 transform scale-100"
-    x-transition:leave="transition ease-in duration-300"
-    x-transition:leave-start="opacity-100 transform scale-100"
-    x-transition:leave-end="opacity-0 transform scale-90"
-    class="fixed inset-0 z-50 overflow-y-auto" 
-    style="display: none;">
-    
-    <!-- Modal backdrop -->
-    <div class="fixed inset-0 bg-black bg-opacity-50" x-show="open" x-on:click="open = false"></div>
-    
-    <!-- Modal content -->
-    <div class="modal d-block" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
+    <!-- Boards Grid -->
+    <div class="row" id="boards-container">
+        {% for board in boards %}
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" id="board-{{ board.id }}">
+            <div class="card h-100 board-card" 
+                 style="border-left: 4px solid {{ board.color }};">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0 text-truncate" title="{{ board.title }}">
+                            {{ board.title }}
+                        </h5>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                    type="button" 
+                                    data-bs-toggle="dropdown" 
+                                    aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'board_detail' board.id %}">
+                                        <i class="fas fa-eye me-2"></i>View Board
+                                    </a>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item" 
+                                            @click="confirmDelete({{ board.id }}, '{{ board.title }}')">
+                                        <i class="fas fa-trash me-2"></i>Delete
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    {% if board.description %}
+                    <p class="card-text text-muted small mb-3">
+                        {{ board.description|truncatewords:20 }}
+                    </p>
+                    {% endif %}
+                    
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-users me-1"></i>
+                                {{ board.memberships.count }} members
+                            </small>
+                            <small class="text-muted">
+                                {{ board.created_at|date:"M d, Y" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-transparent">
+                    <a href="{% url 'board_detail' board.id %}" 
+                       class="btn btn-primary btn-sm w-100">
+                        <i class="fas fa-trello me-1"></i>Open Board
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-trello fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No boards yet</h4>
+                <p class="text-muted">Create your first board to get started!</p>
+                <button class="btn btn-primary" @click="showCreateModal = true">
+                    <i class="fas fa-plus me-2"></i>Create Board
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Create Board Modal -->
+    <div class="modal fade" 
+         x-show="showCreateModal" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="display: none;"
+         tabindex="-1">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Create New Board</h5>
-                    <button type="button" class="btn-close" @click="open = false"></button>
+                    <button type="button" class="btn-close" @click="showCreateModal = false"></button>
+                </div>
+                <form hx-post="{% url 'create_board' %}"
+                      hx-target="#boards-container"
+                      hx-swap="beforeend"
+                      @submit="showCreateModal = false"
+                      class="modal-body">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="board-title" class="form-label">Board Title</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="board-title" 
+                               name="title" 
+                               required 
+                               maxlength="255"
+                               placeholder="Enter board title">
+                    </div>
+                    <div class="mb-3">
+                        <label for="board-description" class="form-label">Description (Optional)</label>
+                        <textarea class="form-control" 
+                                  id="board-description" 
+                                  name="description" 
+                                  rows="3"
+                                  placeholder="Enter board description"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="board-color" class="form-label">Board Color</label>
+                        <select class="form-select" id="board-color" name="color" required>
+                            <option value="blue">Blue</option>
+                            <option value="green">Green</option>
+                            <option value="yellow">Yellow</option>
+                            <option value="red">Red</option>
+                            <option value="purple">Purple</option>
+                            <option value="orange">Orange</option>
+                            <option value="pink">Pink</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @click="showCreateModal = false">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Board</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" 
+         x-show="showDeleteModal" 
+         x-transition
+         style="display: none;"
+         tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Board</h5>
+                    <button type="button" class="btn-close" @click="showDeleteModal = false"></button>
                 </div>
                 <div class="modal-body">
-                    <form hx-post="/api/boards/"
-                          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                          hx-trigger="submit"
-                          hx-target="#boards-container"
-                          hx-swap="innerHTML"
-                          hx-on::after-request="if(event.detail.successful) { $dispatch('close-modal'); document.body.dispatchEvent(new CustomEvent('boardCreated')); }">
-                        
-                        <div class="mb-3">
-                            <label for="boardTitle" class="form-label">Board Title</label>
-                            <input type="text" class="form-control" id="boardTitle" name="title" x-model="title" placeholder="Enter board title" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Board Color</label>
-                            <div class="d-flex flex-wrap gap-2">
-                                <template x-for="boardColor in colors" :key="boardColor">
-                                    <div 
-                                        class="color-option rounded-circle border" 
-                                        :style="`background-color: ${boardColor}; width: 30px; height: 30px; cursor: pointer; border: ${color === boardColor ? '3px solid black' : '1px solid #dee2e6'}`"
-                                        @click="color = boardColor">
-                                    </div>
-                                </template>
-                            </div>
-                            <input type="hidden" name="color" x-model="color">
-                        </div>
-                        
-                        <div x-show="error" class="alert alert-danger" x-text="error"></div>
-                        
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click="open = false">Cancel</button>
-                            <button type="submit" class="btn btn-primary" :disabled="loading || !title.trim()">
-                                <span x-show="loading" class="spinner-border spinner-border-sm me-1"></span>
-                                Create Board
-                            </button>
-                        </div>
-                    </form>
+                    <p>Are you sure you want to delete "<span x-text="boardToDeleteTitle"></span>"?</p>
+                    <p class="text-danger"><small>This action cannot be undone.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="showDeleteModal = false">Cancel</button>
+                    <button type="button" 
+                            class="btn btn-danger"
+                            @click="deleteBoard()">
+                        Delete Board
+                    </button>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Edit Board Modal with Alpine.js -->
-<div x-data="{ 
-    open: false,
-    boardId: null,
-    title: '',
-    color: '#0079BF',
-    colors: ['#0079BF', '#D29034', '#519839', '#B04632', '#89609E', '#CD5A91', '#4BBF6B', '#00AECC', '#838C91'],
-    error: '',
-    loading: false
-}" 
-    x-show="open"
-    x-on:open-modal.window="if ($event.detail.id && $event.detail.id.startsWith('edit-board-modal')) { 
-        open = true; 
-        boardId = $event.detail.id.split('-').pop();
-        title = $event.detail.title || '';
-        color = $event.detail.color || '#0079BF';
-        error = ''; 
-    }"
-    x-on:keydown.escape.window="open = false"
-    x-transition:enter="transition ease-out duration-300"
-    x-transition:enter-start="opacity-0 transform scale-90"
-    x-transition:enter-end="opacity-100 transform scale-100"
-    x-transition:leave="transition ease-in duration-300"
-    x-transition:leave-start="opacity-100 transform scale-100"
-    x-transition:leave-end="opacity-0 transform scale-90"
-    class="fixed inset-0 z-50 overflow-y-auto" 
-    style="display: none;">
-    
-    <!-- Modal backdrop -->
-    <div class="fixed inset-0 bg-black bg-opacity-50" x-show="open" x-on:click="open = false"></div>
-    
-    <!-- Modal content -->
-    <div class="modal d-block" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Edit Board</h5>
-                    <button type="button" class="btn-close" @click="open = false"></button>
-                </div>
-                <div class="modal-body">
-                    <form x-bind:hx-put="'/api/boards/' + boardId + '/'"
-                          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                          hx-trigger="submit"
-                          hx-target="#boards-container"
-                          hx-swap="innerHTML"
-                          hx-on::after-request="if(event.detail.successful) { $dispatch('close-modal'); }">
-                        
-                        <div class="mb-3">
-                            <label for="editBoardTitle" class="form-label">Board Title</label>
-                            <input type="text" class="form-control" id="editBoardTitle" name="title" x-model="title" placeholder="Enter board title" required>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Board Color</label>
-                            <div class="d-flex flex-wrap gap-2">
-                                <template x-for="boardColor in colors" :key="boardColor">
-                                    <div 
-                                        class="color-option rounded-circle border" 
-                                        :style="`background-color: ${boardColor}; width: 30px; height: 30px; cursor: pointer; border: ${color === boardColor ? '3px solid black' : '1px solid #dee2e6'}`"
-                                        @click="color = boardColor">
-                                    </div>
-                                </template>
-                            </div>
-                            <input type="hidden" name="color" x-model="color">
-    </div>
-                        
-                        <div x-show="error" class="alert alert-danger" x-text="error"></div>
-                        
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click="open = false">Cancel</button>
-                            <button type="submit" class="btn btn-primary" :disabled="loading || !title.trim()">
-                                <span x-show="loading" class="spinner-border spinner-border-sm me-1"></span>
-                                Save Changes
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<script>
+function boardsApp() {
+    return {
+        showCreateModal: false,
+        showDeleteModal: false,
+        boardToDeleteId: null,
+        boardToDeleteTitle: null,
+        
+        // Show delete confirmation modal
+        confirmDelete(boardId, boardTitle) {
+            this.boardToDeleteId = boardId;
+            this.boardToDeleteTitle = boardTitle;
+            this.showDeleteModal = true;
+        },
+        
+        // Delete board via htmx
+        deleteBoard() {
+            if (this.boardToDeleteId) {
+                htmx.ajax('DELETE', `/boards/${this.boardToDeleteId}/delete/`, {
+                    target: `#board-${this.boardToDeleteId}`,
+                    swap: 'outerHTML'
+                });
+                this.showDeleteModal = false;
+                this.boardToDeleteId = null;
+                this.boardToDeleteTitle = null;
+            }
+        }
+    }
+}
+</script>
 {% endblock %}
