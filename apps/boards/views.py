@@ -257,3 +257,4 @@ class HTMXCardDeleteView(LoginRequiredMixin, View):
         card.delete()
         return JsonResponse({"success": True})
 
+
