@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% block title %}MiniTrello - Sign Up - Register{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <div class="card-header">
+                <h2>Register</h2>
+            </div>
+            <div class="card-body">
+                <div x-data="{
+                    email: '',
+                    password1: '',
+                    password2: '',
+                    errors: {},
+                    loading: false,
+                    
+                    submitForm() {
+                        this.loading = true;
+                        this.errors = {};
+                        
+                        const formData = new FormData();
+                        formData.append('email', this.email);
+                        formData.append('password1', this.password1);
+                        formData.append('password2', this.password2);
+                        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+                        
+                        fetch('{% url 'account_signup' %}', {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(response => {
+                            if (response.redirected) {
+                                window.location.href = response.url;
+                                return;
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data && data.form && data.form.errors) {
+                                this.errors = data.form.errors;
+                            }
+                            this.loading = false;
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            this.errors = {'__all__': ['An unexpected error occurred. Please try again.']};
+                            this.loading = false;
+                        });
+                    }
+                }">
+                    <!-- Registration Form with Alpine.js -->
+                    <form @submit.prevent="submitForm">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">Email:</label>
+                            <input type="email" x-model="email" id="id_email" class="form-control" required>
+                            <div x-show="errors.email" class="text-danger mt-1" x-text="errors.email"></div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_password1" class="form-label">Password:</label>
+                            <input type="password" x-model="password1" id="id_password1" class="form-control" required>
+                            <div x-show="errors.password1" class="text-danger mt-1" x-text="errors.password1"></div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_password2" class="form-label">Confirm Password:</label>
+                            <input type="password" x-model="password2" id="id_password2" class="form-control" required>
+                            <div x-show="errors.password2" class="text-danger mt-1" x-text="errors.password2"></div>
+                        </div>
+                        
+                        <div x-show="errors.__all__" class="alert alert-danger" x-text="errors.__all__"></div>
+                        
+                        <button type="submit" class="btn btn-primary" :disabled="loading">
+                            <span x-show="loading" class="spinner-border spinner-border-sm me-1"></span>
+                            Register
+                        </button>
+                    </form>
+                </div>
+                
+                <hr>
+                
+                <div class="social-register">
+                    <p>Or register with:</p>
+                    <a href="{% provider_login_url 'google' %}" class="btn btn-danger w-100">
+                        <i class="fab fa-google me-2"></i> Google
+                    </a>
+                </div>
+                
+                <div class="mt-3 text-center">
+                    <p>Already have an account? <a href="{% url 'account_login' %}" hx-boost="true">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

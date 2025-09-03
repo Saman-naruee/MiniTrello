@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% block title %}MiniTrello - Profile{% endblock %}
+
+{% block nav_profile_active %}active{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2>User Profile</h2>
+                <button class="btn btn-sm btn-outline-primary" 
+                        x-data="{}" 
+                        @click="$dispatch('open-modal', {id: 'edit-profile-modal'})">
+                    <i class="fas fa-edit me-1"></i> Edit Profile
+                </button>
+            </div>
+            <div class="card-body" id="profile-info">
+                <div class="mb-3">
+                    <h4>Account Information</h4>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+                </div>
+                
+                {% if user.socialaccount_set.all %}
+                    <div class="mb-3">
+                        <h4>Connected Accounts</h4>
+                        <ul class="list-group">
+                        {% for account in user.socialaccount_set.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    {{ account.provider|title }}
+                                    <small class="text-muted">(Connected on {{ account.date_added|date:"M d, Y" }})</small>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger"
+                                        hx-delete="{% url 'socialaccount_connections' %}?account={{ account.id }}"
+                                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                                        hx-confirm="Are you sure you want to disconnect this account?"
+                                        hx-target="#profile-info"
+                                        hx-swap="outerHTML">
+                                    <i class="fas fa-unlink"></i> Disconnect
+                                </button>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                
+                <div class="mt-4">
+                    <a href="{% url 'Home' %}" class="btn btn-primary">Back to Home</a>
+                    <a href="{% url 'socialaccount_connections' %}" class="btn btn-outline-secondary">Manage Social Accounts</a>
+                    <button class="btn btn-outline-warning" 
+                            x-data="{}" 
+                            @click="$dispatch('open-modal', {id: 'change-password-modal'})">
+                        Change Password
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div x-data="{ 
+    open: false,
+    displayName: '{{ user.get_full_name|default:'' }}',
+    preferredLanguage: '{{ user.profile.preferred_language|default:'en' }}' || 'en',
+    errors: {},
+    loading: false,
+    languages: [
+        { code: 'en', name: 'English' },
+        { code: 'fa', name: 'فارسی' },
+        { code: 'fr', name: 'Français' },
+        { code: 'es', name: 'Español' }
+    ],
+    
+    submitForm() {
+        this.loading = true;
+        this.errors = {};
+        
+        const formData = new FormData();
+        formData.append('display_name', this.displayName);
+        formData.append('preferred_language', this.preferredLanguage);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        
+        fetch('/api/profile/update/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                this.open = false;
+                // Refresh the profile section
+                htmx.trigger('#profile-info', 'refreshProfile');
+            } else if (data.errors) {
+                this.errors = data.errors;
+            }
+            this.loading = false;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            this.errors = {'__all__': ['An unexpected error occurred. Please try again.']};
+            this.loading = false;
+        });
+    }
+}" 
+    x-show="open"
+    x-on:open-modal.window="if ($event.detail.id === 'edit-profile-modal') { open = true; }"
+    x-on:keydown.escape.window="open = false"
+    class="fixed inset-0 z-50 overflow-y-auto" 
+    style="display: none;">
+    
+    <!-- Modal backdrop -->
+    <div class="fixed inset-0 bg-black bg-opacity-50" x-show="open" x-on:click="open = false"></div>
+    
+    <!-- Modal content -->
+    <div class="modal d-block" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Profile</h5>
+                    <button type="button" class="btn-close" @click="open = false"></button>
+                </div>
+                <div class="modal-body">
+                    <form @submit.prevent="submitForm">
+                        <div class="mb-3">
+                            <label for="displayName" class="form-label">Display Name</label>
+                            <input type="text" class="form-control" id="displayName" x-model="displayName">
+                            <div x-show="errors.display_name" class="text-danger mt-1" x-text="errors.display_name"></div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="preferredLanguage" class="form-label">Preferred Language</label>
+                            <select class="form-select" id="preferredLanguage" x-model="preferredLanguage">
+                                <template x-for="lang in languages" :key="lang.code">
+                                    <option :value="lang.code" x-text="lang.name"></option>
+                                </template>
+                            </select>
+                            <div x-show="errors.preferred_language" class="text-danger mt-1" x-text="errors.preferred_language"></div>
+                        </div>
+                        
+                        <div x-show="errors.__all__" class="alert alert-danger" x-text="errors.__all__"></div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @click="open = false">Cancel</button>
+                            <button type="submit" class="btn btn-primary" :disabled="loading">
+                                <span x-show="loading" class="spinner-border spinner-border-sm me-1"></span>
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div x-data="{ 
+    open: false,
+    oldPassword: '',
+    newPassword1: '',
+    newPassword2: '',
+    errors: {},
+    loading: false,
+    
+    submitForm() {
+        this.loading = true;
+        this.errors = {};
+        
+        const formData = new FormData();
+        formData.append('oldpassword', this.oldPassword);
+        formData.append('password1', this.newPassword1);
+        formData.append('password2', this.newPassword2);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+        
+        fetch('{% url 'account_change_password' %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => {
+            if (response.redirected) {
+                window.location.href = response.url;
+                return;
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.form && data.form.errors) {
+                this.errors = data.form.errors;
+            }
+            this.loading = false;
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            this.errors = {'__all__': ['An unexpected error occurred. Please try again.']};
+            this.loading = false;
+        });
+    }
+}" 
+    x-show="open"
+    x-on:open-modal.window="if ($event.detail.id === 'change-password-modal') { open = true; }"
+    x-on:keydown.escape.window="open = false"
+    class="fixed inset-0 z-50 overflow-y-auto" 
+    style="display: none;">
+    
+    <!-- Modal backdrop -->
+    <div class="fixed inset-0 bg-black bg-opacity-50" x-show="open" x-on:click="open = false"></div>
+    
+    <!-- Modal content -->
+    <div class="modal d-block" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Change Password</h5>
+                    <button type="button" class="btn-close" @click="open = false"></button>
+                </div>
+                <div class="modal-body">
+                    <form @submit.prevent="submitForm">
+                        <div class="mb-3">
+                            <label for="oldPassword" class="form-label">Current Password</label>
+                            <input type="password" class="form-control" id="oldPassword" x-model="oldPassword" required>
+                            <div x-show="errors.oldpassword" class="text-danger mt-1" x-text="errors.oldpassword"></div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="newPassword1" class="form-label">New Password</label>
+                            <input type="password" class="form-control" id="newPassword1" x-model="newPassword1" required>
+                            <div x-show="errors.password1" class="text-danger mt-1" x-text="errors.password1"></div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="newPassword2" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="newPassword2" x-model="newPassword2" required>
+                            <div x-show="errors.password2" class="text-danger mt-1" x-text="errors.password2"></div>
+                        </div>
+                        
+                        <div x-show="errors.__all__" class="alert alert-danger" x-text="errors.__all__"></div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @click="open = false">Cancel</button>
+                            <button type="submit" class="btn btn-primary" :disabled="loading">
+                                <span x-show="loading" class="spinner-border spinner-border-sm me-1"></span>
+                                Change Password
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
