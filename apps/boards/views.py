@@ -13,17 +13,20 @@ from django.urls import reverse_lazy
 from django.views import View
 
 from .models import Board, List, Card, Membership
-
+from custom_tools.logger import custom_logger
 
 # Helper functions to avoid repetition
 def get_user_boards(user):
     """Get all boards for a user with optimized queries"""
-    return (
+    boards = (
         Board.objects.filter(memberships__user=user, memberships__is_active=True)
         .select_related("owner")
         .prefetch_related("memberships")
         .distinct()
     )
+    custom_logger(f"Retrieved {boards.count()} boards for user `{user.email}`")
+    custom_logger(f"Boards: {boards}")
+    return boards
 
 
 def get_user_board(board_id, user):
@@ -45,14 +48,16 @@ def get_board_lists(board):
     )
     
     # Preload cards for all lists to avoid N+1 queries
+    # No direct assignment to list_obj.cards
+    cards_by_list = {}
     for list_obj in lists:
-        list_obj.cards = (
+        cards_by_list[list_obj.id] = (
             Card.objects.filter(list=list_obj)
             .select_related("assignee")
             .order_by("priority", "order")
         )
-    
-    return lists
+
+    return lists, cards_by_list
 
 
 def get_user_list(list_id, user):
@@ -111,7 +116,9 @@ class BoardDetailView(LoginRequiredMixin, DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['lists'] = get_board_lists(self.object)
+        lists, cards_by_list = get_board_lists(self.object)
+        context['lists'] = lists
+        context['cards_by_list'] = cards_by_list
         return context
 
 

@@ -21,3 +21,4 @@ dump.json
 custom_tools/custom_settings.py
 .docs
 db/
+staticfiles/
