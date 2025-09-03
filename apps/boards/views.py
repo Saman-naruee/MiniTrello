@@ -14,6 +14,7 @@ from django.views import View
 
 from .models import Board, List, Card, Membership
 from custom_tools.logger import custom_logger
+from .forms import *
 
 # Helper functions to avoid repetition
 def get_user_boards(user):
@@ -116,9 +117,11 @@ class BoardDetailView(LoginRequiredMixin, DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        lists, cards_by_list = get_board_lists(self.object)
+        board = self.get_object()
+        lists, cards_by_list = get_board_lists(board)
         context['lists'] = lists
         context['cards_by_list'] = cards_by_list
+        context['board'] = board
         return context
 
 
@@ -127,19 +130,29 @@ class HTMXBoardCreateView(LoginRequiredMixin, View):
     """Create a new board via HTMX"""
     
     def post(self, request):
-        title = request.POST.get("title")
-        description = request.POST.get("description", "")
-        color = request.POST.get("color", "blue")
-        
-        if not title:
-            return JsonResponse({"error": "Title is required"}, status=400)
-        
+        title = self.context['title']
+        color = self.context['color']
+        description = self.context['description']
+
+        form = BoardForm(request.POST)
+        owner = request.user
+
         # Check board limit
-        user_boards_count = Board.objects.filter(owner=request.user).count()
+        user_boards_count = Board.objects.filter(owner=owner).count()
         max_boards = getattr(settings, "MAX_BOARDS_PER_USER", 10)
         
         if user_boards_count >= max_boards:
             return JsonResponse({"error": "Board limit reached"}, status=400)
+
+        # if form.is_valid():
+        #     board = form.save(commit=False)
+        #     board.owner = request.user
+        #     board.save()
+        #     return render_partial_response("boards/partials/board_card.html", {"board": board})
+        # else:
+        #     return JsonResponse({"error": form.errors}, status=400)
+
+        
         
         # Create board
         board = Board.objects.create(

@@ -9,6 +9,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
 from django.urls import reverse_lazy
+from allauth.account.authentication import get_authentication_records
+from custom_tools.logger import custom_logger
+
+
+
+
 
 User = get_user_model()
 
