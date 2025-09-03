@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-+-_py-^wi2bbs(bkeodby*u^2nbd=3aa_@!fs*!_rw1r*(###i
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+USE_I18N = True
 
 # Application definition
 
@@ -62,6 +62,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -256,3 +257,17 @@ STATICFILES_DIRS = [
    ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+
+from django.utils.translation import gettext_lazy as _
+
+LANGUAGES = [
+    ('en', _('English')),
+    ('fa', _('Persian')),
+    ('fr', _('French')),
+    ('es', _('Spanish')),
+]
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]

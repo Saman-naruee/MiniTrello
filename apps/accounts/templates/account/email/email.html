@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load socialaccount %}
-{% block title %}Email Addresses{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Email Addresses" %}{% endblock %}
 
 {% block content %}
 <div class="container py-4">
@@ -9,13 +10,13 @@
       <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
           <h2 class="h4 mb-0">
-            <i class="fas fa-envelope me-2"></i>Email Addresses
+            <i class="fas fa-envelope me-2"></i>{% trans "Email Addresses" %}
           </h2>
         </div>
         <div class="card-body">
           {% if user.emailaddress_set.all %}
           <p class="text-muted mb-4">
-            The following email addresses are associated with your account:
+            {% trans "The following email addresses are associated with your account:" %}
           </p>
           
           <form hx-post="{% url 'account_email' %}" 
@@ -41,17 +42,17 @@
                   <div class="mt-1">
                     {% if emailaddress.verified %}
                     <span class="badge bg-success">
-                      <i class="fas fa-check-circle me-1"></i>Verified
+                      <i class="fas fa-check-circle me-1"></i>{% trans "Verified" %}
                     </span>
                     {% else %}
                     <span class="badge bg-warning text-dark">
-                      <i class="fas fa-exclamation-triangle me-1"></i>Unverified
+                      <i class="fas fa-exclamation-triangle me-1"></i>{% trans "Unverified" %}
                     </span>
                     {% endif %}
                     
                     {% if emailaddress.primary %}
                     <span class="badge bg-info">
-                      <i class="fas fa-star me-1"></i>Primary
+                      <i class="fas fa-star me-1"></i>{% trans "Primary" %}
                     </span>
                     {% endif %}
                   </div>
@@ -65,7 +66,7 @@
                           hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
                           hx-target="#email-management"
                           class="btn btn-sm btn-outline-primary">
-                    <i class="fas fa-paper-plane me-1"></i>Resend Verification
+                    <i class="fas fa-paper-plane me-1"></i>{% trans "Resend Verification" %}
                   </button>
                   {% endif %}
                 </div>
@@ -78,27 +79,27 @@
                       class="btn btn-primary"
                       hx-vals='{"action_primary": ""}'
                       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                <i class="fas fa-check-circle me-1"></i>Make Primary
+                <i class="fas fa-check-circle me-1"></i>{% trans "Make Primary" %}
               </button>
               
               <button type="submit" name="action_remove" 
                       class="btn btn-danger"
                       hx-vals='{"action_remove": ""}'
                       hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' 
-                      hx-confirm="Are you sure you want to remove the selected email address?">
-                <i class="fas fa-trash me-1"></i>Remove
+                      hx-confirm="{% trans "Are you sure you want to remove the selected email address?" %}">
+                <i class="fas fa-trash me-1"></i>{% trans "Remove" %}
               </button>
             </div>
           </form>
           {% else %}
           <div class="alert alert-info">
-            <i class="fas fa-info-circle me-1"></i>You have not added any email addresses yet.
+            <i class="fas fa-info-circle me-1"></i>{% trans "You have not added any email addresses yet." %}
           </div>
           {% endif %}
           
           <hr class="my-4">
           
-          <h3 class="h5 mb-3">Add Email Address</h3>
+          <h3 class="h5 mb-3">{% trans "Add Email Address" %}</h3>
           <form method="post" action="{% url 'account_email' %}" 
                 hx-post="{% url 'account_email' %}"
                 hx-target="this"
@@ -107,11 +108,11 @@
             {% csrf_token %}
             
             <div class="mb-3">
-              <label for="email" class="form-label">Email Address</label>
+              <label for="email" class="form-label">{% trans "Email Address" %}</label>
               <div class="input-group">
                 <input type="email" name="email" id="email" class="form-control" placeholder="email@example.com" required>
                 <button type="submit" class="btn btn-success">
-                  <i class="fas fa-plus me-1"></i>Add
+                  <i class="fas fa-plus me-1"></i>{% trans "Add" %}
                 </button>
               </div>
               {% if form.email.errors %}
@@ -126,9 +127,9 @@
         </div>
         <div class="card-footer">
           <a href="{% url 'account_change_password' %}" class="btn btn-outline-secondary">
-            <i class="fas fa-key me-1"></i>Change Password
+            <i class="fas fa-key me-1"></i>{% trans "Change Password" %}
           </a>
-          <a href="{% url 'Home' %}" class="btn btn-link">Back to Home</a>
+          <a href="{% url 'Home' %}" class="btn btn-link">{% trans "Back to Home" %}</a>
         </div>
       </div>
     </div>
@@ -152,7 +153,7 @@
      style="z-index: 11; display: none;">
   <div :class="'toast show bg-' + type + ' text-white'" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-header">
-      <strong class="me-auto">Notification</strong>
+      <strong class="me-auto">{% trans "Notification" %}</strong>
       <button type="button" class="btn-close" @click="show = false"></button>
     </div>
     <div class="toast-body" x-text="message"></div>
@@ -172,13 +173,13 @@
         
         let message = '';
         if (responseText.includes('verification e-mail sent')) {
-          message = 'Verification email has been sent!';
+          message = '{% trans "Verification email has been sent!" %}';
         } else if (responseText.includes('primary e-mail address set')) {
-          message = 'Primary email address has been updated!';
+          message = '{% trans "Primary email address has been updated!" %}';
         } else if (responseText.includes('e-mail address removed')) {
-          message = 'Email address has been removed!';
+          message = '{% trans "Email address has been removed!" %}';
         } else if (responseText.includes('e-mail address added')) {
-          message = 'New email address has been added!';
+          message = '{% trans "New email address has been added!" %}';
         }
         
         // Dispatch custom event for toast
@@ -190,3 +191,4 @@
   });
 </script>
 {% endblock %}
+
