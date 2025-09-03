@@ -249,3 +249,10 @@ PREFFERED_IMPLEMENTATION_FOR_PROJECT_API_OR_WEBPAGES = 'WEB' # or 'API'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 ACCOUNT_ADAPTER = 'apps.accounts.adapters.CustomAccountAdapter'
+
+STATICFILES_DIRS = [
+       BASE_DIR / "static",
+       BASE_DIR / "apps/boards/static",
+   ]
+
+STATIC_ROOT = BASE_DIR / "staticfiles"
