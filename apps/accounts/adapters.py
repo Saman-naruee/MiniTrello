@@ -26,14 +26,17 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         message.content_subtype = "html"
         message.send()
 
-    def ajax_response(self, request, response, redirect_url=None, form=None, data=None):
+    def ajax_response(self, request, response, redirect_url=None, redirect_to=None, form=None, data=None, **kwargs):
+        if redirect_to:
+            final_redirect = redirect_to
+        final_redirect = redirect_url
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             if isinstance(response, str):
                 return JsonResponse({'redirect_location': response})
             if form and not form.is_valid():
                 return JsonResponse({'form': {'errors': form.errors}})
-            if redirect_url:
-                return JsonResponse({'redirect': redirect_url})
+            if final_redirect:
+                return JsonResponse({'redirect': final_redirect})
             if data:
                 return JsonResponse(data)
             return JsonResponse({'success': True})
