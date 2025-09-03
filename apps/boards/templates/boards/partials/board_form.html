@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block head_title %}{% trans "Create Board" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <h5 class="card-title">{% trans "Create Board" %}</h5>
+        </div>
+        <div class="card-body">
+          <form method="post" action="{% url 'boards:create_board' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="id_title" class="form-label">{% trans "Title" %}</label>
+              <input type="text" class="form-control {% if form.title.errors %}is-invalid{% endif %}" id="id_title" name="title" placeholder="{% trans "Enter board title" %}" value="{{ form.title.value|default_if_none:'' }}">
+              {% if form.title.errors %}
+                <div class="invalid-feedback">{{ form.title.errors|join:", " }}</div>
+              {% endif %}
+            </div>
+            <div class="mb-3">
+              <label for="id_description" class="form-label">{% trans "Description" %}</label>
+              <textarea class="form-control {% if form.description.errors %}is-invalid{% endif %}" id="id_description" name="description" placeholder="{% trans "Enter board description" %}" rows="3">{{ form.description.value|default_if_none:'' }}</textarea>
+              {% if form.description.errors %}
+                <div class="invalid-feedback">{{ form.description.errors|join:", " }}</div>
+              {% endif %}
+            </div>
+            <div class="mb-3">
+              <label for="id_color" class="form-label">{% trans "Color" %}</label>
+              <input type="color" class="form-control {% if form.color.errors %}is-invalid{% endif %}" id="id_color" name="color" value="{{ form.color.value|default_if_none:'#007bff' }}">
+              {% if form.color.errors %}
+                <div class="invalid-feedback">{{ form.color.errors|join:", " }}</div>
+              {% endif %}
+            </div>
+            <button type="submit" class="btn btn-primary">{% trans "Create" %}</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

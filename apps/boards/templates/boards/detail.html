@@ -218,7 +218,7 @@
                     <h5 class="modal-title">Add New List</h5>
                     <button type="button" class="btn-close" @click="showAddListModal = false"></button>
                 </div>
-                <form hx-post="{% url 'create_list' %}"
+                <form hx-post="{% url 'boards:create_list' %}"
                       hx-target="#lists-container"
                       hx-swap="beforeend"
                       @submit="showAddListModal = false"
@@ -256,7 +256,7 @@
                     <h5 class="modal-title">Add New Card</h5>
                     <button type="button" class="btn-close" @click="showAddCardModal = false"></button>
                 </div>
-                <form hx-post="{% url 'create_card' %}"
+                <form hx-post="{% url 'boards:create_card' %}"
                       x-bind:hx-target="`#cards-container-${selectedListId}`"
                       hx-swap="beforeend"
                       @submit="showAddCardModal = false"
@@ -313,7 +313,7 @@
                     <h5 class="modal-title">Edit Card</h5>
                     <button type="button" class="btn-close" @click="showEditCardModal = false"></button>
                 </div>
-                <form hx-patch="{% url 'update_card' 0 %}"
+                <form hx-patch="{% url 'boards:update_card' 0 %}"
                       x-bind:hx-patch="`/boards/cards/${editingCardId}/update/`"
                       x-bind:hx-target="`#card-${editingCardId}`"
                       hx-swap="outerHTML"

@@ -7,7 +7,7 @@ class BoardForm(forms.ModelForm):
         model = Board
         fields = ["title", "description", "color"]
     
-
+    
     def clean_title(self):
         title = self.cleaned_data["title"] = self.cleaned_data["title"].strip()
         if len(title) <= 3:

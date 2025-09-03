@@ -128,51 +128,30 @@ class BoardDetailView(LoginRequiredMixin, DetailView):
 # HTMX Views for dynamic interactions
 class HTMXBoardCreateView(LoginRequiredMixin, View):
     """Create a new board via HTMX"""
+    custom_logger("Instantiate HTMXBoardCreateView")
+    def get(self, request):
+        form = BoardForm()
+        return render_partial_response("boards/partials/board_form.html", {"form": form})
     
     def post(self, request):
-        title = self.context['title']
-        color = self.context['color']
-        description = self.context['description']
-
         form = BoardForm(request.POST)
-        owner = request.user
+        if form.is_valid():
+            board = form.save(commit=False)
+            board.owner = request.user
+            board.save()
+            custom_logger("Board created", {"board_id": board.id, "user_id": request.user.email})
+            # Create membership
+            Membership.objects.create(
+                user=request.user,
+                board=board,
+                role=Membership.ROLE_OWNER,
+                can_edit=True,
+                can_comment=True,
+                can_invite=True,
+            )
 
-        # Check board limit
-        user_boards_count = Board.objects.filter(owner=owner).count()
-        max_boards = getattr(settings, "MAX_BOARDS_PER_USER", 10)
-        
-        if user_boards_count >= max_boards:
-            return JsonResponse({"error": "Board limit reached"}, status=400)
-
-        # if form.is_valid():
-        #     board = form.save(commit=False)
-        #     board.owner = request.user
-        #     board.save()
-        #     return render_partial_response("boards/partials/board_card.html", {"board": board})
-        # else:
-        #     return JsonResponse({"error": form.errors}, status=400)
-
-        
-        
-        # Create board
-        board = Board.objects.create(
-            owner=request.user,
-            title=title,
-            description=description,
-            color=color
-        )
-        
-        # Create owner membership
-        Membership.objects.create(
-            user=request.user,
-            board=board,
-            role=Membership.ROLE_OWNER,
-            can_edit=True,
-            can_comment=True,
-            can_invite=True,
-        )
-        
-        return render_partial_response("boards/partials/board_card.html", {"board": board})
+            return render_partial_response("boards/partials/board_card.html", {"board": board})
+        return render_partial_response("boards/partials/board_form.html", {"form": form})
 
 
 class HTMXListCreateView(LoginRequiredMixin, View):

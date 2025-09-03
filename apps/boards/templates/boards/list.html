@@ -52,7 +52,7 @@
                             </button>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item" href="{% url 'board_detail' board.id %}">
+                                    <a class="dropdown-item" href="{% url 'boards:board_detail' board.id %}">
                                         <i class="fas fa-eye me-2"></i>View Board
                                     </a>
                                 </li>
@@ -86,7 +86,7 @@
                 </div>
                 
                 <div class="card-footer bg-transparent">
-                    <a href="{% url 'board_detail' board.id %}" 
+                    <a href="{% url 'boards:board_detail' board.id %}" 
                        class="btn btn-primary btn-sm w-100">
                         <i class="fas fa-trello me-1"></i>Open Board
                     </a>
@@ -124,7 +124,7 @@
                     <h5 class="modal-title">Create New Board</h5>
                     <button type="button" class="btn-close" @click="showCreateModal = false"></button>
                 </div>
-                <form hx-post="{% url 'create_board' %}"
+                <form hx-post="{% url 'boards:create_board' %}"
                       hx-target="#boards-container"
                       hx-swap="beforeend"
                       @submit="showCreateModal = false"
