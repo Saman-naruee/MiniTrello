@@ -1,1 +1,1 @@
-Confirm your email address on MiniTrello
+{% include "account/email/email_confirmation_subject.txt" %}
