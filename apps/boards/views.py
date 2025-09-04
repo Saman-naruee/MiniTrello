@@ -124,6 +124,7 @@ class BoardDetailView(LoginRequiredMixin, DetailView):
         context['lists'] = lists
         context['cards_by_list'] = cards_by_list
         context['board'] = board
+        context['board_id'] = board.id
         return context
 
 
@@ -246,8 +247,10 @@ class HTMXListDetailView(LoginRequiredMixin, DetailView):
 class HTMXListDeleteView(LoginRequiredMixin, View):
     """Delete a list via HTMX"""
     
-    def delete(self, request, list_id):
+    def delete(self, request, board_id, list_id):
         list_obj = get_user_list(list_id, request.user)
+        if list_obj.board.id != board_id:
+            raise Http404("List not found")
         list_obj.delete()
         return JsonResponse({"success": True})
 
@@ -267,29 +270,20 @@ class HTMXCardDeleteView(LoginRequiredMixin, View):
 class HTMXCardCreateView(LoginRequiredMixin, View):
     """Create a new card via HTMX"""
     
-    def post(self, request):
-        list_id = request.POST.get("list")
-        title = request.POST.get("title")
-        description = request.POST.get("description", "")
-        priority = request.POST.get("priority", 50)
-        
-        if not list_id or not title:
-            return JsonResponse({"error": "List ID and title are required"}, status=400)
-        
-        list_obj = get_user_list(list_id, request.user)
-        
-        # Get next order
-        order = get_next_order(Card, {"list": list_obj})
-        
-        card = Card.objects.create(
-            list=list_obj,
-            title=title,
-            description=description,
-            priority=int(priority),
-            order=order
-        )
-        
-        return render_partial_response("boards/partials/card_item.html", {"card": card})
+    def post(self, request, board_id, list_id):
+        board = get_user_board(board_id, request.user)
+        card_list = get_user_list(list_id, request.user)
+
+        form = CardForm(request.POST)
+        if form.is_valid():
+            card = form.save(commit=False)
+            card.list = card_list
+
+            last_card = Card.objects.filter(list=card_list).order_by('-order').first()
+            card.order = last_card.order + 1 if last_card else 1
+            card.save()
+            return render_partial_response("boards/partials/card_item.html", {"card": card})
+        return JsonResponse({"error": "Invalid form data"}, status=400)
 
 
 class HTMXCardUpdateView(LoginRequiredMixin, View):
@@ -297,23 +291,15 @@ class HTMXCardUpdateView(LoginRequiredMixin, View):
     
     def patch(self, request, card_id):
         card = get_user_card(card_id, request.user)
-        
-        # Update fields
-        if "title" in request.POST:
-            card.title = request.POST["title"]
-        if "description" in request.POST:
-            card.description = request.POST["description"]
-        if "priority" in request.POST:
-            card.priority = int(request.POST["priority"])
-        if "list" in request.POST:
-            new_list = get_object_or_404(List, id=request.POST["list"])
-            card.list = new_list
-        if "order" in request.POST:
-            card.order = int(request.POST["order"])
-        
-        card.save()
-        
-        return render_partial_response("boards/partials/card_item.html", {"card": card})
+        form = CardForm(request.PATCH or request.POST)
+        if form.is_valid():
+            form.save()
+            return render_partial_response(
+                "boards/partials/card.html",
+                {"card": card, "list": card.list}
+            )
+        else:
+            return JsonResponse({"errors": form.errors}, status=400)
 
 
 class HTMXCardDetailView(LoginRequiredMixin, DetailView):

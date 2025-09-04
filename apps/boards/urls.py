@@ -29,6 +29,10 @@ urlpatterns = [
     path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/update/", HTMXCardUpdateView.as_view(), name="update_card"),
     path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/delete/", HTMXCardDeleteView.as_view(), name="delete_card"),
     path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/", HTMXCardDetailView.as_view(), name="card_detail"),
+
+    path('cards/<int:card_id>/update/',
+         HTMXCardUpdateView.as_view(),
+         name='update_card'),
 ]
 
 

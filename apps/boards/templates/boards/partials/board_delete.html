@@ -1,16 +1,16 @@
-{% extends "base.html" %}
-
-{% load i18n %}
-{% block title %}{% trans "Delete Board" %} - {{ block.super }}{% endblock %}
-
-{% block content %}
-    <h1>{% trans "Delete Board" %}</h1>
-    <p>{% blocktrans with title=board.title %}Are you sure you want to delete "<strong>{{ title }}</strong>"?{% endblocktrans %}</p>
-    <p>{% trans "This action cannot be undone." %}</p>
-    <form hx-post="{% url 'board_delete' board.id %}" hx-swap="outerHTML" hx-target="#board-{{ board.id }}">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">{% trans "Delete Board" %}</button>
-        <a href="{% url 'board_detail' board.id %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
-    </form>
-{% endblock %}
-
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Confirm Deletion</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete the board "<strong>{{ board.title }}</strong>"?</p>
+            <form hx-post="{% url 'board_delete' board.id %}" hx-target="body" hx-swap="innerHTML">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </form>
+        </div>
+    </div>
+</div>
