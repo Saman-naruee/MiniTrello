@@ -118,3 +118,17 @@
     background: linear-gradient(135deg, #e83e8c20, #e83e8c40);
     border-bottom: 3px solid #e83e8c;
 }
+
+/* Member avatars in boards */
+.members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.members img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+}
