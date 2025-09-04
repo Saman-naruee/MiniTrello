@@ -95,7 +95,7 @@ def render_partial_response(template_name, context):
     return JsonResponse({"html": html})
 
 
-# Class-Based Views
+# Class-Based Board Views
 class BoardListView(LoginRequiredMixin, ListView):
     """Display all boards for the current user"""
     model = Board
@@ -188,6 +188,9 @@ class HTMXBoardUpdateView(LoginRequiredMixin, UpdateView):
             return render_partial_response("boards/partials/board_card.html", {"board": board})
         return render_partial_response("boards/partials/update_board.html", {"form": form, "board": board})
 
+
+
+# List Views
 class HTMXListCreateView(LoginRequiredMixin, View):
     """Create a new list via HTMX"""
     
@@ -210,6 +213,55 @@ class HTMXListCreateView(LoginRequiredMixin, View):
         )
         
         return render_partial_response("boards/partials/list_column.html", {"list": list_obj})
+
+class HTMXListUpdateView(LoginRequiredMixin, UpdateView):
+    """Update a list via HTMX"""
+
+    model = List
+    template_name = "boards/partials/update_list.html"
+    form_class = ListForm
+
+    def get_object(self):
+        return get_user_list(self.kwargs['list_id'], self.request.user)
+
+    def post(self, request, *args, **kwargs):
+        list_obj = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            form.save()
+            return render_partial_response("boards/partials/list_column.html", {"list": list_obj})
+        return render_partial_response("boards/partials/update_list.html", {"form": form, "list": list_obj})
+
+
+class HTMXListDetailView(LoginRequiredMixin, DetailView):
+    """View a list's details via HTMX"""
+
+    model = List
+    template_name = "boards/partials/list_detail.html"
+
+    def get_object(self):
+        return get_user_list(self.kwargs['list_id'], self.request.user)
+
+
+class HTMXListDeleteView(LoginRequiredMixin, View):
+    """Delete a list via HTMX"""
+    
+    def delete(self, request, list_id):
+        list_obj = get_user_list(list_id, request.user)
+        list_obj.delete()
+        return JsonResponse({"success": True})
+
+
+
+
+# Card Views
+class HTMXCardDeleteView(LoginRequiredMixin, View):
+    """Delete a card via HTMX"""
+    
+    def delete(self, request, card_id):
+        card = get_user_card(card_id, request.user)
+        card.delete()
+        return JsonResponse({"success": True})
 
 
 class HTMXCardCreateView(LoginRequiredMixin, View):
@@ -262,56 +314,6 @@ class HTMXCardUpdateView(LoginRequiredMixin, View):
         card.save()
         
         return render_partial_response("boards/partials/card_item.html", {"card": card})
-
-
-
-class HTMXListDeleteView(LoginRequiredMixin, View):
-    """Delete a list via HTMX"""
-    
-    def delete(self, request, list_id):
-        list_obj = get_user_list(list_id, request.user)
-        list_obj.delete()
-        return JsonResponse({"success": True})
-
-
-class HTMXCardDeleteView(LoginRequiredMixin, View):
-    """Delete a card via HTMX"""
-    
-    def delete(self, request, card_id):
-        card = get_user_card(card_id, request.user)
-        card.delete()
-        return JsonResponse({"success": True})
-
-
-
-
-class HTMXListUpdateView(LoginRequiredMixin, UpdateView):
-    """Update a list via HTMX"""
-
-    model = List
-    template_name = "boards/partials/update_list.html"
-    form_class = ListForm
-
-    def get_object(self):
-        return get_user_list(self.kwargs['list_id'], self.request.user)
-
-    def post(self, request, *args, **kwargs):
-        list_obj = self.get_object()
-        form = self.get_form()
-        if form.is_valid():
-            form.save()
-            return render_partial_response("boards/partials/list_column.html", {"list": list_obj})
-        return render_partial_response("boards/partials/update_list.html", {"form": form, "list": list_obj})
-
-
-class HTMXListDetailView(LoginRequiredMixin, DetailView):
-    """View a list's details via HTMX"""
-
-    model = List
-    template_name = "boards/partials/list_detail.html"
-
-    def get_object(self):
-        return get_user_list(self.kwargs['list_id'], self.request.user)
 
 
 class HTMXCardDetailView(LoginRequiredMixin, DetailView):
