@@ -128,54 +128,65 @@ class BoardDetailView(LoginRequiredMixin, DetailView):
 
 
 # HTMX Views for dynamic interactions
-class HTMXBoardCreateView(LoginRequiredMixin, View):
+class HTMXBoardCreateView(LoginRequiredMixin, CreateView):
     """Create a new board via HTMX"""
-    
-    def post(self, request):
-        title = self.context['title']
-        color = self.context['color']
-        description = self.context['description']
+    model = Board
+    template_name = "boards/partials/create_board.html"
+    form_class = BoardForm
 
-        form = BoardForm(request.POST)
-        owner = request.user
-
+    def form_valid(self, form):
         # Check board limit
-        user_boards_count = Board.objects.filter(owner=owner).count()
+        user_boards_count = Board.objects.filter(owner=self.request.user).count()
         max_boards = getattr(settings, "MAX_BOARDS_PER_USER", 10)
         
         if user_boards_count >= max_boards:
-            return JsonResponse({"error": "Board limit reached"}, status=400)
+            form.add_error(None, "Board limit reached")
+            return self.form_invalid(form)
 
-        # if form.is_valid():
-        #     board = form.save(commit=False)
-        #     board.owner = request.user
-        #     board.save()
-        #     return render_partial_response("boards/partials/board_card.html", {"board": board})
-        # else:
-        #     return JsonResponse({"error": form.errors}, status=400)
-
-        
-        
         # Create board
-        board = Board.objects.create(
-            owner=request.user,
-            title=title,
-            description=description,
-            color=color
-        )
+        board = form.save(commit=False)
+        board.owner = self.request.user
+        board.save()
         
         # Create owner membership
         Membership.objects.create(
-            user=request.user,
+            user=self.request.user,
             board=board,
             role=Membership.ROLE_OWNER,
             can_edit=True,
             can_comment=True,
             can_invite=True,
         )
-        
+
         return render_partial_response("boards/partials/board_card.html", {"board": board})
 
+class HTMXBoardDeleteView(LoginRequiredMixin, DeleteView):
+    """Delete a board via HTMX"""
+    
+    def delete(self, request, board_id):
+        board = get_user_board(board_id, request.user)
+        board.delete()
+        # return render_partial_response("boards/partials/board_delete.html", {"board": board})
+        return JsonResponse({"success": True})
+
+
+class HTMXBoardUpdateView(LoginRequiredMixin, UpdateView):
+    """Update a board via HTMX"""
+    
+    model = Board
+    template_name = "boards/partials/update_board.html"
+    form_class = BoardForm
+
+    def get_object(self):
+        return get_user_board(self.kwargs['board_id'], self.request.user)
+
+    def post(self, request, *args, **kwargs):
+        board = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            form.save()
+            return render_partial_response("boards/partials/board_card.html", {"board": board})
+        return render_partial_response("boards/partials/update_board.html", {"form": form, "board": board})
 
 class HTMXListCreateView(LoginRequiredMixin, View):
     """Create a new list via HTMX"""
@@ -253,14 +264,6 @@ class HTMXCardUpdateView(LoginRequiredMixin, View):
         return render_partial_response("boards/partials/card_item.html", {"card": card})
 
 
-class HTMXBoardDeleteView(LoginRequiredMixin, View):
-    """Delete a board via HTMX"""
-    
-    def delete(self, request, board_id):
-        board = get_object_or_404(Board, id=board_id, owner=request.user)
-        board.delete()
-        return JsonResponse({"success": True})
-
 
 class HTMXListDeleteView(LoginRequiredMixin, View):
     """Delete a list via HTMX"""
@@ -280,3 +283,42 @@ class HTMXCardDeleteView(LoginRequiredMixin, View):
         return JsonResponse({"success": True})
 
 
+
+
+class HTMXListUpdateView(LoginRequiredMixin, UpdateView):
+    """Update a list via HTMX"""
+
+    model = List
+    template_name = "boards/partials/update_list.html"
+    form_class = ListForm
+
+    def get_object(self):
+        return get_user_list(self.kwargs['list_id'], self.request.user)
+
+    def post(self, request, *args, **kwargs):
+        list_obj = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            form.save()
+            return render_partial_response("boards/partials/list_column.html", {"list": list_obj})
+        return render_partial_response("boards/partials/update_list.html", {"form": form, "list": list_obj})
+
+
+class HTMXListDetailView(LoginRequiredMixin, DetailView):
+    """View a list's details via HTMX"""
+
+    model = List
+    template_name = "boards/partials/list_detail.html"
+
+    def get_object(self):
+        return get_user_list(self.kwargs['list_id'], self.request.user)
+
+
+class HTMXCardDetailView(LoginRequiredMixin, DetailView):
+    """View a card's details via HTMX"""
+
+    model = Card
+    template_name = "boards/partials/card_detail.html"
+
+    def get_object(self):
+        return get_user_card(self.kwargs['card_id'], self.request.user)

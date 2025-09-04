@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+{% block title %}{% trans "Delete Board" %} - {{ block.super }}{% endblock %}
+
+{% block content %}
+    <h1>{% trans "Delete Board" %}</h1>
+    <p>{% blocktrans with title=board.title %}Are you sure you want to delete "<strong>{{ title }}</strong>"?{% endblocktrans %}</p>
+    <p>{% trans "This action cannot be undone." %}</p>
+    <form hx-post="{% url 'board_delete' board.id %}" hx-swap="outerHTML" hx-target="#board-{{ board.id }}">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">{% trans "Delete Board" %}</button>
+        <a href="{% url 'board_detail' board.id %}" class="btn btn-secondary">{% trans "Cancel" %}</a>
+    </form>
+{% endblock %}
+
