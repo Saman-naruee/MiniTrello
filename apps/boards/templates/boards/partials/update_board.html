@@ -1,9 +1,13 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
 <div class="modal fade" id="updateBoardModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Update Board</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">{% trans "Update Board" %}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Close" %}"></button>
             </div>
             <form hx-post="{% url 'update_board' board.id %}"
                   hx-target="#board-{{ board.id }}"
@@ -11,7 +15,7 @@
                 {% csrf_token %}
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="board-title" class="form-label">Board Title</label>
+                        <label for="board-title" class="form-label">{% trans "Board Title" %}</label>
                         <input type="text"
                                class="form-control"
                                id="board-title"
@@ -21,30 +25,31 @@
                                maxlength="255">
                     </div>
                     <div class="mb-3">
-                        <label for="board-description" class="form-label">Description (Optional)</label>
+                        <label for="board-description" class="form-label">{% trans "Description (Optional)" %}</label>
                         <textarea class="form-control"
                                   id="board-description"
                                   name="description"
                                   rows="3">{{ board.description }}</textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="board-color" class="form-label">Board Color</label>
+                        <label for="board-color" class="form-label">{% trans "Board Color" %}</label>
                         <select class="form-select" id="board-color" name="color" required>
-                            <option value="blue" {% if board.color == 'blue' %}selected{% endif %}>Blue</option>
-                            <option value="green" {% if board.color == 'green' %}selected{% endif %}>Green</option>
-                            <option value="yellow" {% if board.color == 'yellow' %}selected{% endif %}>Yellow</option>
-                            <option value="red" {% if board.color == 'red' %}selected{% endif %}>Red</option>
-                            <option value="purple" {% if board.color == 'purple' %}selected{% endif %}>Purple</option>
-                            <option value="orange" {% if board.color == 'orange' %}selected{% endif %}>Orange</option>
-                            <option value="pink" {% if board.color == 'pink' %}selected{% endif %}>Pink</option>
+                            <option value="blue" {% if board.color == 'blue' %}selected{% endif %}>{% trans "Blue" %}</option>
+                            <option value="green" {% if board.color == 'green' %}selected{% endif %}>{% trans "Green" %}</option>
+                            <option value="yellow" {% if board.color == 'yellow' %}selected{% endif %}>{% trans "Yellow" %}</option>
+                            <option value="red" {% if board.color == 'red' %}selected{% endif %}>{% trans "Red" %}</option>
+                            <option value="purple" {% if board.color == 'purple' %}selected{% endif %}>{% trans "Purple" %}</option>
+                            <option value="orange" {% if board.color == 'orange' %}selected{% endif %}>{% trans "Orange" %}</option>
+                            <option value="pink" {% if board.color == 'pink' %}selected{% endif %}>{% trans "Pink" %}</option>
                         </select>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update Board</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
+                    <button type="submit" class="btn btn-primary">{% trans "Update Board" %}</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+{% endblock %}
