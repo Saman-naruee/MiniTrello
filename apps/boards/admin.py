@@ -1,10 +1,20 @@
 from django.contrib import admin
+from nested_admin import NestedTabularInline, NestedStackedInline, NestedModelAdmin
 from .models import Board, List, Card, Membership
 
-# Register your models here.
+class CardInline(NestedTabularInline):
+    model = Card
+    extra = 0
+    # fields = ('title', 'description', 'priority', 'due_date', 'order', 'created_at', 'updated_at')
+
+class ListInline(NestedStackedInline):
+    model = List
+    extra = 0
+    inlines = [CardInline]
+    # fields = ('title', 'order', 'created_at', 'updated_at')
 
 @admin.register(Board)
-class BoardAdmin(admin.ModelAdmin):
+class BoardAdmin(NestedModelAdmin):
     list_display = ('title', 'owner', 'color', 'created_at', 'updated_at')
     list_filter = ('color', 'created_at', 'updated_at')
     search_fields = ('title', 'description')
@@ -13,6 +23,7 @@ class BoardAdmin(admin.ModelAdmin):
     raw_id_fields = ('owner',)
     date_hierarchy = 'created_at'
     ordering = ('created_at',)
+    inlines = [ListInline]
 
 @admin.register(List)
 class ListAdmin(admin.ModelAdmin):
