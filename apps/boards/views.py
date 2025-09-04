@@ -6,11 +6,12 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Max
+from django.db.models import Max, Q
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.urls import reverse_lazy
 from django.views import View
+from django.http import Http404
 
 from .models import Board, List, Card, Membership
 from custom_tools.logger import custom_logger
@@ -32,13 +33,12 @@ def get_user_boards(user):
 
 def get_user_board(board_id, user):
     """Get a specific board for a user with permission check"""
-    return get_object_or_404(
-        Board, 
-        id=board_id, 
-        memberships__user=user, 
-        memberships__is_active=True
-    )
-
+    try:
+        board = get_object_or_404(Board, id=board_id)
+        if board.owner == user or board.memberships.filter(user=user, is_active=True).exists():
+            return board
+    except Board.DoesNotExist:
+        raise Http404("Board not found")
 
 def get_board_lists(board):
     """Get all lists for a board with optimized queries"""
@@ -103,7 +103,9 @@ class BoardListView(LoginRequiredMixin, ListView):
     context_object_name = "boards"
     
     def get_queryset(self):
-        return get_user_boards(self.request.user)
+        return Board.objects.filter(
+            Q(owner=self.request.user) | Q(memberships__user=self.request.user, memberships__is_active=True)
+        ).distinct()
 
 
 class BoardDetailView(LoginRequiredMixin, DetailView):
