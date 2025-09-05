@@ -43,5 +43,5 @@ urlpatterns = [
     path('', login_required(TemplateView.as_view(template_name='home.html')), name='Home'),
 
     # Playground and tests
-    path("play/", include('apps.playground')),
+    path("play/", include('apps.playground.urls')),
 ]
