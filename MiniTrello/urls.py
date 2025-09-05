@@ -41,4 +41,7 @@ urlpatterns = [
     
     # Home page
     path('', login_required(TemplateView.as_view(template_name='home.html')), name='Home')
+
+    # Playground and tests
+    path("play/", include('apps.playground')),
 ]
