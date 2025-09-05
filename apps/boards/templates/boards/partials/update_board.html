@@ -1,55 +1,48 @@
-{% extends "base.html" %}
-{% load i18n %}
-
-{% block content %}
-<div class="modal fade" id="updateBoardModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">{% trans "Update Board" %}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Close" %}"></button>
-            </div>
-            <form hx-post="{% url 'update_board' board.id %}"
-                  hx-target="#board-{{ board.id }}"
-                  hx-swap="outerHTML">
-                {% csrf_token %}
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="board-title" class="form-label">{% trans "Board Title" %}</label>
-                        <input type="text"
-                               class="form-control"
-                               id="board-title"
-                               name="title"
-                               value="{{ board.title }}"
-                               required
-                               maxlength="255">
-                    </div>
-                    <div class="mb-3">
-                        <label for="board-description" class="form-label">{% trans "Description (Optional)" %}</label>
-                        <textarea class="form-control"
-                                  id="board-description"
-                                  name="description"
-                                  rows="3">{{ board.description }}</textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="board-color" class="form-label">{% trans "Board Color" %}</label>
-                        <select class="form-select" id="board-color" name="color" required>
-                            <option value="blue" {% if board.color == 'blue' %}selected{% endif %}>{% trans "Blue" %}</option>
-                            <option value="green" {% if board.color == 'green' %}selected{% endif %}>{% trans "Green" %}</option>
-                            <option value="yellow" {% if board.color == 'yellow' %}selected{% endif %}>{% trans "Yellow" %}</option>
-                            <option value="red" {% if board.color == 'red' %}selected{% endif %}>{% trans "Red" %}</option>
-                            <option value="purple" {% if board.color == 'purple' %}selected{% endif %}>{% trans "Purple" %}</option>
-                            <option value="orange" {% if board.color == 'orange' %}selected{% endif %}>{% trans "Orange" %}</option>
-                            <option value="pink" {% if board.color == 'pink' %}selected{% endif %}>{% trans "Pink" %}</option>
-                        </select>
-                    </div>
+{% comment %} This partial should not extend base.html {% endcomment %}
+<div id="update-board-form-{{ board.id }}">
+    <form hx-post="{% url 'update_board' board_id=board.id %}" hx-swap="outerHTML" hx-target="#update-board-form-{{ board.id }}">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="{{ form.title.id_for_label }}" class="form-label">Board Title</label>
+            <input type="text" class="form-control" id="{{ form.title.id_for_label }}" name="{{ form.title.name }}" value="{{ form.title.value|default:'' }}">
+            {% if form.title.errors %}
+                <div class="text-danger">
+                    {% for error in form.title.errors %}
+                        {{ error }}
+                    {% endfor %}
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Cancel" %}</button>
-                    <button type="submit" class="btn btn-primary">{% trans "Update Board" %}</button>
-                </div>
-            </form>
+            {% endif %}
         </div>
-    </div>
+        <div class="mb-3">
+            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
+            <textarea class="form-control" id="{{ form.description.id_for_label }}" name="{{ form.description.name }}">{{ form.description.value|default:'' }}</textarea>
+            {% if form.description.errors %}
+                <div class="text-danger">
+                    {% for error in form.description.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="{{ form.color.id_for_label }}" class="form-label">Color</label>
+            <input type="color" class="form-control form-control-color" id="{{ form.color.id_for_label }}" name="{{ form.color.name }}" value="{{ form.color.value|default:'#000000' }}">
+            {% if form.color.errors %}
+                <div class="text-danger">
+                    {% for error in form.color.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+        {% endif %}
+        <button type="submit" class="btn btn-primary">Update Board</button>
+        <button type="button" class="btn btn-secondary" hx-get="{% url 'board_detail' board_id=board.id %}" hx-swap="outerHTML" hx-target="#update-board-form-{{ board.id }}">Cancel</button>
+    </form>
 </div>
-{% endblock %}
