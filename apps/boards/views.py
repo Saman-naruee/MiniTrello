@@ -195,6 +195,25 @@ class HTMXBoardUpdateView(LoginRequiredMixin, UpdateView):
         return render_partial_response("boards/partials/update_board.html", {"form": form, "board": board})
 
 
+class BoardMembersView(LoginRequiredMixin, DetailView):
+    """View and manage board members"""
+    model = Board
+    template_name = "boards/partials/board_members.html"
+    context_object_name = "board"
+
+    def get_object(self):
+        return get_user_board(self.kwargs['board_id'], self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        board = self.get_object()
+        memberships = board.memberships.select_related('user').all()
+        members = [membership.user for membership in memberships]
+        context['memberships'] = memberships
+        context['members'] = members
+        return context
+
+
 
 # List Views
 class HTMXListCreateView(LoginRequiredMixin, CreateView):
