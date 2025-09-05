@@ -1,11 +1,11 @@
 from django.urls import path
 
 from .views import (
-    BoardListView, BoardDetailView,
+    BoardListView, BoardDetailView, HTMXCardDetailView,
     HTMXBoardCreateView, HTMXListCreateView, HTMXCardCreateView,
     HTMXBoardDeleteView, HTMXListDeleteView, HTMXCardDeleteView,
-    HTMXCardUpdateView, HTMXBoardUpdateView, HTMXBoardDeleteView,
-    HTMXListUpdateView, HTMXListDetailView, HTMXCardDetailView
+    HTMXCardUpdateView, HTMXBoardUpdateView,
+    HTMXListUpdateView, HTMXListDetailView,
 )
 
 urlpatterns = [
@@ -16,7 +16,7 @@ urlpatterns = [
     # Board operations
     path("create/", HTMXBoardCreateView.as_view(), name="create_board"),
     path("<int:board_id>/delete/", HTMXBoardDeleteView.as_view(), name="delete_board"),
-    path("<int:board_id>/lists/", HTMXBoardUpdateView.as_view(), name="update_board"),
+    path("<int:board_id>/update/", HTMXBoardUpdateView.as_view(), name="update_board"),
 
     # List operations (nested under boards)
     path("<int:board_id>/lists/create/", HTMXListCreateView.as_view(), name="create_list"),
@@ -30,9 +30,6 @@ urlpatterns = [
     path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/delete/", HTMXCardDeleteView.as_view(), name="delete_card"),
     path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/", HTMXCardDetailView.as_view(), name="card_detail"),
 
-    path('cards/<int:card_id>/update/',
-         HTMXCardUpdateView.as_view(),
-         name='update_card'),
 ]
 
 
