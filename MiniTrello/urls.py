@@ -34,7 +34,7 @@ urlpatterns = [
     path('account/', include('apps.accounts.urls')),
     
     # Boards pages (template-based with htmx)
-    path('boards/', include('apps.boards.urls')),
+    path('boards/', include(("apps.boards.urls", "boards"), namespace="boards")),
     
     # i18n - Language selection
     path('i18n/setlang/', set_language, name='set_language'),

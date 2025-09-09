@@ -8,6 +8,8 @@ from .views import (
     HTMXListUpdateView, HTMXListDetailView,
 )
 
+app_name = "boards"
+
 urlpatterns = [
     # Main pages
     path("", BoardListView.as_view(), name="boards_list"),

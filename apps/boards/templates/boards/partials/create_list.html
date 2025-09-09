@@ -1,5 +1,5 @@
 <div id="create-list-form">
-    <form hx-post="{% url 'create_list' board_id %}"
+    <form hx-post="{% url 'boards:create_list' board_id %}"
           hx-target="#lists-container"
           hx-swap="beforeend">
         {% csrf_token %}
