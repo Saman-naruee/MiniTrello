@@ -282,7 +282,7 @@ class HTMXListDeleteView(LoginRequiredMixin, View):
 
 
 # Card Views
-class HTMXCardDeleteView(LoginRequiredMixin, View):
+class HTMXCardDeleteView(LoginRequiredMixin, DeleteView):
     """Delete a card via HTMX"""
     
     def delete(self, request, card_id):
@@ -295,7 +295,8 @@ class HTMXCardCreateView(LoginRequiredMixin, CreateView):
     """Create a new card via HTMX"""
     model = Card
     template_name = "boards/partials/create_card.html"  # Assuming this template exists or will be created
-    form_class = CardForm
+    fields = ["title", "description", "priority", "due_date", "order", "assignee"]
+    success_url = reverse_lazy("boards_list")
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()

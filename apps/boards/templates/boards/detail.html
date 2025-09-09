@@ -255,6 +255,32 @@
             </div>
         </div>
     </div>
+
+    <!-- Members Modal Trigger (Button) -->
+    <div class="d-flex justify-content-end">
+        <button 
+            hx-get="{% url 'board_members' board.id %}" 
+            hx-target="#members-modal-content" 
+            hx-swap="innerHTML"
+            class="btn btn-secondary">
+            Members
+        </button>
+    </div>
+
+    <!-- Members Modal (Bootstrap) -->
+    <div class="modal fade" id="membersModal" tabindex="-1" aria-labelledby="membersModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="membersModalLabel">Board Members</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="members-modal-content">
+                    <!-- HTMX will load the members list here -->
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>

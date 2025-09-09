@@ -1,62 +1,9 @@
 <div id="create-card-form">
-    <form hx-post="{% url 'create_card' board_id=board_id list_id=list_id %}" hx-swap="outerHTML" hx-target="#create-card-form">
+    <form hx-post="{% url 'create_card' board_id list_id %}"
+          hx-target="#cards-container-{{ list_id }}"
+          hx-swap="beforeend">
         {% csrf_token %}
-        <div class="mb-3">
-            <label for="{{ form.title.id_for_label }}" class="form-label">Card Title</label>
-            <input type="text" class="form-control" id="{{ form.title.id_for_label }}" name="{{ form.title.name }}" value="{{ form.title.value|default:'' }}">
-            {% if form.title.errors %}
-                <div class="text-danger">
-                    {% for error in form.title.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
-        <div class="mb-3">
-            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
-            <textarea class="form-control" id="{{ form.description.id_for_label }}" name="{{ form.description.name }}">{{ form.description.value|default:'' }}</textarea>
-            {% if form.description.errors %}
-                <div class="text-danger">
-                    {% for error in form.description.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
-        <div class="mb-3">
-            <label for="{{ form.priority.id_for_label }}" class="form-label">Priority</label>
-            <select class="form-control" id="{{ form.priority.id_for_label }}" name="{{ form.priority.name }}">
-                {% for value, label in form.priority.field.choices %}
-                    <option value="{{ value }}" {% if form.priority.value == value %}selected{% endif %}>{{ label }}</option>
-                {% endfor %}
-            </select>
-            {% if form.priority.errors %}
-                <div class="text-danger">
-                    {% for error in form.priority.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
-        <div class="mb-3">
-            <label for="{{ form.due_date.id_for_label }}" class="form-label">Due Date</label>
-            <input type="date" class="form-control" id="{{ form.due_date.id_for_label }}" name="{{ form.due_date.name }}" value="{{ form.due_date.value|default:''|date:'Y-m-d' }}">
-            {% if form.due_date.errors %}
-                <div class="text-danger">
-                    {% for error in form.due_date.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
-        {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-                {% for error in form.non_field_errors %}
-                    {{ error }}
-                {% endfor %}
-            </div>
-        {% endif %}
+        {{ form.as_p }}
         <button type="submit" class="btn btn-primary">Create Card</button>
-        <button type="button" class="btn btn-secondary" hx-get="{% url 'list_detail' board_id=board_id list_id=list_id %}" hx-swap="outerHTML" hx-target="#create-card-form">Cancel</button>
     </form>
 </div>

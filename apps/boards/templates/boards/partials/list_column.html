@@ -28,7 +28,7 @@
             </div>
         </div>
         
-        <div class="card-body p-2" id="cards-container-{{ list.id }}">
+        <div id="cards-container-{{ list.id }}">
             {% for card in list.cards %}
                 {% include "boards/partials/card_item.html" with card=card %}
             {% empty %}

@@ -75,6 +75,12 @@ class Card(models.Model):
     class Meta:
         ordering = ['priority', 'order']
 
+    def move_to(self, new_list):
+        """
+        Move the card to a different list.
+        """
+        self.list = new_list
+        self.save(update_fields=["list", "updated_at"])
 
 
 class Membership(models.Model):

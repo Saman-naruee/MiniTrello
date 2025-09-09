@@ -1,25 +1,9 @@
 <div id="create-list-form">
-    <form hx-post="{% url 'create_list' board_id=board_id %}" hx-swap="outerHTML" hx-target="#create-list-form">
+    <form hx-post="{% url 'create_list' board_id %}"
+          hx-target="#lists-container"
+          hx-swap="beforeend">
         {% csrf_token %}
-        <div class="mb-3">
-            <label for="{{ form.title.id_for_label }}" class="form-label">List Title</label>
-            <input type="text" class="form-control" id="{{ form.title.id_for_label }}" name="{{ form.title.name }}" value="{{ form.title.value|default:'' }}">
-            {% if form.title.errors %}
-                <div class="text-danger">
-                    {% for error in form.title.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
-        {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-                {% for error in form.non_field_errors %}
-                    {{ error }}
-                {% endfor %}
-            </div>
-        {% endif %}
+        {{ form.as_p }}
         <button type="submit" class="btn btn-primary">Create List</button>
-        <button type="button" class="btn btn-secondary" hx-get="{% url 'board_detail' board_id=board_id %}" hx-swap="outerHTML" hx-target="#create-list-form">Cancel</button>
     </form>
 </div>

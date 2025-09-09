@@ -1,0 +1,5 @@
+<form hx-post="{% url 'update_list' board.id list.id %}" hx-target="this" class="edit-list-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Save List</button>
+</form>
