@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from django.urls import reverse_lazy
 from django.views import View
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect, HttpResponse
 
 from .models import Board, List, Card, Membership
 from custom_tools.logger import custom_logger
@@ -168,13 +168,28 @@ class HTMXBoardCreateView(LoginRequiredMixin, CreateView):
 
 class HTMXBoardDeleteView(LoginRequiredMixin, DeleteView):
     """Delete a board via HTMX"""
-    
-    def delete(self, request, board_id):
-        board = get_user_board(board_id, request.user)
-        board.delete()
-        # return render_partial_response("boards/partials/board_delete.html", {"board": board})
-        return JsonResponse({"success": True})
+    model = Board
+    template_name = "boards/delete_confirm_board.html"
+    success_url = reverse_lazy("boards:boards_list")
 
+    def get_object(self, queryset=None):
+        return  get_user_board(self.kwargs['board_id'], self.request.user)
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Perform delete and return an HTMX-friendly response when applicable.
+        """
+        custom_logger(f"HTMXBoardDeleteView.delete called with args: {args}, kwargs: {kwargs}")
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.delete()
+        custom_logger(f"Deleted board: {self.object}")
+
+        if request.headers.get("HX-Request") == "true":
+            # Option A: 204 No Content — typical when the client-side will remove the row/card.
+            return HttpResponse(status=204)
+    
+        return HttpResponseRedirect(success_url)
 
 class HTMXBoardUpdateView(LoginRequiredMixin, UpdateView):
     """Update a board via HTMX"""
