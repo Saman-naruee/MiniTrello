@@ -22,4 +22,5 @@ custom_tools/custom_settings.py
 .docs
 db/
 staticfiles/
+*_prompt.txt
 template_prompt.txt

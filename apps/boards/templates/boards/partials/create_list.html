@@ -1,0 +1,9 @@
+<div id="create-list-form">
+    <form hx-post="{% url 'create_list' board_id %}"
+          hx-target="#lists-container"
+          hx-swap="beforeend">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Create List</button>
+    </form>
+</div>

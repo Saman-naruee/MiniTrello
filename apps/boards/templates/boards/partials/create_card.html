@@ -1,0 +1,9 @@
+<div id="create-card-form">
+    <form hx-post="{% url 'create_card' board_id list_id %}"
+          hx-target="#cards-container-{{ list_id }}"
+          hx-swap="beforeend">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Create Card</button>
+    </form>
+</div>

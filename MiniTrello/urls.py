@@ -40,5 +40,8 @@ urlpatterns = [
     path('i18n/setlang/', set_language, name='set_language'),
     
     # Home page
-    path('', login_required(TemplateView.as_view(template_name='home.html')), name='Home')
+    path('', login_required(TemplateView.as_view(template_name='home.html')), name='Home'),
+
+    # Playground and tests
+    path("play/", include('apps.playground.urls')),
 ]

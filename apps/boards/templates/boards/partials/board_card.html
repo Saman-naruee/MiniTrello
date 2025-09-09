@@ -55,4 +55,14 @@
             </a>
         </div>
     </div>
+
+    <div class="members">
+        {% for membership in board.memberships.all %}
+            {% if membership.user.socialaccount_set.all.0.get_avatar_url %}
+                <img src="{{ membership.user.socialaccount_set.all.0.get_avatar_url }}" alt="{{ membership.user.username }}" title="{{ membership.user.username }}">
+            {% else %}
+                <img src="{% static 'default-avatar.png' %}" alt="{{ membership.user.username }}" title="{{ membership.user.username }}">
+            {% endif %}
+        {% endfor %}
+    </div>
 </div>

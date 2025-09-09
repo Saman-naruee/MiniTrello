@@ -11,13 +11,14 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li>
-                        <button class="dropdown-item" @click="editCard({{ card.id }}, '{{ card.title }}', '{{ card.description }}', {{ card.priority }})">
+                        <button class="dropdown-item" 
+                                @click="editCard({{ card.id }}, '{{ card.title }}', '{{ card.description }}', {{ card.priority }})">
                             <i class="fas fa-edit me-2"></i>Edit
                         </button>
                     </li>
                     <li>
                         <button class="dropdown-item" 
-                                hx-delete="{% url 'delete_card' board_id=board_id list_id=list_id card_id=card.id %}"
+                                hx-delete="{% url 'delete_card' card.id %}"
                                 hx-target="#card-{{ card.id }}"
                                 hx-swap="outerHTML"
                                 hx-confirm="Are you sure you want to delete this card?">
@@ -34,6 +35,7 @@
         </p>
         {% endif %}
         
+        <!-- Priority Badge -->
         <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex gap-1">
                 {% if card.priority == 10 %}
@@ -62,14 +64,5 @@
             </div>
             {% endif %}
         </div>
-        
-        {% if card.due_date %}
-        <div class="mt-2">
-            <small class="text-muted">
-                <i class="fas fa-calendar me-1"></i>
-                Due: {{ card.due_date|date:"M d, Y" }}
-            </small>
-        </div>
-        {% endif %}
     </div>
 </div>

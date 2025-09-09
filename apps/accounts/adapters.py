@@ -4,9 +4,14 @@ from allauth.account.adapter import DefaultAccountAdapter
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.conf import settings
+import random
+
 # from premailer import transform  # pip install premailer (if you want to inline CSS)
 
 class CustomAccountAdapter(DefaultAccountAdapter):
+    """
+    To override default allauth behavior
+    """
     def respond_user_inactive(self, request, user):
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
@@ -46,3 +51,17 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({'redirect_location': url})
         return url
+    
+    def save_user(self, request, user, form, commit=True):
+        user = super().save_user(request, user, form, commit=False)
+        email = user.email
+        username = email.split('@')[0]
+        if '@' in email:
+            user.username = username
+            if User.objects.filter(username=username):
+                user.username = f"{username}{random.randint(1, 100000)}"
+        user.is_staff = False
+        user.is_superuser = False
+        if commit:
+            user.save()
+        return user
