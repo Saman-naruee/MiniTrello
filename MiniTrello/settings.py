@@ -204,12 +204,12 @@ REST_AUTH = {
 
 # django-allauth settings
 SITE_ID = 1
-ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_LOGIN_METHODS = {'email'}
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+# ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['username*', 'password1*', 'password2*']
 LOGIN_REDIRECT_URL = "/"
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory' # or 'optional'
+# ACCOUNT_EMAIL_VERIFICATION = 'mandatory' # or 'optional'
 
 
 # CORS SETTINGS
