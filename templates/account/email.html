@@ -1,3 +1,4 @@
+{% load i18n %}
 {% extends "account/base_manage_email.html" %}
 {% load static allauth i18n %}
 {% block head_title %}
@@ -75,8 +76,8 @@
 {% endblock content %}
 {% block extra_body %}
     <script src="{% static 'account/js/account.js' %}"></script>
-    <script src="{% static 'account/js/onload.js' %}"></script>
-    <script data-allauth-onload="allauth.account.forms.manageEmailForm" type="application/json">{
+<script src="{% static 'account/js/onload.js' %}"></script>
+<script data-allauth-onload="allauth.account.forms.manageEmailForm" type="application/json">{
     "i18n": {"confirmDelete": "{% trans 'Do you really want to remove the selected email address?' %}"}
 }
     </script>

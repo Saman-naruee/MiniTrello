@@ -1,5 +1,6 @@
-<form hx-post="{% url 'update_list' board.id list.id %}" hx-target="this" class="edit-list-form">
+{% load i18n %}
+<form class="edit-list-form" hx-post="{% url 'update_list' board.id list.id %}" hx-target="this">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Save List</button>
+    <button class="btn btn-primary" type="submit">{% trans "Save List" %}</button>
 </form>

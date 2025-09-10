@@ -6,9 +6,18 @@ import re
 class Command(BaseCommand):
     help = 'Prepares HTML files for internationalization by adding {% load i18n %} and converting text to {% trans %} tags'
 
+    def should_skip_directory(self, dir_path):
+        # Skip virtual environment directories
+        skip_dirs = ['env', 'venv', '.env', '.venv']
+        return any(venv_dir in dir_path.split(os.sep) for venv_dir in skip_dirs)
+
     def handle(self, *args, **options):
         # Get all HTML files recursively
         for root, dirs, files in os.walk('.'):
+            # Skip processing if we're in a virtual environment directory
+            if self.should_skip_directory(root):
+                continue
+                
             for file in files:
                 if file.endswith('.html'):
                     file_path = os.path.join(root, file)

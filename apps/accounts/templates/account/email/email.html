@@ -5,116 +5,88 @@
 
 {% block content %}
 <div class="container py-4">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h2 class="h4 mb-0">
-            <i class="fas fa-envelope me-2"></i>{% trans "Email Addresses" %}
+<div class="row justify-content-center">
+<div class="col-md-8">
+<div class="card shadow-sm">
+<div class="card-header bg-primary text-white">
+<h2 class="h4 mb-0">
+<i class="fas fa-envelope me-2"></i>{% trans "Email Addresses" %}
           </h2>
-        </div>
-        <div class="card-body">
+</div>
+<div class="card-body">
           {% if user.emailaddress_set.all %}
           <p class="text-muted mb-4">
             {% trans "The following email addresses are associated with your account:" %}
           </p>
-          
-          <form hx-post="{% url 'account_email' %}" 
-                hx-target="#email-management"
-                hx-swap="outerHTML"
-                id="email-management"
-                class="email_list">
+<form class="email_list" hx-post="{% url 'account_email' %}" hx-swap="outerHTML" hx-target="#email-management" id="email-management">
             {% csrf_token %}
             
             <div class="list-group mb-4">
               {% for emailaddress in user.emailaddress_set.all %}
               <div class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                  <div class="form-check">
-                    <input id="email_radio_{{forloop.counter}}" type="radio" name="email" 
-                           {% if emailaddress.primary %}checked="checked"{% endif %} 
-                           value="{{emailaddress.email}}"
-                           class="form-check-input">
-                    <label for="email_radio_{{forloop.counter}}" class="form-check-label {% if emailaddress.primary %}fw-bold{% endif %}">
+<div>
+<div class="form-check">
+<input %}="" %}checked="checked" class="form-check-input" emailaddress.primary="" endif="" id="email_radio_{{forloop.counter}}" if="" name="email" type="radio" value="{{emailaddress.email}}" {%=""/>
+<label class="form-check-label {% if emailaddress.primary %}fw-bold{% endif %}" for="email_radio_{{forloop.counter}}">
                       {{ emailaddress.email }}
                     </label>
-                  </div>
-                  <div class="mt-1">
+</div>
+<div class="mt-1">
                     {% if emailaddress.verified %}
                     <span class="badge bg-success">
-                      <i class="fas fa-check-circle me-1"></i>{% trans "Verified" %}
+<i class="fas fa-check-circle me-1"></i>{% trans "Verified" %}
                     </span>
                     {% else %}
                     <span class="badge bg-warning text-dark">
-                      <i class="fas fa-exclamation-triangle me-1"></i>{% trans "Unverified" %}
+<i class="fas fa-exclamation-triangle me-1"></i>{% trans "Unverified" %}
                     </span>
                     {% endif %}
                     
                     {% if emailaddress.primary %}
                     <span class="badge bg-info">
-                      <i class="fas fa-star me-1"></i>{% trans "Primary" %}
+<i class="fas fa-star me-1"></i>{% trans "Primary" %}
                     </span>
                     {% endif %}
                   </div>
-                </div>
-                
-                <div>
+</div>
+<div>
                   {% if not emailaddress.verified %}
-                  <button type="button" name="action_send" 
-                          hx-post="{% url 'account_email' %}"
-                          hx-vals='{"action_send": "", "email": "{{emailaddress.email}}"}'
-                          hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-                          hx-target="#email-management"
-                          class="btn btn-sm btn-outline-primary">
-                    <i class="fas fa-paper-plane me-1"></i>{% trans "Resend Verification" %}
+                  <button class="btn btn-sm btn-outline-primary" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-post="{% url 'account_email' %}" hx-target="#email-management" hx-vals='{"action_send": "", "email": "{{emailaddress.email}}"}' name="action_send" type="button">
+<i class="fas fa-paper-plane me-1"></i>{% trans "Resend Verification" %}
                   </button>
                   {% endif %}
                 </div>
-              </div>
+</div>
               {% endfor %}
             </div>
-            
-            <div class="d-flex gap-2">
-              <button type="submit" name="action_primary" 
-                      class="btn btn-primary"
-                      hx-vals='{"action_primary": ""}'
-                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-                <i class="fas fa-check-circle me-1"></i>{% trans "Make Primary" %}
+<div class="d-flex gap-2">
+<button class="btn btn-primary" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-vals='{"action_primary": ""}' name="action_primary" type="submit">
+<i class="fas fa-check-circle me-1"></i>{% trans "Make Primary" %}
               </button>
-              
-              <button type="submit" name="action_remove" 
-                      class="btn btn-danger"
-                      hx-vals='{"action_remove": ""}'
-                      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' 
-                      hx-confirm="{% trans "Are you sure you want to remove the selected email address?" %}">
-                <i class="fas fa-trash me-1"></i>{% trans "Remove" %}
+<button %}"="" address?"="" are="" class="btn btn-danger" email="" hx-confirm="{% trans " hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-vals='{"action_remove": ""}' name="action_remove" remove="" selected="" sure="" the="" to="" type="submit" want="" you="">
+<i class="fas fa-trash me-1"></i>{% trans "Remove" %}
               </button>
-            </div>
-          </form>
+</div>
+</form>
           {% else %}
           <div class="alert alert-info">
-            <i class="fas fa-info-circle me-1"></i>{% trans "You have not added any email addresses yet." %}
+<i class="fas fa-info-circle me-1"></i>{% trans "You have not added any email addresses yet." %}
           </div>
           {% endif %}
           
-          <hr class="my-4">
-          
-          <h3 class="h5 mb-3">{% trans "Add Email Address" %}</h3>
-          <form method="post" action="{% url 'account_email' %}" 
-                hx-post="{% url 'account_email' %}"
-                hx-target="this"
-                hx-swap="outerHTML"
-                class="add_email">
+          <hr class="my-4"/>
+<h3 class="h5 mb-3">{% trans "Add Email Address" %}</h3>
+<form action="{% url 'account_email' %}" class="add_email" hx-post="{% url 'account_email' %}" hx-swap="outerHTML" hx-target="this" method="post">
             {% csrf_token %}
             
             <div class="mb-3">
-              <label for="email" class="form-label">{% trans "Email Address" %}</label>
-              <div class="input-group">
-                <input type="email" name="email" id="email" class="form-control" placeholder="email@example.com" required>
-                <button type="submit" class="btn btn-success">
-                  <i class="fas fa-plus me-1"></i>{% trans "Add" %}
+<label class="form-label" for="email">{% trans "Email Address" %}</label>
+<div class="input-group">
+<input class="form-control" id="email" name="email" placeholder="email@example.com" required="" type="email"/>
+<button class="btn btn-success" type="submit">
+<i class="fas fa-plus me-1"></i>{% trans "Add" %}
                 </button>
-              </div>
+</div>
               {% if form.email.errors %}
               <div class="text-danger mt-1">
                 {% for error in form.email.errors %}
@@ -123,43 +95,35 @@
               </div>
               {% endif %}
             </div>
-          </form>
-        </div>
-        <div class="card-footer">
-          <a href="{% url 'account_change_password' %}" class="btn btn-outline-secondary">
-            <i class="fas fa-key me-1"></i>{% trans "Change Password" %}
-          </a>
-          <a href="{% url 'Home' %}" class="btn btn-link">{% trans "Back to Home" %}</a>
-        </div>
-      </div>
-    </div>
-  </div>
+</form>
 </div>
-
+<div class="card-footer">
+<a class="btn btn-outline-secondary" href="{% url 'account_change_password' %}">
+<i class="fas fa-key me-1"></i>{% trans "Change Password" %}
+          </a>
+<a class="btn btn-link" href="{% url 'Home' %}">{% trans "Back to Home" %}</a>
+</div>
+</div>
+</div>
+</div>
+</div>
 <!-- Toast for notifications -->
-<div x-data="{ show: false, message: '', type: 'success' }"
-     x-init="
-       window.addEventListener('emailAction', (e) => {
+<div @click="show = false" class="position-fixed bottom-0 end-0 p-3" style="z-index: 11; display: none;" x-data="{ show: false, message: '', type: 'success' }" x-init="
+       window.addEventListener('emailAction', (e) =&gt; {
          message = e.detail.message;
          type = e.detail.type || 'success';
          show = true;
-         setTimeout(() => { show = false }, 5000);
+         setTimeout(() =&gt; { show = false }, 5000);
        });
-     "
-     x-show="show"
-     x-transition
-     @click="show = false"
-     class="position-fixed bottom-0 end-0 p-3"
-     style="z-index: 11; display: none;">
-  <div :class="'toast show bg-' + type + ' text-white'" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header">
-      <strong class="me-auto">{% trans "Notification" %}</strong>
-      <button type="button" class="btn-close" @click="show = false"></button>
-    </div>
-    <div class="toast-body" x-text="message"></div>
-  </div>
+     " x-show="show" x-transition="">
+<div :class="'toast show bg-' + type + ' text-white'" aria-atomic="true" aria-live="assertive" role="alert">
+<div class="toast-header">
+<strong class="me-auto">{% trans "Notification" %}</strong>
+<button @click="show = false" class="btn-close" type="button"></button>
 </div>
-
+<div class="toast-body" x-text="message"></div>
+</div>
+</div>
 <script>
   document.body.addEventListener('htmx:afterSwap', function(event) {
     if (event.detail.xhr.status === 200) {

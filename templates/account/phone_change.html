@@ -40,12 +40,9 @@
         {% endslot %}
     {% endelement %}
     {% if not phone_verified %}
-        <form style="display: none"
-              id="verify-phone"
-              method="post"
-              action="{{ action_url }}">
+        <form action="{{ action_url }}" id="verify-phone" method="post" style="display: none">
             {% csrf_token %}
-            <input type="hidden" name="action" value="verify">
-        </form>
+            <input name="action" type="hidden" value="verify"/>
+</form>
     {% endif %}
 {% endblock content %}

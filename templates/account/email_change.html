@@ -57,12 +57,9 @@
         {% endslot %}
     {% endelement %}
     {% if new_emailaddress %}
-        <form style="display: none"
-              id="pending-email"
-              method="post"
-              action="{% url 'account_email' %}">
+        <form action="{% url 'account_email' %}" id="pending-email" method="post" style="display: none">
             {% csrf_token %}
-            <input type="hidden" name="email" value="{{ new_emailaddress.email }}">
-        </form>
+            <input name="email" type="hidden" value="{{ new_emailaddress.email }}"/>
+</form>
     {% endif %}
 {% endblock content %}

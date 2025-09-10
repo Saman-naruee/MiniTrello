@@ -1,16 +1,17 @@
+{% load i18n %}
 {% extends 'base.html' %}
 {% load socialaccount %}
 {% block title %}MiniTrello - Login{% endblock %}
 
 {% block content %}
 <div class="row">
-    <div class="col-md-6 offset-md-3">
-        <div class="card">
-            <div class="card-header">
-                <h2>Login</h2>
-            </div>
-            <div class="card-body">
-                <div x-data="{
+<div class="col-md-6 offset-md-3">
+<div class="card">
+<div class="card-header">
+<h2>{% trans "Login" %}</h2>
+</div>
+<div class="card-body">
+<div x-data="{
                     email: '',
                     password: '',
                     remember: false,
@@ -34,72 +35,62 @@
                                 'X-Requested-With': 'XMLHttpRequest'
                             }
                         })
-                        .then(response => {
+                        .then(response =&gt; {
                             if (response.redirected) {
                                 window.location.href = response.url;
                                 return;
                             }
                             return response.json();
                         })
-                        .then(data => {
-                            if (data && data.form && data.form.errors) {
+                        .then(data =&gt; {
+                            if (data &amp;&amp; data.form &amp;&amp; data.form.errors) {
                                 this.errors = data.form.errors;
                             }
                             this.loading = false;
                         })
-                        .catch(error => {
+                        .catch(error =&gt; {
                             console.error('Error:', error);
                             this.errors = {'__all__': ['An unexpected error occurred. Please try again.']};
                             this.loading = false;
                         });
                     }
                 }">
-                    <!-- Login Form with Alpine.js -->
-                    <form @submit.prevent="submitForm">
+{% trans "Login Form with Alpine.js" %}
+<form @submit.prevent="submitForm">
                         {% csrf_token %}
                         
                         <div class="mb-3">
-                            <label for="id_login" class="form-label">Email:</label>
-                            <input type="email" x-model="email" id="id_login" class="form-control" required>
-                            <div x-show="errors.login" class="text-danger mt-1" x-text="errors.login"></div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="id_password" class="form-label">Password:</label>
-                            <input type="password" x-model="password" id="id_password" class="form-control" required>
-                            <div x-show="errors.password" class="text-danger mt-1" x-text="errors.password"></div>
-                        </div>
-                        
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" x-model="remember" id="id_remember" class="form-check-input">
-                            <label for="id_remember" class="form-check-label">Remember Me</label>
-                        </div>
-                        
-                        <div x-show="errors.__all__" class="alert alert-danger" x-text="errors.__all__"></div>
-                        
-                        <button type="submit" class="btn btn-primary" :disabled="loading">
-                            <span x-show="loading" class="spinner-border spinner-border-sm me-1"></span>
-                            Login
-                        </button>
-                        <a href="{% url 'account_reset_password' %}" class="btn btn-link">Forgot Password?</a>
-                    </form>
-                </div>
-                
-                <hr>
-                
-                <div class="social-login">
-                    <p>Or login with:</p>
-                    <a href="{% provider_login_url 'google' %}" class="btn btn-danger w-100">
-                        <i class="fab fa-google me-2"></i>
-                        <span class="icon-google"></span> Google
-                    </a>
-                </div>
-                
-                <div class="mt-3 text-center">
-                    <p>Don't have an account? <a href="{% url 'account_signup' %}" hx-boost="true">Register here</a></p>
-                </div>
-            </div>
-        </div>
-    </div>
+<label class="form-label" for="id_login">{% trans "Email:" %}</label>
+<input class="form-control" id="id_login" required="" type="email" x-model="email"/>
+<div class="text-danger mt-1" x-show="errors.login" x-text="errors.login"></div>
+</div>
+<div class="mb-3">
+<label class="form-label" for="id_password">{% trans "Password:" %}</label>
+<input class="form-control" id="id_password" required="" type="password" x-model="password"/>
+<div class="text-danger mt-1" x-show="errors.password" x-text="errors.password"></div>
+</div>
+<div class="mb-3 form-check">
+<input class="form-check-input" id="id_remember" type="checkbox" x-model="remember"/>
+<label class="form-check-label" for="id_remember">{% trans "Remember Me" %}</label>
+</div>
+<div class="alert alert-danger" x-show="errors.__all__" x-text="errors.__all__"></div>
+<button :disabled="loading" class="btn btn-primary" type="submit">
+<span class="spinner-border spinner-border-sm me-1" x-show="loading"></span>{% trans "Login" %}</button>
+<a class="btn btn-link" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+</form>
+</div>
+<hr/>
+<div class="social-login">
+<p>{% trans "Or login with:" %}</p>
+<a class="btn btn-danger w-100" href="{% provider_login_url 'google' %}">
+<i class="fab fa-google me-2"></i>
+<span class="icon-google"></span>{% trans "Google" %}</a>
+</div>
+<div class="mt-3 text-center">
+<p>{% trans "Don't have an account?" %}<a href="{% url 'account_signup' %}" hx-boost="true">{% trans "Register here" %}</a></p>
+</div>
+</div>
+</div>
+</div>
 </div>
 {% endblock %}

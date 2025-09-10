@@ -1,16 +1,17 @@
+{% load i18n %}
 {% extends 'base.html' %}
 {% load socialaccount %}
 {% block title %}MiniTrello - Sign Up - Register{% endblock %}
 
 {% block content %}
 <div class="row">
-    <div class="col-md-6 offset-md-3">
-        <div class="card">
-            <div class="card-header">
-                <h2>Register</h2>
-            </div>
-            <div class="card-body">
-                <div x-data="{
+<div class="col-md-6 offset-md-3">
+<div class="card">
+<div class="card-header">
+<h2>{% trans "Register" %}</h2>
+</div>
+<div class="card-body">
+<div x-data="{
                     email: '',
                     password1: '',
                     password2: '',
@@ -34,71 +35,61 @@
                                 'X-Requested-With': 'XMLHttpRequest'
                             }
                         })
-                        .then(response => {
+                        .then(response =&gt; {
                             if (response.redirected) {
                                 window.location.href = response.url;
                                 return;
                             }
                             return response.json();
                         })
-                        .then(data => {
-                            if (data && data.form && data.form.errors) {
+                        .then(data =&gt; {
+                            if (data &amp;&amp; data.form &amp;&amp; data.form.errors) {
                                 this.errors = data.form.errors;
                             }
                             this.loading = false;
                         })
-                        .catch(error => {
+                        .catch(error =&gt; {
                             console.error('Error:', error);
                             this.errors = {'__all__': ['An unexpected error occurred. Please try again.']};
                             this.loading = false;
                         });
                     }
                 }">
-                    <!-- Registration Form with Alpine.js -->
-                    <form @submit.prevent="submitForm">
+{% trans "Registration Form with Alpine.js" %}
+<form @submit.prevent="submitForm">
                         {% csrf_token %}
                         
                         <div class="mb-3">
-                            <label for="id_email" class="form-label">Email:</label>
-                            <input type="email" x-model="email" id="id_email" class="form-control" required>
-                            <div x-show="errors.email" class="text-danger mt-1" x-text="errors.email"></div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="id_password1" class="form-label">Password:</label>
-                            <input type="password" x-model="password1" id="id_password1" class="form-control" required>
-                            <div x-show="errors.password1" class="text-danger mt-1" x-text="errors.password1"></div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label for="id_password2" class="form-label">Confirm Password:</label>
-                            <input type="password" x-model="password2" id="id_password2" class="form-control" required>
-                            <div x-show="errors.password2" class="text-danger mt-1" x-text="errors.password2"></div>
-                        </div>
-                        
-                        <div x-show="errors.__all__" class="alert alert-danger" x-text="errors.__all__"></div>
-                        
-                        <button type="submit" class="btn btn-primary" :disabled="loading">
-                            <span x-show="loading" class="spinner-border spinner-border-sm me-1"></span>
-                            Register
-                        </button>
-                    </form>
-                </div>
-                
-                <hr>
-                
-                <div class="social-register">
-                    <p>Or register with:</p>
-                    <a href="{% provider_login_url 'google' %}" class="btn btn-danger w-100">
-                        <i class="fab fa-google me-2"></i> Google
-                    </a>
-                </div>
-                
-                <div class="mt-3 text-center">
-                    <p>Already have an account? <a href="{% url 'account_login' %}" hx-boost="true">Login here</a></p>
-                </div>
-            </div>
-        </div>
-    </div>
+<label class="form-label" for="id_email">{% trans "Email:" %}</label>
+<input class="form-control" id="id_email" required="" type="email" x-model="email"/>
+<div class="text-danger mt-1" x-show="errors.email" x-text="errors.email"></div>
+</div>
+<div class="mb-3">
+<label class="form-label" for="id_password1">{% trans "Password:" %}</label>
+<input class="form-control" id="id_password1" required="" type="password" x-model="password1"/>
+<div class="text-danger mt-1" x-show="errors.password1" x-text="errors.password1"></div>
+</div>
+<div class="mb-3">
+<label class="form-label" for="id_password2">{% trans "Confirm Password:" %}</label>
+<input class="form-control" id="id_password2" required="" type="password" x-model="password2"/>
+<div class="text-danger mt-1" x-show="errors.password2" x-text="errors.password2"></div>
+</div>
+<div class="alert alert-danger" x-show="errors.__all__" x-text="errors.__all__"></div>
+<button :disabled="loading" class="btn btn-primary" type="submit">
+<span class="spinner-border spinner-border-sm me-1" x-show="loading"></span>{% trans "Register" %}</button>
+</form>
+</div>
+<hr/>
+<div class="social-register">
+<p>{% trans "Or register with:" %}</p>
+<a class="btn btn-danger w-100" href="{% provider_login_url 'google' %}">
+<i class="fab fa-google me-2"></i>{% trans "Google" %}</a>
+</div>
+<div class="mt-3 text-center">
+<p>{% trans "Already have an account?" %}<a href="{% url 'account_login' %}" hx-boost="true">{% trans "Login here" %}</a></p>
+</div>
+</div>
+</div>
+</div>
 </div>
 {% endblock %}

@@ -1,3 +1,4 @@
+{% load i18n %}
 {% extends 'base.html' %}
 {% load static %}
 
@@ -5,70 +6,52 @@
 
 {% block extra_head %}
 <!-- Alpine.js for interactivity -->
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script defer="" src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <!-- HTMX for dynamic interactions -->
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 <!-- Custom CSS -->
-<link rel="stylesheet" href="{% static 'boards/css/boards.css' %}">
+<link href="{% static 'boards/css/boards.css' %}" rel="stylesheet"/>
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid" x-data="boardsApp()">
-    <!-- Header Section -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <h1 class="h2 mb-0">
-                    <i class="fas fa-trello text-primary me-2"></i>
-                    My Boards
-                </h1>
-                <button 
-                    class="btn btn-primary"
-                    hx-get="{% url 'create_board' %}"
-                    hx-target="#create-board-form-container"
-                    hx-swap="innerHTML"
-                    data-bs-toggle="modal"
-                    data-bs-target="#createBoardModal"
-                >
-                    <i class="fas fa-plus me-2"></i>Create Board
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Boards Grid -->
-    <div class="row" id="boards-container">
+{% trans "Header Section" %}
+<div class="row mb-4">
+<div class="col-12">
+<div class="d-flex justify-content-between align-items-center">
+<h1 class="h2 mb-0">
+<i class="fas fa-trello text-primary me-2"></i>{% trans "My Boards" %}</h1>
+<button class="btn btn-primary" data-bs-target="#createBoardModal" data-bs-toggle="modal" hx-get="{% url 'create_board' %}" hx-swap="innerHTML" hx-target="#create-board-form-container">
+<i class="fas fa-plus me-2"></i>{% trans "Create Board" %}</button>
+</div>
+</div>
+</div>
+{% trans "Boards Grid" %}
+<div class="row" id="boards-container">
         {% for board in boards %}
         <div class="col-lg-3 col-md-4 col-sm-6 mb-4" id="board-{{ board.id }}">
-            <div class="card h-100 board-card" 
-                 style="border-left: 4px solid {{ board.color }};">
-                <div class="card-body d-flex flex-column">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="card-title mb-0 text-truncate" title="{{ board.title }}">
+<div class="card h-100 board-card" style="border-left: 4px solid {{ board.color }};">
+<div class="card-body d-flex flex-column">
+<div class="d-flex justify-content-between align-items-start mb-2">
+<h5 class="card-title mb-0 text-truncate" title="{{ board.title }}">
                             {{ board.title }}
                         </h5>
-                        <div class="dropdown">
-                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
-                                    type="button" 
-                                    data-bs-toggle="dropdown" 
-                                    aria-expanded="false">
-                                <i class="fas fa-ellipsis-v"></i>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'boards:board_detail' board.id %}">
-                                        <i class="fas fa-eye me-2"></i>View Board
-                                    </a>
-                                </li>
-                                <li>
-                                    <button class="dropdown-item" 
-                                            @click="confirmDelete({{ board.id }}, '{{ board.title }}')">
-                                        <i class="fas fa-trash me-2"></i>Delete
-                                    </button>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+<div class="dropdown">
+<button aria-expanded="false" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" type="button">
+<i class="fas fa-ellipsis-v"></i>
+</button>
+<ul class="dropdown-menu">
+<li>
+<a class="dropdown-item" href="{% url 'boards:board_detail' board.id %}">
+<i class="fas fa-eye me-2"></i>{% trans "View Board" %}</a>
+</li>
+<li>
+<button @click="confirmDelete({{ board.id }}, '{{ board.title }}')" class="dropdown-item">
+<i class="fas fa-trash me-2"></i>{% trans "Delete" %}</button>
+</li>
+</ul>
+</div>
+</div>
                     
                     {% if board.description %}
                     <p class="card-text text-muted small mb-3">
@@ -77,139 +60,94 @@
                     {% endif %}
                     
                     <div class="mt-auto">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">
-                                <i class="fas fa-users me-1"></i>
+<div class="d-flex justify-content-between align-items-center">
+<small class="text-muted">
+<i class="fas fa-users me-1"></i>
                                 {{ board.memberships.count }} members
                             </small>
-                            <small class="text-muted">
+<small class="text-muted">
                                 {{ board.created_at|date:"M d, Y" }}
                             </small>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="card-footer bg-transparent">
-                    <a href="{% url 'boards:board_detail' board.id %}" 
-                       class="btn btn-primary btn-sm w-100">
-                        <i class="fas fa-trello me-1"></i>Open Board
-                    </a>
-                </div>
-            </div>
-        </div>
+</div>
+</div>
+</div>
+<div class="card-footer bg-transparent">
+<a class="btn btn-primary btn-sm w-100" href="{% url 'boards:board_detail' board.id %}">
+<i class="fas fa-trello me-1"></i>{% trans "Open Board" %}</a>
+</div>
+</div>
+</div>
         {% empty %}
         <div class="col-12">
-            <div class="text-center py-5">
-                <i class="fas fa-trello fa-3x text-muted mb-3"></i>
-                <h4 class="text-muted">No boards yet</h4>
-                <p class="text-muted">Create your first board to get started!</p>
-                <button class="btn btn-primary"
-                        hx-get="{% url 'create_board' %}"
-                        hx-target="#create-board-form-container"
-                        hx-swap="innerHTML"
-                        data-bs-toggle="modal"
-                        data-bs-target="#createBoardModal"
-                >
-                    <i class="fas fa-plus me-2"></i>Create Board
-                </button>
-            </div>
-        </div>
+<div class="text-center py-5">
+<i class="fas fa-trello fa-3x text-muted mb-3"></i>
+<h4 class="text-muted">{% trans "No boards yet" %}</h4>
+<p class="text-muted">{% trans "Create your first board to get started!" %}</p>
+<button class="btn btn-primary" data-bs-target="#createBoardModal" data-bs-toggle="modal" hx-get="{% url 'create_board' %}" hx-swap="innerHTML" hx-target="#create-board-form-container">
+<i class="fas fa-plus me-2"></i>{% trans "Create Board" %}</button>
+</div>
+</div>
         {% endfor %}
     </div>
-
-    <!-- Create Board Modal -->
-    <div class="modal fade" 
-         id="createBoardModal" {# Add an ID for Bootstrap to target #}
-         tabindex="-1" 
-         aria-labelledby="createBoardModalLabel" {# Add for accessibility #}
-         aria-hidden="true"
-    >
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createBoardModalLabel">Create New Board</h5> {# Add an ID for accessibility #}
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="create-board-form-container">
-                    <!-- HTMX will load the form here -->
-                </div>
-<<<<<<< HEAD
-                <form hx-post="{% url 'boards:create_board' %}"
-                      hx-target="#boards-container"
-                      hx-swap="beforeend"
-                      @submit="showCreateModal = false"
-                      class="modal-body">
+{% trans "Create Board Modal" %}
+<div #}="" accessibility="" add="" an="" aria-hidden="true" aria-labelledby="createBoardModalLabel" bootstrap="" class="modal fade" for="" id="" tabindex="-1" target="" to="" {#="">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title" id="createBoardModalLabel">{% trans "Create New Board" %}</h5>{% trans "{# Add an ID for accessibility #}" %}<button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+</div>
+<div class="modal-body" id="create-board-form-container">
+{% trans "HTMX will load the form here" %}
+</div>{% trans "&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD" %}<form @submit="showCreateModal = false" class="modal-body" hx-post="{% url 'boards:create_board' %}" hx-swap="beforeend" hx-target="#boards-container">
                     {% csrf_token %}
                     <div class="mb-3">
-                        <label for="board-title" class="form-label">Board Title</label>
-                        <input type="text" 
-                               class="form-control" 
-                               id="board-title" 
-                               name="title" 
-                               required 
-                               maxlength="255"
-                               placeholder="Enter board title">
-                    </div>
-                    <div class="mb-3">
-                        <label for="board-description" class="form-label">Description (Optional)</label>
-                        <textarea class="form-control" 
-                                  id="board-description" 
-                                  name="description" 
-                                  rows="3"
-                                  placeholder="Enter board description"></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label for="board-color" class="form-label">Board Color</label>
-                        <select class="form-select" id="board-color" name="color" required>
-                            <option value="blue">Blue</option>
-                            <option value="green">Green</option>
-                            <option value="yellow">Yellow</option>
-                            <option value="red">Red</option>
-                            <option value="purple">Purple</option>
-                            <option value="orange">Orange</option>
-                            <option value="pink">Pink</option>
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="showCreateModal = false">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Create Board</button>
-                    </div>
-                </form>
-=======
->>>>>>> 489139fdbe472089d0b91d717bf1bc1f1a51740b
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" 
-         x-show="showDeleteModal" 
-         x-transition
-         style="display: none;"
-         tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Delete Board</h5>
-                    <button type="button" class="btn-close" @click="showDeleteModal = false"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Are you sure you want to delete "<span x-text="boardToDeleteTitle"></span>"?</p>
-                    <p class="text-danger"><small>This action cannot be undone.</small></p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" @click="showDeleteModal = false">Cancel</button>
-                    <button type="button" 
-                            class="btn btn-danger"
-                            @click="deleteBoard()">
-                        Delete Board
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+<label class="form-label" for="board-title">{% trans "Board Title" %}</label>
+<input class="form-control" id="board-title" maxlength="255" name="title" placeholder="Enter board title" required="" type="text"/>
 </div>
-
+<div class="mb-3">
+<label class="form-label" for="board-description">{% trans "Description (Optional)" %}</label>
+<textarea class="form-control" id="board-description" name="description" placeholder="Enter board description" rows="3"></textarea>
+</div>
+<div class="mb-3">
+<label class="form-label" for="board-color">{% trans "Board Color" %}</label>
+<select class="form-select" id="board-color" name="color" required="">
+<option value="blue">Blue</option>
+<option value="green">Green</option>
+<option value="yellow">Yellow</option>
+<option value="red">Red</option>
+<option value="purple">Purple</option>
+<option value="orange">Orange</option>
+<option value="pink">Pink</option>
+</select>
+</div>
+<div class="modal-footer">
+<button @click="showCreateModal = false" class="btn btn-secondary" type="button">{% trans "Cancel" %}</button>
+<button class="btn btn-primary" type="submit">{% trans "Create Board" %}</button>
+</div>
+</form>{% trans "=======
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; 489139fdbe472089d0b91d717bf1bc1f1a51740b" %}</div>
+</div>
+</div>
+{% trans "Delete Confirmation Modal" %}
+<div class="modal fade" style="display: none;" tabindex="-1" x-show="showDeleteModal" x-transition="">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<h5 class="modal-title">{% trans "Delete Board" %}</h5>
+<button @click="showDeleteModal = false" class="btn-close" type="button"></button>
+</div>
+<div class="modal-body">
+<p>{% trans "Are you sure you want to delete "" %}<span x-text="boardToDeleteTitle"></span>{% trans ""?" %}</p>
+<p class="text-danger"><small>This action cannot be undone.</small></p>
+</div>
+<div class="modal-footer">
+<button @click="showDeleteModal = false" class="btn btn-secondary" type="button">{% trans "Cancel" %}</button>
+<button @click="deleteBoard()" class="btn btn-danger" type="button">{% trans "Delete Board" %}</button>
+</div>
+</div>
+</div>
+</div>
+</div>
 <script>
 function boardsApp() {
     return {

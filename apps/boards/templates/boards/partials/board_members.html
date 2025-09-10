@@ -1,3 +1,4 @@
+{% load i18n %}
 <!-- {% extends 'base.html' %} -->
 
 {% block content %}
@@ -6,7 +7,7 @@
             {{ member.username }} ({{ member.email }})
         </div>
     {% empty %}
-        <div>No members found.</div>
+        <div>{% trans "No members found." %}</div>
     {% endfor %}
 {% endblock %}
 

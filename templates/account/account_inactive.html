@@ -4,23 +4,23 @@
 
 {% block extra_head %}
 <!-- Alpine.js for interactivity -->
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script defer="" src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <!-- HTMX for dynamic interactions -->
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 <!-- Custom CSS -->
-<link rel="stylesheet" href="{% static 'account/css/account.css' %}">
+<link href="{% static 'account/css/account.css' %}" rel="stylesheet"/>
 {% endblock %}
 
 {% block content %}
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="well">
-                    <h2 class="text-center">{% trans "Account Inactive" %}</h2>
-                    <p>{% trans "This account is inactive." %}</p>
-                    <p>{% blocktrans %}We have sent an email to you for verification. Follow the link provided to finalize the signup process. If you do not see the verification email in your main inbox, check your spam folder. Please contact us if you do not receive the verification email within a few minutes.{% endblocktrans %}</p>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="row justify-content-center">
+<div class="col-md-6">
+<div class="well">
+<h2 class="text-center">{% trans "Account Inactive" %}</h2>
+<p>{% trans "This account is inactive." %}</p>
+<p>{% blocktrans %}We have sent an email to you for verification. Follow the link provided to finalize the signup process. If you do not see the verification email in your main inbox, check your spam folder. Please contact us if you do not receive the verification email within a few minutes.{% endblocktrans %}</p>
+</div>
+</div>
+</div>
+</div>
 {% endblock %}
