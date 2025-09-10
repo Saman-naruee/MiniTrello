@@ -1,8 +1,8 @@
 {% load i18n %}
 <div id="create-list-form">
 <form hx-post="{% url 'create_list' board_id %}" hx-swap="beforeend" hx-target="#lists-container">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-primary" type="submit">{% trans "Create List" %}</button>
+{% csrf_token %}
+{{ form.as_p }}
+<button class="btn btn-primary" type="submit">{% trans "Create List" %}</button>
 </form>
 </div>

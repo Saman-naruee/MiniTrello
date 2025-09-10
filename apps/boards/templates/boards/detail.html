@@ -1,9 +1,8 @@
-{% load i18n %}
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 {% load board_extras %}
 {% block title %}{{ board.title }} - MiniTrello{% endblock %}
-
 {% block extra_head %}
 <script defer="" src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
@@ -11,37 +10,31 @@
 <link href="{% static 'boards/css/boards.css' %}" rel="stylesheet"/>
 <style>
 .board-header {
-    background: linear-gradient(135deg, {{ board.color }}20, {{ board.color }}40);
-    border-bottom: 3px solid {{ board.color }};
+background: linear-gradient(135deg, {{ board.color }}20, {{ board.color }}40);
+border-bottom: 3px solid {{ board.color }};
 }
-
 .list-container {
-    min-height: calc(100vh - 200px);
-    overflow-x: auto;
+min-height: calc(100vh - 200px);
+overflow-x: auto;
 }
-
 .list-column {
-    min-width: 300px;
-    max-width: 300px;
+min-width: 300px;
+max-width: 300px;
 }
-
 .card-item {
-    cursor: pointer;
-    transition: all 0.2s ease;
+cursor: pointer;
+transition: all 0.2s ease;
 }
-
 .card-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+transform: translateY(-2px);
+box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
-
 .priority-badge {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.4rem;
+font-size: 0.7rem;
+padding: 0.2rem 0.4rem;
 }
 </style>
 {% endblock %}
-
 {% block content %}
 <!-- In your board detail page -->
 <button class="btn btn-danger" data-bs-target="#modal-container" data-bs-toggle="modal" hx-get="{% url 'delete_board' board.id %}" hx-swap="innerHTML" hx-target="#modal-container">{% trans "Delete Board" %}</button>
@@ -52,10 +45,10 @@
 <div class="d-flex justify-content-between align-items-center">
 <div>
 <h1 class="h3 mb-1">{{ board.title }}</h1>
-                    {% if board.description %}
-                    <p class="text-muted mb-0">{{ board.description }}</p>
-                    {% endif %}
-                </div>
+{% if board.description %}
+<p class="text-muted mb-0">{{ board.description }}</p>
+{% endif %}
+</div>
 <div class="d-flex gap-2">
 <button class="btn btn-outline-primary btn-sm" data-bs-target="#addListModal" data-bs-toggle="modal" hx-get="{% url 'create_list' board_id=board.id %}" hx-swap="innerHTML" hx-target="#create-list-form-container">
 <i class="fas fa-plus me-1"></i>{% trans "Add List" %}</button>
@@ -68,8 +61,8 @@
 </div>
 {% trans "Lists Container" %}
 <div class="list-container d-flex gap-3 px-3" id="lists-container">
-        {% for list in lists %}
-        <div class="list-column" id="list-{{ list.id }}">
+{% for list in lists %}
+<div class="list-column" id="list-{{ list.id }}">
 <div class="card list-card">
 <div class="card-header d-flex justify-content-between align-items-center">
 <h6 class="mb-0">{{ list.title }}</h6>
@@ -90,32 +83,32 @@
 </div>
 </div>
 <div class="card-body p-2" id="cards-container-{{ list.id }}">
-                    {% for card in list.prefetched_cards %}
-                    {% include "boards/partials/card_item.html" with card=card board_id=board.id list_id=list.id %}
-                    {% empty %}
-                    <div class="text-center py-3">
+{% for card in list.prefetched_cards %}
+{% include "boards/partials/card_item.html" with card=card board_id=board.id list_id=list.id %}
+{% empty %}
+<div class="text-center py-3">
 <p class="text-muted small mb-0">{% trans "No cards yet" %}</p>
 <button @click="addCardToList({{ list.id }}, {{ board.id }})" class="btn btn-outline-primary btn-sm mt-2">
 <i class="fas fa-plus me-1"></i>{% trans "Add Card" %}</button>
 </div>
-                    {% endfor %}
-                </div>
+{% endfor %}
+</div>
 <div class="card-footer bg-transparent p-2">
 <button @click="addCardToList({{ list.id }}, {{ board.id }})" class="btn btn-outline-primary btn-sm w-100">
 <i class="fas fa-plus me-1"></i>{% trans "Add Card" %}</button>
 </div>
 </div>
 </div>
-        {% empty %}
-        <div class="col-12 text-center py-5">
+{% empty %}
+<div class="col-12 text-center py-5">
 <i class="fas fa-list fa-3x text-muted mb-3"></i>
 <h4 class="text-muted">{% trans "No lists yet" %}</h4>
 <p class="text-muted">{% trans "Create your first list to get started!" %}</p>
 <button class="btn btn-primary" data-bs-target="#addListModal" data-bs-toggle="modal" hx-get="{% url 'create_list' board_id=board.id %}" hx-swap="innerHTML" hx-target="#create-list-form-container">
 <i class="fas fa-plus me-2"></i>{% trans "Create List" %}</button>
 </div>
-        {% endfor %}
-    </div>
+{% endfor %}
+</div>
 {% trans "Add List Modal" %}
 <div #}="" accessibility="" add="" an="" aria-hidden="true" aria-labelledby="addListModalLabel" bootstrap="" class="modal fade" for="" id="" tabindex="-1" target="" to="" {#="">
 <div class="modal-dialog">
@@ -126,8 +119,8 @@
 <div class="modal-body" id="create-list-form-container">
 {% trans "HTMX will load the form here" %}
 </div>{% trans "&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD" %}<form @submit="showAddListModal = false" class="modal-body" hx-post="{% url 'boards:create_list' %}" hx-swap="beforeend" hx-target="#lists-container">
-                    {% csrf_token %}
-                    <input name="board" type="hidden" value="{{ board.id }}"/>
+{% csrf_token %}
+<input name="board" type="hidden" value="{{ board.id }}"/>
 <div class="mb-3">
 <label class="form-label" for="list-title">{% trans "List Title" %}</label>
 <input class="form-control" id="list-title" maxlength="255" name="title" placeholder="Enter list title" required="" type="text"/>
@@ -136,8 +129,8 @@
 <button @click="showAddListModal = false" class="btn btn-secondary" type="button">{% trans "Cancel" %}</button>
 <button class="btn btn-primary" type="submit">{% trans "Create List" %}</button>
 </div>
-</form>{% trans "=======
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; 489139fdbe472089d0b91d717bf1bc1f1a51740b" %}</div>
+</form>{% trans "{% trans "=======
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; 489139fdbe472089d0b91d717bf1bc1f1a51740b" %}" %}</div>
 </div>
 </div>
 {% trans "Add Card Modal" %}
@@ -150,8 +143,8 @@
 <div class="modal-body" id="create-card-form-container">
 {% trans "HTMX will load the form here" %}
 </div>{% trans "&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD" %}<form @submit="showAddCardModal = false" class="modal-body" hx-post="{% url 'boards:create_card' %}" hx-swap="beforeend" x-bind:hx-target="`#cards-container-${selectedListId}`">
-                    {% csrf_token %}
-                    <input name="list" type="hidden" x-bind:value="selectedListId"/>
+{% csrf_token %}
+<input name="list" type="hidden" x-bind:value="selectedListId"/>
 <div class="mb-3">
 <label class="form-label" for="card-title">{% trans "Card Title" %}</label>
 <input class="form-control" id="card-title" maxlength="255" name="title" placeholder="Enter card title" required="" type="text"/>
@@ -175,8 +168,8 @@
 <button @click="showAddCardModal = false" class="btn btn-secondary" type="button">{% trans "Cancel" %}</button>
 <button class="btn btn-primary" type="submit">{% trans "Create Card" %}</button>
 </div>
-</form>{% trans "=======
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; 489139fdbe472089d0b91d717bf1bc1f1a51740b" %}</div>
+</form>{% trans "{% trans "=======
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; 489139fdbe472089d0b91d717bf1bc1f1a51740b" %}" %}</div>
 </div>
 </div>
 {% trans "Edit Card Modal" %}
@@ -187,12 +180,12 @@
 <h5 class="modal-title">{% trans "Edit Card" %}</h5>
 <button @click="showEditCardModal = false" class="btn-close" type="button"></button>
 </div>{% trans "&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD" %}<form =="&lt;form" hx-patch="{% url 'boards:update_card' 0 %}" x-bind:hx-patch="`/boards/cards/${editingCardId}/update/`">&gt;&gt;&gt;&gt;&gt;&gt; 489139fdbe472089d0b91d717bf1bc1f1a51740b
-                      x-bind:hx-target="`#card-${editingCardId}`"
-                      hx-swap="outerHTML"
-                      @submit="showEditCardModal = false"
-                      class="modal-body"&gt;
-                    {% csrf_token %}
-                    <input name="card_id" type="hidden" x-bind:value="editingCardId"/>
+x-bind:hx-target="`#card-${editingCardId}`"
+hx-swap="outerHTML"
+@submit="showEditCardModal = false"
+class="modal-body"&gt;
+{% csrf_token %}
+<input name="card_id" type="hidden" x-bind:value="editingCardId"/>
 <div class="mb-3">
 <label class="form-label" for="edit-card-title">{% trans "Card Title" %}</label>
 <input class="form-control" id="edit-card-title" maxlength="255" name="title" placeholder="Enter card title" required="" type="text" x-bind:value="editingCardTitle"/>
@@ -241,59 +234,54 @@
 </div>
 <script>
 function boardApp() {
-    return {
-        showAddListModal: false,
-        showAddCardModal: false, // This will be managed by Bootstrap now
-        showEditCardModal: false,
-        showMembersModal: false,
-        selectedListId: null,
-        editingCardId: null,
-        editingCardTitle: '',
-        editingCardDescription: '',
-        editingCardPriority: 50,
-        
-        // Show add card modal for specific list
-        addCardToList(listId, boardId) {
-            this.selectedListId = listId;
-            // Open the Bootstrap modal first
-            const addCardModal = new bootstrap.Modal(document.getElementById('addCardModal'));
-            addCardModal.show();
-
-            // Then, trigger an HTMX GET to load the form into the modal
-            htmx.ajax('GET', `/boards/${boardId}/lists/${listId}/cards/create/`, {
-                target: `#create-card-form-container`,
-                swap: 'innerHTML',
-            });
-        },
-        
-        // Show edit card modal
-        editCard(cardId, title, description, priority) {
-            this.editingCardId = cardId;
-            this.editingCardTitle = title;
-            this.editingCardDescription = description;
-            this.editingCardPriority = priority;
-            this.showEditCardModal = true;
-        }
-    }
+return {
+showAddListModal: false,
+showAddCardModal: false, // This will be managed by Bootstrap now
+showEditCardModal: false,
+showMembersModal: false,
+selectedListId: null,
+editingCardId: null,
+editingCardTitle: '',
+editingCardDescription: '',
+editingCardPriority: 50,
+// Show add card modal for specific list
+addCardToList(listId, boardId) {
+this.selectedListId = listId;
+// Open the Bootstrap modal first
+const addCardModal = new bootstrap.Modal(document.getElementById('addCardModal'));
+addCardModal.show();
+// Then, trigger an HTMX GET to load the form into the modal
+htmx.ajax('GET', `/boards/${boardId}/lists/${listId}/cards/create/`, {
+target: `#create-card-form-container`,
+swap: 'innerHTML',
+});
+},
+// Show edit card modal
+editCard(cardId, title, description, priority) {
+this.editingCardId = cardId;
+this.editingCardTitle = title;
+this.editingCardDescription = description;
+this.editingCardPriority = priority;
+this.showEditCardModal = true;
 }
-
+}
+}
 // HTMX event listener to close the Add List Modal on successful list creation
 document.body.addEventListener('htmx:afterSwap', function(evt) {
-    if (evt.detail.target.id === 'lists-container' && evt.detail.xhr.status === 200 && evt.detail.requestHeaders['HX-Trigger'] === 'listCreated') {
-        const addListModal = new bootstrap.Modal(document.getElementById('addListModal'));
-        addListModal.hide();
-    }
+if (evt.detail.target.id === 'lists-container' && evt.detail.xhr.status === 200 && evt.detail.requestHeaders['HX-Trigger'] === 'listCreated') {
+const addListModal = new bootstrap.Modal(document.getElementById('addListModal'));
+addListModal.hide();
+}
 });
-
 // HTMX event listener to close the Add Card Modal on successful card creation
 document.body.addEventListener('htmx:afterSwap', function(evt) {
-    // Check if the swap was for a new card and was successful
-    // We're targeting #cards-container-${selectedListId} for successful card additions
-    // and expecting an HX-Trigger 'cardCreated' from the server.
-    if (evt.detail.target.closest('[id^="cards-container-"]') && evt.detail.xhr.status === 200 && evt.detail.requestHeaders['HX-Trigger'] === 'cardCreated') {
-        const addCardModal = new bootstrap.Modal(document.getElementById('addCardModal'));
-        addCardModal.hide();
-    }
+// Check if the swap was for a new card and was successful
+// We're targeting #cards-container-${selectedListId} for successful card additions
+// and expecting an HX-Trigger 'cardCreated' from the server.
+if (evt.detail.target.closest('[id^="cards-container-"]') && evt.detail.xhr.status === 200 && evt.detail.requestHeaders['HX-Trigger'] === 'cardCreated') {
+const addCardModal = new bootstrap.Modal(document.getElementById('addCardModal'));
+addCardModal.hide();
+}
 });
 </script>
 {% endblock %}

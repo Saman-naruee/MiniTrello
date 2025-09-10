@@ -1,10 +1,8 @@
-{% load i18n %}
 {% extends 'base.html' %}
+{% load i18n %}
 {% load socialaccount %}
 {% block title %}MiniTrello - Profile{% endblock %}
-
 {% block nav_profile_active %}active{% endblock %}
-
 {% block content %}
 <div class="row">
 <div class="col-md-8 offset-md-2">
@@ -20,26 +18,24 @@
 <p><strong>Email:</strong> {{ user.email }}</p>
 <p><strong>Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
 </div>
-                
-                {% if user.socialaccount_set.all %}
-                    <div class="mb-3">
+{% if user.socialaccount_set.all %}
+<div class="mb-3">
 <h4>{% trans "Connected Accounts" %}</h4>
 <ul class="list-group">
-                        {% for account in user.socialaccount_set.all %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
+{% for account in user.socialaccount_set.all %}
+<li class="list-group-item d-flex justify-content-between align-items-center">
 <div>
-                                    {{ account.provider|title }}
-                                    <small class="text-muted">(Connected on {{ account.date_added|date:"M d, Y" }})</small>
+{{ account.provider|title }}
+<small class="text-muted">(Connected on {{ account.date_added|date:"M d, Y" }})</small>
 </div>
 <button class="btn btn-sm btn-outline-danger" hx-confirm="Are you sure you want to disconnect this account?" hx-delete="{% url 'socialaccount_connections' %}?account={{ account.id }}" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-swap="outerHTML" hx-target="#profile-info">
 <i class="fas fa-unlink"></i>{% trans "Disconnect" %}</button>
 </li>
-                        {% endfor %}
-                        </ul>
+{% endfor %}
+</ul>
 </div>
-                {% endif %}
-                
-                <div class="mt-4">
+{% endif %}
+<div class="mt-4">
 <a class="btn btn-primary" href="{% url 'Home' %}">{% trans "Back to Home" %}</a>
 <a class="btn btn-outline-secondary" href="{% url 'socialaccount_connections' %}">{% trans "Manage Social Accounts" %}</a>
 <button @click="$dispatch('open-modal', {id: 'change-password-modal'})" class="btn btn-outline-warning" x-data="{}">{% trans "Change Password" %}</button>
@@ -49,52 +45,49 @@
 </div>
 </div>
 <!-- Edit Profile Modal -->
-<div class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-data="{ 
-    open: false,
-    displayName: '{{ user.get_full_name|default:'' }}',
-    preferredLanguage: '{{ user.profile.preferred_language|default:'en' }}' || 'en',
-    errors: {},
-    loading: false,
-    languages: [
-        { code: 'en', name: 'English' },
-        { code: 'fa', name: 'فارسی' },
-        { code: 'fr', name: 'Français' },
-        { code: 'es', name: 'Español' }
-    ],
-    
-    submitForm() {
-        this.loading = true;
-        this.errors = {};
-        
-        const formData = new FormData();
-        formData.append('display_name', this.displayName);
-        formData.append('preferred_language', this.preferredLanguage);
-        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-        
-        fetch('/api/profile/update/', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response =&gt; response.json())
-        .then(data =&gt; {
-            if (data.success) {
-                this.open = false;
-                // Refresh the profile section
-                htmx.trigger('#profile-info', 'refreshProfile');
-            } else if (data.errors) {
-                this.errors = data.errors;
-            }
-            this.loading = false;
-        })
-        .catch(error =&gt; {
-            console.error('Error:', error);
-            this.errors = {'__all__': ['An unexpected error occurred. Please try again.']};
-            this.loading = false;
-        });
-    }
+<div class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-data="{
+open: false,
+displayName: '{{ user.get_full_name|default:'' }}',
+preferredLanguage: '{{ user.profile.preferred_language|default:'en' }}' || 'en',
+errors: {},
+loading: false,
+languages: [
+{ code: 'en', name: 'English' },
+{ code: 'fa', name: 'فارسی' },
+{ code: 'fr', name: 'Français' },
+{ code: 'es', name: 'Español' }
+],
+submitForm() {
+this.loading = true;
+this.errors = {};
+const formData = new FormData();
+formData.append('display_name', this.displayName);
+formData.append('preferred_language', this.preferredLanguage);
+formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+fetch('/api/profile/update/', {
+method: 'POST',
+body: formData,
+headers: {
+'X-Requested-With': 'XMLHttpRequest'
+}
+})
+.then(response =&gt; response.json())
+.then(data =&gt; {
+if (data.success) {
+this.open = false;
+// Refresh the profile section
+htmx.trigger('#profile-info', 'refreshProfile');
+} else if (data.errors) {
+this.errors = data.errors;
+}
+this.loading = false;
+})
+.catch(error =&gt; {
+console.error('Error:', error);
+this.errors = {'__all__': ['An unexpected error occurred. Please try again.']};
+this.loading = false;
+});
+}
 }" x-on:keydown.escape.window="open = false" x-on:open-modal.window="if ($event.detail.id === 'edit-profile-modal') { open = true; }" x-show="open">
 {% trans "Modal backdrop" %}
 <div class="fixed inset-0 bg-black bg-opacity-50" x-on:click="open = false" x-show="open"></div>
@@ -135,50 +128,47 @@
 </div>
 </div>
 <!-- Change Password Modal -->
-<div class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-data="{ 
-    open: false,
-    oldPassword: '',
-    newPassword1: '',
-    newPassword2: '',
-    errors: {},
-    loading: false,
-    
-    submitForm() {
-        this.loading = true;
-        this.errors = {};
-        
-        const formData = new FormData();
-        formData.append('oldpassword', this.oldPassword);
-        formData.append('password1', this.newPassword1);
-        formData.append('password2', this.newPassword2);
-        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-        
-        fetch('{% url 'account_change_password' %}', {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response =&gt; {
-            if (response.redirected) {
-                window.location.href = response.url;
-                return;
-            }
-            return response.json();
-        })
-        .then(data =&gt; {
-            if (data &amp;&amp; data.form &amp;&amp; data.form.errors) {
-                this.errors = data.form.errors;
-            }
-            this.loading = false;
-        })
-        .catch(error =&gt; {
-            console.error('Error:', error);
-            this.errors = {'__all__': ['An unexpected error occurred. Please try again.']};
-            this.loading = false;
-        });
-    }
+<div class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-data="{
+open: false,
+oldPassword: '',
+newPassword1: '',
+newPassword2: '',
+errors: {},
+loading: false,
+submitForm() {
+this.loading = true;
+this.errors = {};
+const formData = new FormData();
+formData.append('oldpassword', this.oldPassword);
+formData.append('password1', this.newPassword1);
+formData.append('password2', this.newPassword2);
+formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+fetch('{% url 'account_change_password' %}', {
+method: 'POST',
+body: formData,
+headers: {
+'X-Requested-With': 'XMLHttpRequest'
+}
+})
+.then(response =&gt; {
+if (response.redirected) {
+window.location.href = response.url;
+return;
+}
+return response.json();
+})
+.then(data =&gt; {
+if (data &amp;&amp; data.form &amp;&amp; data.form.errors) {
+this.errors = data.form.errors;
+}
+this.loading = false;
+})
+.catch(error =&gt; {
+console.error('Error:', error);
+this.errors = {'__all__': ['An unexpected error occurred. Please try again.']};
+this.loading = false;
+});
+}
 }" x-on:keydown.escape.window="open = false" x-on:open-modal.window="if ($event.detail.id === 'change-password-modal') { open = true; }" x-show="open">
 {% trans "Modal backdrop" %}
 <div class="fixed inset-0 bg-black bg-opacity-50" x-on:click="open = false" x-show="open"></div>

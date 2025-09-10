@@ -1,13 +1,11 @@
-{% load i18n %}
 <!-- {% extends 'base.html' %} -->
-
+{% load i18n %}
 {% block content %}
-    {% for member in members %}
-        <div>
-            {{ member.username }} ({{ member.email }})
-        </div>
-    {% empty %}
-        <div>{% trans "No members found." %}</div>
-    {% endfor %}
+{% for member in members %}
+<div>
+{{ member.username }} ({{ member.email }})
+</div>
+{% empty %}
+<div>{% trans "No members found." %}</div>
+{% endfor %}
 {% endblock %}
-

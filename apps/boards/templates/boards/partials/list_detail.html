@@ -2,8 +2,8 @@
 <div class="list-detail">
 <h3>{{ list.title }}</h3>
 <div class="list-cards">
-        {% for card in list.prefetched_cards %}
-            {% include "boards/partials/card_item.html" with card=card %}
-        {% endfor %}
-    </div>
+{% for card in list.prefetched_cards %}
+{% include "boards/partials/card_item.html" with card=card %}
+{% endfor %}
+</div>
 </div>

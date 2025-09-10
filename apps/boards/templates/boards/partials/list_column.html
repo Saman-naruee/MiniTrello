@@ -20,16 +20,16 @@
 </div>
 </div>
 <div id="cards-container-{{ list.id }}">
-            {% for card in list.cards %}
-                {% include "boards/partials/card_item.html" with card=card %}
-            {% empty %}
-                <div class="text-center py-3">
+{% for card in list.cards %}
+{% include "boards/partials/card_item.html" with card=card %}
+{% empty %}
+<div class="text-center py-3">
 <p class="text-muted small mb-0">{% trans "No cards yet" %}</p>
 <button @click="addCardToList({{ list.id }})" class="btn btn-outline-primary btn-sm mt-2">
 <i class="fas fa-plus me-1"></i>{% trans "Add Card" %}</button>
 </div>
-            {% endfor %}
-        </div>
+{% endfor %}
+</div>
 <div class="card-footer bg-transparent p-2">
 <button @click="addCardToList({{ list.id }})" class="btn btn-outline-primary btn-sm w-100">
 <i class="fas fa-plus me-1"></i>{% trans "Add Card" %}</button>

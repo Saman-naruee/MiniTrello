@@ -1,9 +1,7 @@
 {% extends "base.html" %}
 {% load i18n %}
 {% load static %}
-
 {% block head_title %}{% trans "Create Board" %}{% endblock %}
-
 {% block content %}
 <div class="container">
 <div class="row justify-content-center">
@@ -14,28 +12,28 @@
 </div>
 <div class="card-body">
 <form action="{% url 'boards:create_board' %}" method="post">
-            {% csrf_token %}
-            <div class="mb-3">
+{% csrf_token %}
+<div class="mb-3">
 <label class="form-label" for="id_title">{% trans "Title" %}</label>
 <input %}"="" board="" class="form-control {% if form.title.errors %}is-invalid{% endif %}" enter="" id="id_title" name="title" placeholder="{% trans " title"="" type="text" value="{{ form.title.value|default_if_none:'' }}"/>
-              {% if form.title.errors %}
-                <div class="invalid-feedback">{{ form.title.errors|join:", " }}</div>
-              {% endif %}
-            </div>
+{% if form.title.errors %}
+<div class="invalid-feedback">{{ form.title.errors|join:", " }}</div>
+{% endif %}
+</div>
 <div class="mb-3">
 <label class="form-label" for="id_description">{% trans "Description" %}</label>
 <textarea %}"="" board="" class="form-control {% if form.description.errors %}is-invalid{% endif %}" description"="" enter="" id="id_description" name="description" placeholder="{% trans " rows="3">{{ form.description.value|default_if_none:'' }}</textarea>
-              {% if form.description.errors %}
-                <div class="invalid-feedback">{{ form.description.errors|join:", " }}</div>
-              {% endif %}
-            </div>
+{% if form.description.errors %}
+<div class="invalid-feedback">{{ form.description.errors|join:", " }}</div>
+{% endif %}
+</div>
 <div class="mb-3">
 <label class="form-label" for="id_color">{% trans "Color" %}</label>
 <input class="form-control {% if form.color.errors %}is-invalid{% endif %}" id="id_color" name="color" type="color" value="{{ form.color.value|default_if_none:'#007bff' }}"/>
-              {% if form.color.errors %}
-                <div class="invalid-feedback">{{ form.color.errors|join:", " }}</div>
-              {% endif %}
-            </div>
+{% if form.color.errors %}
+<div class="invalid-feedback">{{ form.color.errors|join:", " }}</div>
+{% endif %}
+</div>
 <button class="btn btn-primary" type="submit">{% trans "Create" %}</button>
 </form>
 </div>

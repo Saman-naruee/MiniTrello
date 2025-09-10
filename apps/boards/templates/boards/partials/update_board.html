@@ -2,48 +2,48 @@
 {% comment %} This partial should not extend base.html {% endcomment %}
 <div id="update-board-form-{{ board.id }}">
 <form hx-post="{% url 'update_board' board_id=board.id %}" hx-swap="outerHTML" hx-target="#update-board-form-{{ board.id }}">
-        {% csrf_token %}
-        <div class="mb-3">
+{% csrf_token %}
+<div class="mb-3">
 <label class="form-label" for="{{ form.title.id_for_label }}">{% trans "Board Title" %}</label>
 <input class="form-control" id="{{ form.title.id_for_label }}" name="{{ form.title.name }}" type="text" value="{{ form.title.value|default:'' }}"/>
-            {% if form.title.errors %}
-                <div class="text-danger">
-                    {% for error in form.title.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
+{% if form.title.errors %}
+<div class="text-danger">
+{% for error in form.title.errors %}
+{{ error }}
+{% endfor %}
+</div>
+{% endif %}
+</div>
 <div class="mb-3">
 <label class="form-label" for="{{ form.description.id_for_label }}">{% trans "Description" %}</label>
 <textarea class="form-control" id="{{ form.description.id_for_label }}" name="{{ form.description.name }}">{{ form.description.value|default:'' }}</textarea>
-            {% if form.description.errors %}
-                <div class="text-danger">
-                    {% for error in form.description.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
+{% if form.description.errors %}
+<div class="text-danger">
+{% for error in form.description.errors %}
+{{ error }}
+{% endfor %}
+</div>
+{% endif %}
+</div>
 <div class="mb-3">
 <label class="form-label" for="{{ form.color.id_for_label }}">{% trans "Color" %}</label>
 <input class="form-control form-control-color" id="{{ form.color.id_for_label }}" name="{{ form.color.name }}" type="color" value="{{ form.color.value|default:'#000000' }}"/>
-            {% if form.color.errors %}
-                <div class="text-danger">
-                    {% for error in form.color.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
-        {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-                {% for error in form.non_field_errors %}
-                    {{ error }}
-                {% endfor %}
-            </div>
-        {% endif %}
-        <button class="btn btn-primary" type="submit">{% trans "Update Board" %}</button>
+{% if form.color.errors %}
+<div class="text-danger">
+{% for error in form.color.errors %}
+{{ error }}
+{% endfor %}
+</div>
+{% endif %}
+</div>
+{% if form.non_field_errors %}
+<div class="alert alert-danger">
+{% for error in form.non_field_errors %}
+{{ error }}
+{% endfor %}
+</div>
+{% endif %}
+<button class="btn btn-primary" type="submit">{% trans "Update Board" %}</button>
 <button class="btn btn-secondary" hx-get="{% url 'board_detail' board_id=board.id %}" hx-swap="outerHTML" hx-target="#update-board-form-{{ board.id }}" type="button">{% trans "Cancel" %}</button>
 </form>
 </div>

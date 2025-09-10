@@ -2,10 +2,10 @@
 <div class="card-detail">
 <h3>{{ card.title }}</h3>
 <p>{{ card.description }}</p>
-    {% if card.assignee %}
-        <p>{% trans "Assigned to: {{ card.assignee.username }}" %}</p>
-    {% endif %}
-    {% if card.due_date %}
-        <p>{% trans "Due: {{ card.due_date }}" %}</p>
-    {% endif %}
+{% if card.assignee %}
+<p>{% trans "Assigned to: {{ card.assignee.username }}" %}</p>
+{% endif %}
+{% if card.due_date %}
+<p>{% trans "Due: {{ card.due_date }}" %}</p>
+{% endif %}
 </div>

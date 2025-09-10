@@ -2,47 +2,47 @@
 {% load i18n %}
 {% load allauth %}
 {% block head_title %}
-    {% trans "Change Phone" %}
+{% trans "Change Phone" %}
 {% endblock head_title %}
 {% block content %}
-    {% element h1 %}
-        {% trans "Change Phone" %}
-    {% endelement %}
-    {% url 'account_change_phone' as action_url %}
-    {% element form method="post" action=action_url %}
-        {% slot body %}
-            {% csrf_token %}
-            {% if phone %}
-                {% element field id="current_phone" disabled=True type="tel" value=phone %}
-                    {% slot label %}
-                        {% translate "Current phone" %}:
-                    {% endslot %}
-                    {% if not phone_verified %}
-                        {% slot help_text %}
-                            {% blocktranslate %}Your phone number is still pending verification.{% endblocktranslate %}
-                            {% element button form="verify-phone" type="submit" tags="minor,secondary" %}
-                                {% trans 'Re-send Verification' %}
-                            {% endelement %}
-                        {% endslot %}
-                    {% endif %}
-                {% endelement %}
-            {% endif %}
-            {% element field id=form.phone.auto_id name="phone" value=form.phone.value errors=form.phone.errors type="tel" %}
-                {% slot label %}
-                    {% translate "Change to" %}:
-                {% endslot %}
-            {% endelement %}
-        {% endslot %}
-        {% slot actions %}
-            {% element button name="action_add" type="submit" %}
-                {% translate "Change Phone" context "action" %}
-            {% endelement %}
-        {% endslot %}
-    {% endelement %}
-    {% if not phone_verified %}
-        <form action="{{ action_url }}" id="verify-phone" method="post" style="display: none">
-            {% csrf_token %}
-            <input name="action" type="hidden" value="verify"/>
+{% element h1 %}
+{% trans "Change Phone" %}
+{% endelement %}
+{% url 'account_change_phone' as action_url %}
+{% element form method="post" action=action_url %}
+{% slot body %}
+{% csrf_token %}
+{% if phone %}
+{% element field id="current_phone" disabled=True type="tel" value=phone %}
+{% slot label %}
+{% translate "Current phone" %}:
+{% endslot %}
+{% if not phone_verified %}
+{% slot help_text %}
+{% blocktranslate %}Your phone number is still pending verification.{% endblocktranslate %}
+{% element button form="verify-phone" type="submit" tags="minor,secondary" %}
+{% trans 'Re-send Verification' %}
+{% endelement %}
+{% endslot %}
+{% endif %}
+{% endelement %}
+{% endif %}
+{% element field id=form.phone.auto_id name="phone" value=form.phone.value errors=form.phone.errors type="tel" %}
+{% slot label %}
+{% translate "Change to" %}:
+{% endslot %}
+{% endelement %}
+{% endslot %}
+{% slot actions %}
+{% element button name="action_add" type="submit" %}
+{% translate "Change Phone" context "action" %}
+{% endelement %}
+{% endslot %}
+{% endelement %}
+{% if not phone_verified %}
+<form action="{{ action_url }}" id="verify-phone" method="post" style="display: none">
+{% csrf_token %}
+<input name="action" type="hidden" value="verify"/>
 </form>
-    {% endif %}
+{% endif %}
 {% endblock content %}

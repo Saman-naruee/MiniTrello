@@ -1,7 +1,6 @@
 {% extends "base.html" %}
-{% load static %}
 {% load i18n %}
-
+{% load static %}
 {% block extra_head %}
 <!-- HTMX for dynamic interactions -->
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
@@ -12,32 +11,31 @@
 <!-- Custom CSS -->
 <link href="{% static 'account/css/account.css' %}" rel="stylesheet"/>
 {% endblock %}
-
 {% block content %}
-    <div class="container">
+<div class="container">
 <div class="row justify-content-center">
 <div class="col-md-6">
 <div class="well">
 <h2 class="text-center">{{ title }}</h2>
-                    {% element form form=form method="post" action=action_url tags="entrance,login" %}
-                        {% slot body %}
-                            {% csrf_token %}
-                            {% element fields form=form unlabeled=True %}
-                            {% endelement %}
-                            {{ redirect_field }}
-                        {% endslot %}
-                        {% slot actions %}
-                            {% element button type="submit" tags="prominent,login" %}
-                                {% trans "Submit" %}
-                            {% endelement %}
-                        {% endslot %}
-                    {% endelement %}
-                    {% if change_title %}
-                        <p>
+{% element form form=form method="post" action=action_url tags="entrance,login" %}
+{% slot body %}
+{% csrf_token %}
+{% element fields form=form unlabeled=True %}
+{% endelement %}
+{{ redirect_field }}
+{% endslot %}
+{% slot actions %}
+{% element button type="submit" tags="prominent,login" %}
+{% trans "Submit" %}
+{% endelement %}
+{% endslot %}
+{% endelement %}
+{% if change_title %}
+<p>
 <a href="{{ change_url }}">{{ change_title }}</a>
 </p>
-                    {% endif %}
-                </div>
+{% endif %}
+</div>
 </div>
 </div>
 </div>

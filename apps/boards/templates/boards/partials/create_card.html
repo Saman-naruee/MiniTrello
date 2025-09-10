@@ -1,8 +1,8 @@
 {% load i18n %}
 <div id="create-card-form">
 <form hx-post="{% url 'create_card' board_id list_id %}" hx-swap="beforeend" hx-target="#cards-container-{{ list_id }}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button class="btn btn-primary" type="submit">{% trans "Create Card" %}</button>
+{% csrf_token %}
+{{ form.as_p }}
+<button class="btn btn-primary" type="submit">{% trans "Create Card" %}</button>
 </form>
 </div>

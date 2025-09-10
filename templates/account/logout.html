@@ -1,8 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
-
 {% block head_title %}{% trans "Sign Out" %}{% endblock %}
-
 {% block content %}
 <div class="container mt-5">
 <div class="row">
@@ -12,11 +10,11 @@
 <h1 class="card-title">{% trans "Sign Out" %}</h1>
 <p class="card-text">{% trans 'Are you sure you want to sign out Dear User' %}</p>
 <form action="{% url 'account_logout' %}" method="post">
-                        {% csrf_token %}
-                        {% if redirect_field_value %}
-                        <input name="{{ redirect_field_name }}" type="hidden" value="{{ redirect_field_value }}"/>
-                        {% endif %}
-                        <button class="btn btn-danger" type="submit">{% trans 'Sign Out' %}</button>
+{% csrf_token %}
+{% if redirect_field_value %}
+<input name="{{ redirect_field_name }}" type="hidden" value="{{ redirect_field_value }}"/>
+{% endif %}
+<button class="btn btn-danger" type="submit">{% trans 'Sign Out' %}</button>
 </form>
 </div>
 </div>
@@ -24,4 +22,3 @@
 </div>
 </div>
 {% endblock %}
-

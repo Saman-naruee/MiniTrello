@@ -1,8 +1,7 @@
 {% extends "base.html" %}
-{% load socialaccount %}
 {% load i18n %}
+{% load socialaccount %}
 {% block title %}{% trans "Email Addresses" %}{% endblock %}
-
 {% block content %}
 <div class="container py-4">
 <div class="row justify-content-center">
@@ -11,96 +10,92 @@
 <div class="card-header bg-primary text-white">
 <h2 class="h4 mb-0">
 <i class="fas fa-envelope me-2"></i>{% trans "Email Addresses" %}
-          </h2>
+</h2>
 </div>
 <div class="card-body">
-          {% if user.emailaddress_set.all %}
-          <p class="text-muted mb-4">
-            {% trans "The following email addresses are associated with your account:" %}
-          </p>
+{% if user.emailaddress_set.all %}
+<p class="text-muted mb-4">
+{% trans "The following email addresses are associated with your account:" %}
+</p>
 <form class="email_list" hx-post="{% url 'account_email' %}" hx-swap="outerHTML" hx-target="#email-management" id="email-management">
-            {% csrf_token %}
-            
-            <div class="list-group mb-4">
-              {% for emailaddress in user.emailaddress_set.all %}
-              <div class="list-group-item d-flex justify-content-between align-items-center">
+{% csrf_token %}
+<div class="list-group mb-4">
+{% for emailaddress in user.emailaddress_set.all %}
+<div class="list-group-item d-flex justify-content-between align-items-center">
 <div>
 <div class="form-check">
 <input %}="" %}checked="checked" class="form-check-input" emailaddress.primary="" endif="" id="email_radio_{{forloop.counter}}" if="" name="email" type="radio" value="{{emailaddress.email}}" {%=""/>
 <label class="form-check-label {% if emailaddress.primary %}fw-bold{% endif %}" for="email_radio_{{forloop.counter}}">
-                      {{ emailaddress.email }}
-                    </label>
+{{ emailaddress.email }}
+</label>
 </div>
 <div class="mt-1">
-                    {% if emailaddress.verified %}
-                    <span class="badge bg-success">
+{% if emailaddress.verified %}
+<span class="badge bg-success">
 <i class="fas fa-check-circle me-1"></i>{% trans "Verified" %}
-                    </span>
-                    {% else %}
-                    <span class="badge bg-warning text-dark">
+</span>
+{% else %}
+<span class="badge bg-warning text-dark">
 <i class="fas fa-exclamation-triangle me-1"></i>{% trans "Unverified" %}
-                    </span>
-                    {% endif %}
-                    
-                    {% if emailaddress.primary %}
-                    <span class="badge bg-info">
+</span>
+{% endif %}
+{% if emailaddress.primary %}
+<span class="badge bg-info">
 <i class="fas fa-star me-1"></i>{% trans "Primary" %}
-                    </span>
-                    {% endif %}
-                  </div>
+</span>
+{% endif %}
+</div>
 </div>
 <div>
-                  {% if not emailaddress.verified %}
-                  <button class="btn btn-sm btn-outline-primary" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-post="{% url 'account_email' %}" hx-target="#email-management" hx-vals='{"action_send": "", "email": "{{emailaddress.email}}"}' name="action_send" type="button">
+{% if not emailaddress.verified %}
+<button class="btn btn-sm btn-outline-primary" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-post="{% url 'account_email' %}" hx-target="#email-management" hx-vals='{"action_send": "", "email": "{{emailaddress.email}}"}' name="action_send" type="button">
 <i class="fas fa-paper-plane me-1"></i>{% trans "Resend Verification" %}
-                  </button>
-                  {% endif %}
-                </div>
+</button>
+{% endif %}
 </div>
-              {% endfor %}
-            </div>
+</div>
+{% endfor %}
+</div>
 <div class="d-flex gap-2">
 <button class="btn btn-primary" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-vals='{"action_primary": ""}' name="action_primary" type="submit">
 <i class="fas fa-check-circle me-1"></i>{% trans "Make Primary" %}
-              </button>
+</button>
 <button %}"="" address?"="" are="" class="btn btn-danger" email="" hx-confirm="{% trans " hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}' hx-vals='{"action_remove": ""}' name="action_remove" remove="" selected="" sure="" the="" to="" type="submit" want="" you="">
 <i class="fas fa-trash me-1"></i>{% trans "Remove" %}
-              </button>
+</button>
 </div>
 </form>
-          {% else %}
-          <div class="alert alert-info">
+{% else %}
+<div class="alert alert-info">
 <i class="fas fa-info-circle me-1"></i>{% trans "You have not added any email addresses yet." %}
-          </div>
-          {% endif %}
-          
-          <hr class="my-4"/>
+</div>
+{% endif %}
+<hr class="my-4"/>
 <h3 class="h5 mb-3">{% trans "Add Email Address" %}</h3>
 <form action="{% url 'account_email' %}" class="add_email" hx-post="{% url 'account_email' %}" hx-swap="outerHTML" hx-target="this" method="post">
-            {% csrf_token %}
-            
-            <div class="mb-3">
+{% csrf_token %}
+<div class="mb-3">
 <label class="form-label" for="email">{% trans "Email Address" %}</label>
 <div class="input-group">
 <input class="form-control" id="email" name="email" placeholder="email@example.com" required="" type="email"/>
 <button class="btn btn-success" type="submit">
 <i class="fas fa-plus me-1"></i>{% trans "Add" %}
-                </button>
+</button>
 </div>
-              {% if form.email.errors %}
-              <div class="text-danger mt-1">
-                {% for error in form.email.errors %}
-                  {{ error }}
-                {% endfor %}
-              </div>
-              {% endif %}
-            </div>
+{% if form.email.errors %}
+<div class="text-danger mt-1">
+{% for error in form.email.errors %}
+{{ error }}
+{% endfor %}
+</div>
+{% endif %}
+</div>
 </form>
 </div>
 <div class="card-footer">
 <a class="btn btn-outline-secondary" href="{% url 'account_change_password' %}">
 <i class="fas fa-key me-1"></i>{% trans "Change Password" %}
-          </a>
+</a>
 <a class="btn btn-link" href="{% url 'Home' %}">{% trans "Back to Home" %}</a>
 </div>
 </div>
@@ -109,13 +104,13 @@
 </div>
 <!-- Toast for notifications -->
 <div @click="show = false" class="position-fixed bottom-0 end-0 p-3" style="z-index: 11; display: none;" x-data="{ show: false, message: '', type: 'success' }" x-init="
-       window.addEventListener('emailAction', (e) =&gt; {
-         message = e.detail.message;
-         type = e.detail.type || 'success';
-         show = true;
-         setTimeout(() =&gt; { show = false }, 5000);
-       });
-     " x-show="show" x-transition="">
+window.addEventListener('emailAction', (e) =&gt; {
+message = e.detail.message;
+type = e.detail.type || 'success';
+show = true;
+setTimeout(() =&gt; { show = false }, 5000);
+});
+" x-show="show" x-transition="">
 <div :class="'toast show bg-' + type + ' text-white'" aria-atomic="true" aria-live="assertive" role="alert">
 <div class="toast-header">
 <strong class="me-auto">{% trans "Notification" %}</strong>
@@ -125,34 +120,30 @@
 </div>
 </div>
 <script>
-  document.body.addEventListener('htmx:afterSwap', function(event) {
-    if (event.detail.xhr.status === 200) {
-      const responseText = event.detail.xhr.responseText;
-      
-      // Check for success messages
-      if (responseText.includes('verification e-mail sent') || 
-          responseText.includes('primary e-mail address set') ||
-          responseText.includes('e-mail address removed') ||
-          responseText.includes('e-mail address added')) {
-        
-        let message = '';
-        if (responseText.includes('verification e-mail sent')) {
-          message = '{% trans "Verification email has been sent!" %}';
-        } else if (responseText.includes('primary e-mail address set')) {
-          message = '{% trans "Primary email address has been updated!" %}';
-        } else if (responseText.includes('e-mail address removed')) {
-          message = '{% trans "Email address has been removed!" %}';
-        } else if (responseText.includes('e-mail address added')) {
-          message = '{% trans "New email address has been added!" %}';
-        }
-        
-        // Dispatch custom event for toast
-        window.dispatchEvent(new CustomEvent('emailAction', {
-          detail: { message, type: 'success' }
-        }));
-      }
-    }
-  });
+document.body.addEventListener('htmx:afterSwap', function(event) {
+if (event.detail.xhr.status === 200) {
+const responseText = event.detail.xhr.responseText;
+// Check for success messages
+if (responseText.includes('verification e-mail sent') ||
+responseText.includes('primary e-mail address set') ||
+responseText.includes('e-mail address removed') ||
+responseText.includes('e-mail address added')) {
+let message = '';
+if (responseText.includes('verification e-mail sent')) {
+message = '{% trans "Verification email has been sent!" %}';
+} else if (responseText.includes('primary e-mail address set')) {
+message = '{% trans "Primary email address has been updated!" %}';
+} else if (responseText.includes('e-mail address removed')) {
+message = '{% trans "Email address has been removed!" %}';
+} else if (responseText.includes('e-mail address added')) {
+message = '{% trans "New email address has been added!" %}';
+}
+// Dispatch custom event for toast
+window.dispatchEvent(new CustomEvent('emailAction', {
+detail: { message, type: 'success' }
+}));
+}
+}
+});
 </script>
 {% endblock %}
-

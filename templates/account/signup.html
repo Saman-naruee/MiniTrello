@@ -1,8 +1,7 @@
-{% load i18n %}
 {% extends 'base.html' %}
+{% load i18n %}
 {% load socialaccount %}
 {% block title %}MiniTrello - Sign Up - Register{% endblock %}
-
 {% block content %}
 <div class="row">
 <div class="col-md-6 offset-md-3">
@@ -12,54 +11,50 @@
 </div>
 <div class="card-body">
 <div x-data="{
-                    email: '',
-                    password1: '',
-                    password2: '',
-                    errors: {},
-                    loading: false,
-                    
-                    submitForm() {
-                        this.loading = true;
-                        this.errors = {};
-                        
-                        const formData = new FormData();
-                        formData.append('email', this.email);
-                        formData.append('password1', this.password1);
-                        formData.append('password2', this.password2);
-                        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
-                        
-                        fetch('{% url 'account_signup' %}', {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        })
-                        .then(response =&gt; {
-                            if (response.redirected) {
-                                window.location.href = response.url;
-                                return;
-                            }
-                            return response.json();
-                        })
-                        .then(data =&gt; {
-                            if (data &amp;&amp; data.form &amp;&amp; data.form.errors) {
-                                this.errors = data.form.errors;
-                            }
-                            this.loading = false;
-                        })
-                        .catch(error =&gt; {
-                            console.error('Error:', error);
-                            this.errors = {'__all__': ['An unexpected error occurred. Please try again.']};
-                            this.loading = false;
-                        });
-                    }
-                }">
+email: '',
+password1: '',
+password2: '',
+errors: {},
+loading: false,
+submitForm() {
+this.loading = true;
+this.errors = {};
+const formData = new FormData();
+formData.append('email', this.email);
+formData.append('password1', this.password1);
+formData.append('password2', this.password2);
+formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+fetch('{% url 'account_signup' %}', {
+method: 'POST',
+body: formData,
+headers: {
+'X-Requested-With': 'XMLHttpRequest'
+}
+})
+.then(response =&gt; {
+if (response.redirected) {
+window.location.href = response.url;
+return;
+}
+return response.json();
+})
+.then(data =&gt; {
+if (data &amp;&amp; data.form &amp;&amp; data.form.errors) {
+this.errors = data.form.errors;
+}
+this.loading = false;
+})
+.catch(error =&gt; {
+console.error('Error:', error);
+this.errors = {'__all__': ['An unexpected error occurred. Please try again.']};
+this.loading = false;
+});
+}
+}">
 {% trans "Registration Form with Alpine.js" %}
 <form @submit.prevent="submitForm">
-                        {% csrf_token %}
-                        
-                        <div class="mb-3">
+{% csrf_token %}
+<div class="mb-3">
 <label class="form-label" for="id_email">{% trans "Email:" %}</label>
 <input class="form-control" id="id_email" required="" type="email" x-model="email"/>
 <div class="text-danger mt-1" x-show="errors.email" x-text="errors.email"></div>

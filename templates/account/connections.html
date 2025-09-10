@@ -1,8 +1,7 @@
-{% load i18n %}
 {% extends "base.html" %}
+{% load i18n %}
 {% load socialaccount %}
 {% block title %}Account Connections{% endblock %}
-
 {% block content %}
 <div class="container py-4">
 <div class="row justify-content-center">
@@ -14,31 +13,29 @@
 </div>
 <div class="card-body">
 <p class="text-muted mb-4">{% trans "Connect your account with these services to enable easier login and access to additional features." %}</p>
-          
-          {% if form.accounts %}
-          <h3 class="h5 mb-3">{% trans "Connected Accounts" %}</h3>
+{% if form.accounts %}
+<h3 class="h5 mb-3">{% trans "Connected Accounts" %}</h3>
 <div class="list-group mb-4" id="connected-accounts">
-            {% for base_account in form.accounts %}
-            <div class="list-group-item d-flex justify-content-between align-items-center">
+{% for base_account in form.accounts %}
+<div class="list-group-item d-flex justify-content-between align-items-center">
 <div>
 <h4 class="h6 mb-1">{{ base_account.provider|title }}</h4>
 <p class="text-muted small mb-0">{% trans "Connected on {{ base_account.date_added|date:"M d, Y" }}" %}</p>
 </div>
 <form action="{% url 'socialaccount_connections' %}" hx-post="{% url 'socialaccount_connections' %}" hx-swap="outerHTML" hx-target="#connected-accounts" method="post">
-                {% csrf_token %}
-                <input name="account" type="hidden" value="{{ base_account.id }}"/>
+{% csrf_token %}
+<input name="account" type="hidden" value="{{ base_account.id }}"/>
 <button class="btn btn-sm btn-outline-danger" hx-confirm="Are you sure you want to disconnect this account?" name="action_remove" type="submit">
 <i class="fas fa-unlink me-1"></i>{% trans "Disconnect" %}</button>
 </form>
 </div>
-            {% endfor %}
-          </div>
-          {% endif %}
-          
-          <h3 class="h5 mb-3">{% trans "Available Connections" %}</h3>
+{% endfor %}
+</div>
+{% endif %}
+<h3 class="h5 mb-3">{% trans "Available Connections" %}</h3>
 <div class="row row-cols-1 row-cols-md-2 g-4">
-            {% for provider in socialaccount_providers %}
-            <div class="col">
+{% for provider in socialaccount_providers %}
+<div class="col">
 <div class="card h-100">
 <div class="card-body">
 <h4 class="card-title">{{ provider.name|title }}</h4>
@@ -48,8 +45,8 @@
 </div>
 </div>
 </div>
-            {% endfor %}
-          </div>
+{% endfor %}
+</div>
 </div>
 <div class="card-footer">
 <a class="btn btn-outline-secondary" href="{% url 'account_email' %}">
@@ -64,13 +61,13 @@
 </div>
 <!-- Toast for notifications -->
 <div @click="show = false" class="position-fixed bottom-0 end-0 p-3" style="z-index: 11; display: none;" x-data="{ show: false, message: '', type: 'success' }" x-init="
-       window.addEventListener('connectionAction', (e) =&gt; {
-         message = e.detail.message;
-         type = e.detail.type || 'success';
-         show = true;
-         setTimeout(() =&gt; { show = false }, 5000);
-       });
-     " x-show="show" x-transition="">
+window.addEventListener('connectionAction', (e) =&gt; {
+message = e.detail.message;
+type = e.detail.type || 'success';
+show = true;
+setTimeout(() =&gt; { show = false }, 5000);
+});
+" x-show="show" x-transition="">
 <div :class="'toast show bg-' + type + ' text-white'" aria-atomic="true" aria-live="assertive" role="alert">
 <div class="toast-header">
 <strong class="me-auto">Notification</strong>
@@ -80,16 +77,16 @@
 </div>
 </div>
 <script>
-  document.body.addEventListener('htmx:afterSwap', function(event) {
-    if (event.detail.xhr.status === 200) {
-      // Dispatch custom event for toast
-      window.dispatchEvent(new CustomEvent('connectionAction', {
-        detail: { 
-          message: 'Account connection has been removed!', 
-          type: 'success' 
-        }
-      }));
-    }
-  });
+document.body.addEventListener('htmx:afterSwap', function(event) {
+if (event.detail.xhr.status === 200) {
+// Dispatch custom event for toast
+window.dispatchEvent(new CustomEvent('connectionAction', {
+detail: {
+message: 'Account connection has been removed!',
+type: 'success'
+}
+}));
+}
+});
 </script>
 {% endblock %}

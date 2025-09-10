@@ -1,10 +1,7 @@
-{% load i18n %}
 {% extends 'base.html' %}
-
+{% load i18n %}
 {% block title %}MiniTrello - Home{% endblock %}
-
 {% block nav_home_active %}active{% endblock %}
-
 {% block content %}
 <div class="row">
 <div class="col-md-8">
@@ -14,12 +11,12 @@
 </div>
 <div class="card-body">
 <p class="card-text">{% trans "Manage your projects and tasks with our simple and intuitive interface." %}</p>
-                {% if user.is_authenticated %}
-                    <a class="btn btn-primary" href="{% url 'boards:boards_list' %}">{% trans "View My Boards" %}</a>
-                {% else %}
-                    <a class="btn btn-success" href="{% url 'account_signup' %}">{% trans "Get Started" %}</a>
-                {% endif %}
-            </div>
+{% if user.is_authenticated %}
+<a class="btn btn-primary" href="{% url 'boards:boards_list' %}">{% trans "View My Boards" %}</a>
+{% else %}
+<a class="btn btn-success" href="{% url 'account_signup' %}">{% trans "Get Started" %}</a>
+{% endif %}
+</div>
 </div>
 <div class="card">
 <div class="card-header">
@@ -53,24 +50,22 @@
 </div>
 </div>
 <div class="col-md-4">
-        {% if user.is_authenticated %}
-            <div class="profile-section">
+{% if user.is_authenticated %}
+<div class="profile-section">
 <h3>{% trans "Your Profile" %}</h3>
 <p><strong>Email:</strong> {{ user.email }}</p>
 <p><strong>Joined:</strong> {{ user.date_joined|date:"M d, Y" }}</p>
-                
-                {% if user.socialaccount_set.all %}
-                    <p><strong>Connected with:</strong> 
-                    {% for account in user.socialaccount_set.all %}
-                        {{ account.provider|title }}
-                    {% endfor %}
-                    </p>
-                {% endif %}
-                
-                <a class="btn btn-sm btn-outline-secondary" href="{% url 'profile' %}">{% trans "Edit Profile" %}</a>
+{% if user.socialaccount_set.all %}
+<p><strong>Connected with:</strong>
+{% for account in user.socialaccount_set.all %}
+{{ account.provider|title }}
+{% endfor %}
+</p>
+{% endif %}
+<a class="btn btn-sm btn-outline-secondary" href="{% url 'profile' %}">{% trans "Edit Profile" %}</a>
 </div>
-        {% else %}
-            <div class="card">
+{% else %}
+<div class="card">
 <div class="card-header">
 <h3>{% trans "Authentication" %}</h3>
 </div>
@@ -85,7 +80,7 @@
 </div>
 </div>
 </div>
-        {% endif %}
-    </div>
+{% endif %}
+</div>
 </div>
 {% endblock %}

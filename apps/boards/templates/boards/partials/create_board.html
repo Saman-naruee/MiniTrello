@@ -7,9 +7,9 @@
 <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
 </div>
 <form hx-post="{% url 'create_board' %}" hx-swap="beforeend" hx-target="#boards-container">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button class="btn btn-primary" type="submit">{% trans "Create Board" %}</button>
+{% csrf_token %}
+{{ form.as_p }}
+<button class="btn btn-primary" type="submit">{% trans "Create Board" %}</button>
 </form>
 </div>
 </div>
