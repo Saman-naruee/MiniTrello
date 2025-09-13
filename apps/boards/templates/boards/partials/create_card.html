@@ -14,7 +14,11 @@
         </div>
         {% endfor %}
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" 
+                    class="btn btn-secondary" 
+                    hx-get="{% url 'boards:board_detail' board_id %}"
+                    hx-target="body"
+                    hx-swap="outerHTML">Cancel</button>
             <button type="submit" class="btn btn-primary">Create Card</button>
         </div>
     </form>

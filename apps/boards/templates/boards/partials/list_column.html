@@ -39,6 +39,7 @@
                     </button>
                 </div>
             {% endfor %}
+            <div id="card-form-container-{{ list.id }}"></div> <!-- Add this container -->
         </div>
         
         <div class="card-footer bg-transparent p-2">
@@ -50,3 +51,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('htmx:afterSwap', function(evt) {
+        if (evt.detail.target.id.startsWith('card-form-container-')) {
+            const cancelButton = evt.detail.target.querySelector('button[type="button"]');
+            if (cancelButton) {
+                cancelButton.addEventListener('click', function() {
+                    const containerId = evt.detail.target.id;
+                    const container = document.getElementById(containerId);
+                    container.innerHTML = '';
+                });
+            }
+        }
+    });
+
+    document.addEventListener('cardFormShown', function() {
+        // You can add any additional logic here when the card form is shown
+    });
+</script>

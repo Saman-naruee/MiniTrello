@@ -337,11 +337,16 @@ class HTMXCardCreateView(LoginRequiredMixin, CreateView):
         board = get_user_board(self.kwargs['board_id'], self.request.user)
         form = self.form_class(board=board)
         custom_logger(f"HTMXCardCreateView.get called with args: {args}, kwargs: {kwargs}", Fore.YELLOW)
-        return render(request, self.template_name, {
+        response = render(request, self.template_name, {
             "form": form,
             "board_id": self.kwargs['board_id'],
             "list_id": self.kwargs['list_id']
         })
+
+        response.headers['HX-Trigger'] = 'cardFormShown'
+        response.headers['HX-Target'] = '#card-form-container-' + str(self.kwargs['list_id'])
+        response.headers['HX-Swap'] = 'innerHTML'
+        return response
 
     def form_valid(self, form):
         custom_logger(f"HTMXCardCreateView.form_valid entered.", Fore.GREEN)
