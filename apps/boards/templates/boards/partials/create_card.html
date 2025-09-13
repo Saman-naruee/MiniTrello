@@ -2,6 +2,10 @@
     <form hx-post="{% url 'boards:create_card' board_id list_id %}"
           hx-target="#cards-container-{{ list_id }}"
           hx-swap="beforeend"
+          hx-trigger="submit"
+          hx-on::after-request="setTimeout(() => {
+            htmx.ajax('GET', '{% url 'boards:board_detail' board_id %}', {target: 'body', swap: 'outerHTML'});
+          }, 3000)"
           class="p-3">
         {% csrf_token %}
         {% for field in form %}
