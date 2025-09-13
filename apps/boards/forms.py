@@ -57,3 +57,25 @@ class CardForm(forms.ModelForm):
         if due_date and due_date <= timezone.now().date():
             raise forms.ValidationError("Due date cannot be in the past or today")
         return due_date
+
+
+class MembershipForm(forms.ModelForm):
+
+
+    class Meta:
+        model = Membership
+        fields = ['user', 'role']
+        widgets = {
+            'user': forms.Select(attrs={'class': 'form-control'}),
+            'role': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.board = kwargs.pop('board', None)
+        super().__init__(*args, **kwargs)
+
+    def clean_user(self):
+        user = self.cleaned_data['user']
+        if self.board and Membership.objects.filter(board=self.board, user=user).exists():
+            raise forms.ValidationError("This user is already a member of this board.")
+        return user

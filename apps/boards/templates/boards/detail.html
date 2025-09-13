@@ -42,6 +42,11 @@
 {% endblock %}
 
 {% block content %}
+<a href="{% url 'boards:add_member' board_id=board.id %}" class="btn btn-success mb-3">
+    + Add Member
+</a>
+
+
 <!-- In your board detail page -->
 <button class="btn btn-danger" 
         hx-get="{% url 'boards:delete_board' board.id %}" 

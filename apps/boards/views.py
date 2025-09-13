@@ -13,6 +13,9 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
+
 from .models import Board, List, Card, Membership
 from custom_tools.logger import custom_logger
 from .forms import *
@@ -366,3 +369,31 @@ class HTMXCardDetailView(LoginRequiredMixin, DetailView):
 
     def get_object(self):
         return get_user_card(self.kwargs['card_id'], self.request.user)
+
+
+
+@login_required
+def add_member_to_board(request, board_id):
+    # Check current user have right acccess
+    board = get_user_board(board_id, request.user)
+
+    # can check the owner
+    # if board.owner != request.user:
+    #     messages.error(request, "You don't have permission to add members.")
+    #     return redirect('boards:board_detail', board_id=board.id)
+
+    if request.method == 'POST':
+
+        form = MembershipForm(request.POST, board=board)
+        if form.is_valid():
+            membership = form.save(commit=False)
+            membership.board = board
+            membership.invited_by = request.user # کاربری که دعوت کرده را مشخص می‌کنیم
+            membership.save()
+            
+            messages.success(request, f"{membership.user.username} was added to the board.")
+            return redirect('boards:board_detail', board_id=board.id)
+    else:
+        form = MembershipForm(board=board)
+        
+    return render(request, 'boards/add_member.html', {'form': form, 'board': board})

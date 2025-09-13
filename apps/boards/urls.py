@@ -5,7 +5,7 @@ from .views import (
     HTMXBoardCreateView, HTMXListCreateView, HTMXCardCreateView,
     HTMXBoardDeleteView, HTMXListDeleteView, HTMXCardDeleteView,
     HTMXCardUpdateView, HTMXBoardUpdateView, BoardMembersView,
-    HTMXListUpdateView, HTMXListDetailView,
+    HTMXListUpdateView, HTMXListDetailView, add_member_to_board
 )
 
 app_name = "boards"
@@ -22,6 +22,7 @@ urlpatterns = [
 
     # Board members
     path("<int:board_id>/members/", BoardMembersView.as_view(), name="board_members"),
+    path("<int:board_id>/members/add/", add_member_to_board, name="add_member"),
 
     # List operations (nested under boards)
     path("<int:board_id>/lists/create/", HTMXListCreateView.as_view(), name="create_list"),
