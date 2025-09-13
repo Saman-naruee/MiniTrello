@@ -20,7 +20,7 @@ class ListForm(forms.ModelForm):
 
     class Meta:
         model = List
-        fields = ["title", "order"]
+        fields = ["title"]
     
 
     def clean_title(self):
