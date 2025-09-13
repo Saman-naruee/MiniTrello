@@ -1,5 +1,5 @@
 from django import forms
-from .models import Board, List, Card, Membership
+from .models import Board, List, Card, Membership, Comment, MiniTask
 from django.utils import timezone
 
 
@@ -95,3 +95,13 @@ class MembershipForm(forms.ModelForm):
         if self.board and Membership.objects.filter(board=self.board, user=user).exists():
             raise forms.ValidationError("This user is already a member of this board.")
         return user
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+
+class MiniTaskForm(forms.ModelForm):
+    class Meta:
+        model = MiniTask
+        fields = ['text']

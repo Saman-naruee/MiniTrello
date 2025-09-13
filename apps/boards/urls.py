@@ -5,7 +5,8 @@ from .views import (
     HTMXBoardCreateView, HTMXListCreateView, HTMXCardCreateView,
     HTMXBoardDeleteView, HTMXListDeleteView, HTMXCardDeleteView,
     HTMXCardUpdateView, HTMXBoardUpdateView, BoardMembersView,
-    HTMXListUpdateView, HTMXListDetailView, add_member_to_board
+    HTMXListUpdateView, HTMXListDetailView, add_member_to_board,
+    add_comment_to_card, add_mini_task_to_card, toggle_mini_task
 )
 
 app_name = "boards"
@@ -36,6 +37,10 @@ urlpatterns = [
     path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/delete/", HTMXCardDeleteView.as_view(), name="delete_card"),
     path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/", HTMXCardDetailView.as_view(), name="card_detail"),
 
+    # Additional card operations
+    path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/add_comment/", add_comment_to_card, name="add_comment"),
+    path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/add_mini_task/", add_mini_task_to_card, name="add_mini_task"),
+    path("toggle_mini_task/", toggle_mini_task, name="toggle_mini_task"),
 ]
 
 

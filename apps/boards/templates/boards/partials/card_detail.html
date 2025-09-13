@@ -1,10 +1,72 @@
-<div class="card-detail">
-    <h3>{{ card.title }}</h3>
+<div class="modal-header">
+    <h5 class="modal-title" id="cardDetailModalLabel">{{ card.title }}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+    <h2>{{ card.title }}</h2>
     <p>{{ card.description }}</p>
-    {% if card.assignee %}
-        <p>Assigned to: {{ card.assignee.username }}</p>
-    {% endif %}
-    {% if card.due_date %}
-        <p>Due: {{ card.due_date }}</p>
-    {% endif %}
+    <h3>Comments:</h3>
+    <ul>
+        {% for comment in comments %}
+            <li>{{ comment.text }} ({{ comment.user.username }})</li>
+        {% endfor %}
+    </ul>
+    <form method="post" action="{% url 'boards:add_comment' card.id %}">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button type="submit">Add Comment</button>
+    </form>
+    <h3>Mini Tasks:</h3>
+    <ul>
+        {% for task in mini_tasks %}
+            <li>
+                <input type="checkbox" {% if task.is_completed %}checked{% endif %} onclick="toggleMiniTask({{ task.id }})">
+                {{ task.text }}
+            </li>
+        {% endfor %}
+    </ul>
+    <form method="post" action="{% url 'boards:add_mini_task' card.id %}">
+        {% csrf_token %}
+        {{ mini_task_form.as_p }}
+        <button type="submit">Add Mini Task</button>
+    </form>
+</div>
+
+<script>
+    function toggleMiniTask(taskId) {
+        // Send an AJAX request to toggle the mini task
+        fetch(`{% url 'boards:toggle_mini_task' %}`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ task_id: taskId })
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error(error));
+    }
+</script>
+
+
+
+
+
+
+<div class="card mb-2" 
+     hx-get="{% url 'boards:card_detail' board_id=board.id list_id=list.id card_id=card.id %}"
+     hx-target="#cardDetailModal .modal-content"
+     hx-trigger="click"
+     style="cursor: pointer;">
+    <div class="card-body">
+        <h5 class="card-title">{{ card.title }}</h5>
+        <p class="card-text">{{ card.description|truncatechars:100 }}</p>
+        {% if card.due_date %}
+        <p class="card-text"><small class="text-muted">Due: {{ card.due_date }}</small></p>
+        {% endif %}
+        {% if card.assignee %}
+        <p class="card-text"><small class="text-muted">Assigned to: {{ card.assignee.username }}</small></p>
+        {% endif %}
+    </div>
 </div>

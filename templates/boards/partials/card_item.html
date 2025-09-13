@@ -1,0 +1,16 @@
+<div class="card mb-2" 
+     hx-get="{% url 'boards:card_detail' board_id=board_id list_id=list_id card_id=card.id %}"
+     hx-target="#cardDetailModal .modal-content"
+     hx-trigger="click"
+     style="cursor: pointer;">
+    <div class="card-body">
+        <h5 class="card-title">{{ card.title }}</h5>
+        <p class="card-text">{{ card.description|truncatechars:100 }}</p>
+        {% if card.due_date %}
+        <p class="card-text"><small class="text-muted">Due: {{ card.due_date }}</small></p>
+        {% endif %}
+        {% if card.assignee %}
+        <p class="card-text"><small class="text-muted">Assigned to: {{ card.assignee.username }}</small></p>
+        {% endif %}
+    </div>
+</div>

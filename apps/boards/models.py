@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-
+from django.conf import settings
 
 class Board(models.Model):
     COLOR_CHOICES = [
@@ -183,3 +183,16 @@ class Membership(models.Model):
     def activate(self):
         self.is_active = True
         self.save(update_fields=["is_active", "updated_at"])
+
+
+class Comment(models.Model):
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    text = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+class MiniTask(models.Model):
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='mini_tasks')
+    text = models.CharField(max_length=255)
+    is_completed = models.BooleanField(default=False)

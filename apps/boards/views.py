@@ -402,11 +402,25 @@ class HTMXCardDetailView(LoginRequiredMixin, DetailView):
 
     model = Card
     template_name = "boards/partials/card_detail.html"
+    context_object_name = "card"
 
     def get_object(self):
         return get_user_card(self.kwargs['card_id'], self.request.user)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        card = self.get_object()
+        context.update({
+            'comments': card.comments.all(),
+            'mini_tasks': card.mini_tasks.all(),
+            'comment_form': CommentForm(),
+            'mini_task_form': MiniTaskForm()
+        })
+        return context
 
+    def get(self, request, *args, **kwargs):
+        custom_logger("/n/nHTMXCardDetailView.get called/n/n", Fore.YELLOW)
+        return super().get(request, *args, **kwargs)
 
 @login_required
 def add_member_to_board(request, board_id):
@@ -424,7 +438,7 @@ def add_member_to_board(request, board_id):
         if form.is_valid():
             membership = form.save(commit=False)
             membership.board = board
-            membership.invited_by = request.user # کاربری که دعوت کرده را مشخص می‌کنیم
+            membership.invited_by = request.user # invite the current user
             membership.save()
             
             messages.success(request, f"{membership.user.username} was added to the board.")
@@ -433,3 +447,35 @@ def add_member_to_board(request, board_id):
         form = MembershipForm(board=board)
         
     return render(request, 'boards/add_member.html', {'form': form, 'board': board})
+
+@login_required
+def add_comment_to_card(request, board_id, list_id, card_id):
+    card = get_user_card(card_id, request.user)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.card = card
+            comment.user = request.user
+            comment.save()
+            return redirect('boards:card_detail', board_id=board_id, list_id=list_id, card_id=card_id)
+
+@login_required
+def add_mini_task_to_card(request, board_id, list_id, card_id):
+    card = get_user_card(card_id, request.user)
+    if request.method == 'POST':
+        form = MiniTaskForm(request.POST)
+        if form.is_valid():
+            mini_task = form.save(commit=False)
+            mini_task.card = card
+            mini_task.save()
+            return redirect('boards:card_detail', board_id=board_id, list_id=list_id, card_id=card_id)
+
+@login_required
+def toggle_mini_task(request):
+    if request.method == 'POST':
+        task_id = request.POST.get('task_id')
+        mini_task = MiniTask.objects.get(id=task_id)
+        mini_task.is_completed = not mini_task.is_completed
+        mini_task.save()
+        return JsonResponse({'success': True})
