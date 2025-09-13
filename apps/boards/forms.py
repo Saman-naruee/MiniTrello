@@ -44,7 +44,23 @@ class CardForm(forms.ModelForm):
             'priority': forms.Select(attrs={'class': 'form-control'}),
             'assignee': forms.Select(attrs={'class': 'form-control'}),
         }
-    
+
+    def __init__(self, *args, **kwargs):
+        self.board = kwargs.pop('board', None)
+        super().__init__(*args, **kwargs)
+        if self.board:
+            # Filter assignee choices to only show board members
+            members = self.board.memberships.select_related('user').values_list('user', flat=True)
+            self.fields['assignee'].queryset = self.fields['assignee'].queryset.filter(id__in=members)
+
+    def clean_assignee(self):
+        assignee = self.cleaned_data.get('assignee')
+        if assignee and self.board:
+            # Verify the assigned user is a board member
+            is_member = self.board.memberships.filter(user=assignee).exists()
+            if not is_member:
+                raise forms.ValidationError("Assignee must be a member of this board")
+        return assignee
 
     def clean_title(self):
         title = self.cleaned_data["title"] = self.cleaned_data["title"].strip()

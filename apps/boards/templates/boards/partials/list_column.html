@@ -43,7 +43,8 @@
         
         <div class="card-footer bg-transparent p-2">
             <button class="btn btn-outline-primary btn-sm w-100" 
-                    @click="addCardToList({{ list.id }})">
+                    @click="addCardToList({{ list.id }})"
+                    :disabled="isLoading">
                 <i class="fas fa-plus me-1"></i>Add Card
             </button>
         </div>

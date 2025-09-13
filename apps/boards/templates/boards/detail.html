@@ -67,6 +67,21 @@
 </div>
 
 <div class="container-fluid p-0" x-data="boardApp()">
+    <!-- Add this modal container at the top of your board content -->
+    <div class="modal fade" id="addCardModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Card</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div id="create-card-form-container">
+                    <!-- Form will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Board Header -->
     <div class="board-header p-3 mb-3">
         <div class="container-fluid">
@@ -192,26 +207,6 @@
         </div>
     </div>
 
-    <!-- Add Card Modal -->
-    <div class="modal fade" 
-         id="addCardModal" {# Add an ID for Bootstrap to target #}
-         tabindex="-1" 
-         aria-labelledby="addCardModalLabel" {# Add for accessibility #}
-         aria-hidden="true"
-    >
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addCardModalLabel">Add New Card</h5> {# Add an ID for accessibility #}
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="create-card-form-container">
-                    <!-- HTMX will load the form here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Edit Card Modal -->
     <div class="modal fade" 
          x-show="showEditCardModal" 
@@ -313,16 +308,26 @@ function boardApp() {
         
         // Show add card modal for specific list
         addCardToList(listId, boardId) {
-            this.selectedListId = listId;
-            // Open the Bootstrap modal first
+            console.log('Add card clicked', listId);
+            if (this.isLoading) {
+                console.log('Already loading, preventing duplicate request');
+                return;
+            }
+            this.isLoading = true;
+            
+            // Get the modal element
             const addCardModal = new bootstrap.Modal(document.getElementById('addCardModal'));
-            addCardModal.show();
 
-            // Then, trigger an HTMX GET to load the form into the modal
+            // Load the form via HTMX
             htmx.ajax('GET', `/boards/${boardId}/lists/${listId}/cards/create/`, {
-                target: `#create-card-form-container`,
+                target: '#create-card-form-container',
                 swap: 'innerHTML',
+                handler: function(evt) {
+                    // Show the modal after the form is loaded
+                    addCardModal.show();
+                }
             });
+        },
         },
         
         // Show edit card modal
@@ -336,23 +341,17 @@ function boardApp() {
     }
 }
 
-// HTMX event listener to close the Add List Modal on successful list creation
+// Remove any existing event listeners for htmx:afterSwap
 document.body.addEventListener('htmx:afterSwap', function(evt) {
-    if (evt.detail.target.id === 'lists-container' && evt.detail.xhr.status === 200 && evt.detail.requestHeaders['HX-Trigger'] === 'listCreated') {
-        const addListModal = new bootstrap.Modal(document.getElementById('addListModal'));
-        addListModal.hide();
+    if (evt.detail.target.id.startsWith('cards-container-') && 
+        evt.detail.xhr.status === 200 && 
+        evt.detail.xhr.headers['HX-Trigger'] === 'cardCreated') {
+        
+        const modal = bootstrap.Modal.getInstance(document.getElementById('addCardModal'));
+        if (modal) {
+            modal.hide();
+        }
     }
-});
-
-// HTMX event listener to close the Add Card Modal on successful card creation
-document.body.addEventListener('htmx:afterSwap', function(evt) {
-    // Check if the swap was for a new card and was successful
-    // We're targeting #cards-container-${selectedListId} for successful card additions
-    // and expecting an HX-Trigger 'cardCreated' from the server.
-    if (evt.detail.target.closest('[id^="cards-container-"]') && evt.detail.xhr.status === 200 && evt.detail.requestHeaders['HX-Trigger'] === 'cardCreated') {
-        const addCardModal = new bootstrap.Modal(document.getElementById('addCardModal'));
-        addCardModal.hide();
-    }
-});
+}, { once: true }); // Add this option to ensure the listener is only added once
 </script>
 {% endblock %}

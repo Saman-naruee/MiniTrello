@@ -312,36 +312,49 @@ class HTMXCardDeleteView(LoginRequiredMixin, DeleteView):
 class HTMXCardCreateView(LoginRequiredMixin, CreateView):
     """Create a new card via HTMX"""
     model = Card
-    template_name = "boards/partials/create_card.html"  # Assuming this template exists or will be created
-    # fields = ["title", "description", "priority", "due_date", "order", "assignee"]
     form_class = CardForm
-    success_url = reverse_lazy("boards_list")
+    template_name = "boards/partials/create_card.html"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        board = get_user_board(self.kwargs['board_id'], self.request.user)
+        kwargs['board'] = board
+        return kwargs
 
     def get(self, request, *args, **kwargs):
-        form = self.form_class()
-        return render(request,
-            self.template_name, {
-                "form": form,
-                "board_id": self.kwargs['board_id'],
-                "list_id": self.kwargs['list_id']
-            })
-
-    def form_invalid(self, form):
-        return render(self.request, self.template_name, {"form": form, "board_id": self.kwargs['board_id'], "list_id": self.kwargs['list_id']}, status=400)
+        board = get_user_board(self.kwargs['board_id'], self.request.user)
+        form = self.form_class(board=board)
+        return render(request, self.template_name, {
+            "form": form,
+            "board_id": self.kwargs['board_id'],
+            "list_id": self.kwargs['list_id']
+        })
 
     def form_valid(self, form):
         board = get_user_board(self.kwargs['board_id'], self.request.user)
         card_list = get_user_list(self.kwargs['list_id'], self.request.user)
-
+        
         card = form.save(commit=False)
         card.list = card_list
-
-        last_card = Card.objects.filter(list=card_list).order_by('-order').first()
-        card.order = last_card.order + 1 if last_card else 1
+        card.order = get_next_order(Card, {"list": card_list})
         card.save()
-        response = render_partial_response("boards/partials/card_item.html", {"card": card})
-        response['HX-Trigger'] = 'cardCreated'
+
+        response = HttpResponse(
+            render_to_string("boards/partials/card_item.html", {
+                "card": card,
+                "board_id": board.id,
+                "list_id": card_list.id
+            })
+        )
+        response.headers['HX-Trigger'] = 'cardCreated'
         return response
+
+    def form_invalid(self, form):
+        return render(self.request, self.template_name, {
+            "form": form,
+            "board_id": self.kwargs['board_id'],
+            "list_id": self.kwargs['list_id']
+        }, status=400)
 
 
 class HTMXCardUpdateView(LoginRequiredMixin, View):
