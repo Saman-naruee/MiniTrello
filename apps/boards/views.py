@@ -63,13 +63,16 @@ def get_board_lists(board):
     return lists
 
 
-def get_user_list(list_id, user):
-    """Get a specific list for a user with permission check"""
+def get_user_list(list_id, user, board):
+    """Get a specific list for a user with permission check, ensuring it belongs to the given board"""
+    custom_logger(f"get_user_list called with list_id: {list_id}, user: {user.email}, board_id: {board.id}", Fore.MAGENTA)
+    custom_logger(f"Attempting to retrieve List with id={list_id}, board={board.id}, and user {user.email} as active member.", Fore.MAGENTA)
     return get_object_or_404(
-        List, 
-        id=list_id, 
-        board__memberships__user=user, 
-        board__memberships__is_active=True
+        List,
+        id=list_id,
+        board=board, # Explicitly filter by the board object
+        # board__memberships__user=user,
+        # board__memberships__is_active=True
     )
 
 
@@ -159,7 +162,7 @@ class HTMXBoardCreateView(LoginRequiredMixin, CreateView):
         board.save()
         
         # Create owner membership
-        Membership.objects.create(
+        membership = Membership.objects.create(
             user=self.request.user,
             board=board,
             role=Membership.ROLE_OWNER,
@@ -167,6 +170,8 @@ class HTMXBoardCreateView(LoginRequiredMixin, CreateView):
             can_comment=True,
             can_invite=True,
         )
+
+        custom_logger(f"membership created for user {self.request.user.username}, membership: {membership}")
 
         response = render_partial_response("boards/partials/board_card.html", {"board": board})
         response['HX-Trigger'] = 'boardCreated'
@@ -268,7 +273,8 @@ class HTMXListUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ListForm
 
     def get_object(self):
-        return get_user_list(self.kwargs['list_id'], self.request.user)
+        board = get_user_board(self.kwargs['board_id'], self.request.user)
+        return get_user_list(self.kwargs['list_id'], self.request.user, board)
 
     def post(self, request, *args, **kwargs):
         list_obj = self.get_object()
@@ -286,14 +292,16 @@ class HTMXListDetailView(LoginRequiredMixin, DetailView):
     template_name = "boards/partials/list_detail.html"
 
     def get_object(self):
-        return get_user_list(self.kwargs['list_id'], self.request.user)
+        board = get_user_board(self.kwargs['board_id'], self.request.user)
+        return get_user_list(self.kwargs['list_id'], self.request.user, board)
 
 
 class HTMXListDeleteView(LoginRequiredMixin, View):
     """Delete a list via HTMX"""
     
     def delete(self, request, board_id, list_id):
-        list_obj = get_user_list(list_id, request.user)
+        board = get_user_board(board_id, request.user)
+        list_obj = get_user_list(list_id, request.user, board)
         if list_obj.board.id != board_id:
             raise Http404("List not found")
         list_obj.delete()
@@ -336,12 +344,14 @@ class HTMXCardCreateView(LoginRequiredMixin, CreateView):
         })
 
     def form_valid(self, form):
+        custom_logger(f"HTMXCardCreateView.form_valid entered.", Fore.GREEN)
         board = get_user_board(self.kwargs['board_id'], self.request.user)
-        card_list = get_user_list(self.kwargs['list_id'], self.request.user)
+        card_list = get_user_list(self.kwargs['list_id'], self.request.user, board)
         
         card = form.save(commit=False)
         card.list = card_list
         card.order = get_next_order(Card, {"list": card_list})
+        custom_logger(f"Card object before save: {card.__dict__}", Fore.CYAN)
         card.save()
 
         custom_logger(f"Card '{card.title}' created in list '{card_list.title}' on board '{board.title}' by user '{self.request.user}'")
@@ -357,7 +367,7 @@ class HTMXCardCreateView(LoginRequiredMixin, CreateView):
         return response
 
     def form_invalid(self, form):
-        custom_logger(f"HTMXCardCreateView.form_invalid called with form: {form}", Fore.YELLOW)
+        custom_logger(f"HTMXCardCreateView.form_invalid called with form errors: {form.errors}", Fore.RED)
         return render(self.request, self.template_name, {
             "form": form,
             "board_id": self.kwargs['board_id'],
