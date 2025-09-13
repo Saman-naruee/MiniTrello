@@ -31,13 +31,19 @@ class ListForm(forms.ModelForm):
 
 class CardForm(forms.ModelForm):
     due_date = forms.DateField(
-        widget=forms.DateInput(attrs={'type': 'date'}),
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         required=False
     )
 
     class Meta:
         model = Card
-        fields = ["title", "description", "priority", "due_date", "order", "assignee"]
+        fields = ["title", "description", "priority", "due_date", "assignee"]
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'priority': forms.Select(attrs={'class': 'form-control'}),
+            'assignee': forms.Select(attrs={'class': 'form-control'}),
+        }
     
 
     def clean_title(self):

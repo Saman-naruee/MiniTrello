@@ -310,12 +310,18 @@ class HTMXCardCreateView(LoginRequiredMixin, CreateView):
     """Create a new card via HTMX"""
     model = Card
     template_name = "boards/partials/create_card.html"  # Assuming this template exists or will be created
-    fields = ["title", "description", "priority", "due_date", "order", "assignee"]
+    # fields = ["title", "description", "priority", "due_date", "order", "assignee"]
+    form_class = CardForm
     success_url = reverse_lazy("boards_list")
 
     def get(self, request, *args, **kwargs):
         form = self.form_class()
-        return render(request, self.template_name, {"form": form, "board_id": self.kwargs['board_id'], "list_id": self.kwargs['list_id']})
+        return render(request,
+            self.template_name, {
+                "form": form,
+                "board_id": self.kwargs['board_id'],
+                "list_id": self.kwargs['list_id']
+            })
 
     def form_invalid(self, form):
         return render(self.request, self.template_name, {"form": form, "board_id": self.kwargs['board_id'], "list_id": self.kwargs['list_id']}, status=400)
