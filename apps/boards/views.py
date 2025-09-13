@@ -19,6 +19,9 @@ from django.contrib.auth.decorators import login_required
 from .models import Board, List, Card, Membership
 from custom_tools.logger import custom_logger
 from .forms import *
+from colorama import Fore
+
+
 
 # Helper functions to avoid repetition
 def get_user_boards(user):
@@ -319,11 +322,13 @@ class HTMXCardCreateView(LoginRequiredMixin, CreateView):
         kwargs = super().get_form_kwargs()
         board = get_user_board(self.kwargs['board_id'], self.request.user)
         kwargs['board'] = board
+        custom_logger(f"HTMXCardCreateView.get_form_kwargs called with kwargs: {kwargs}", Fore.YELLOW)
         return kwargs
 
     def get(self, request, *args, **kwargs):
         board = get_user_board(self.kwargs['board_id'], self.request.user)
         form = self.form_class(board=board)
+        custom_logger(f"HTMXCardCreateView.get called with args: {args}, kwargs: {kwargs}", Fore.YELLOW)
         return render(request, self.template_name, {
             "form": form,
             "board_id": self.kwargs['board_id'],
@@ -339,6 +344,8 @@ class HTMXCardCreateView(LoginRequiredMixin, CreateView):
         card.order = get_next_order(Card, {"list": card_list})
         card.save()
 
+        custom_logger(f"Card '{card.title}' created in list '{card_list.title}' on board '{board.title}' by user '{self.request.user}'")
+
         response = HttpResponse(
             render_to_string("boards/partials/card_item.html", {
                 "card": card,
@@ -350,6 +357,7 @@ class HTMXCardCreateView(LoginRequiredMixin, CreateView):
         return response
 
     def form_invalid(self, form):
+        custom_logger(f"HTMXCardCreateView.form_invalid called with form: {form}", Fore.YELLOW)
         return render(self.request, self.template_name, {
             "form": form,
             "board_id": self.kwargs['board_id'],
