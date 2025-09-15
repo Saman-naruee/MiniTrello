@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -228,14 +229,31 @@ class HTMXBoardUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         board = form.save()
-        custom_logger(f"[BoardUpdate] Board updated → {board}")
+        custom_logger(f"[BoardUpdate] Board updated to {board.title}")
+
+        # currently, this condition is true
         if self.request.htmx:
-            return render(self.request, "boards/partials/board_card.html", {"board": board})
+            # render the updated title section
+            updated_title_partial = render_to_string("boards/partials/board_title_section.html", {"board": board})
+            
+            # construct the response
+            response = HttpResponse(updated_title_partial)
+            
+            # set a trigger with a success message to display to the user
+            trigger_data = {
+                "boardUpdated": True, # to trigger the modal
+                "showMessage": f"Board '{board.title}' updated successfully!" # to display to the user
+            }
+            response['HX-Trigger'] = json.dumps(trigger_data)
+            
+            return response
+            
         return redirect(self.get_success_url())
 
     def form_invalid(self, form):
         custom_logger("[BoardUpdate] Form invalid")
         return render(self.request, self.template_name, {"form": form, "board": self.get_object()})
+
 
 class BoardMembersView(LoginRequiredMixin, DetailView):
     """View and manage board members"""
