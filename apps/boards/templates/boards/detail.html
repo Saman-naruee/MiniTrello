@@ -57,6 +57,15 @@
     Delete Board
 </button>
 
+<button class="btn btn-warning"
+        hx-get="{% url 'boards:update_board' board.id %}"
+        hx-target="#update-board-form-{{ board.id }}"
+        hx-swap="innerHTML"
+        data-bs-toggle="modal"
+        data-bs-target="#updateBoardModal">
+    Update Board
+</button>
+
 <!-- Add this modal container -->
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
@@ -308,7 +317,14 @@
                           hx-swap="outerHTML">
                         {% csrf_token %}
                         {{ update_board_form.as_p }}
-                        <button type="submit" class="btn btn-primary">Update Board</button>
+                        <button class="btn btn-warning"
+                                hx-get="{% url 'boards:update_board' board.id %}"
+                                hx-target="#update-board-form-{{ board.id }}"
+                                hx-swap="innerHTML"
+                                data-bs-toggle="modal"
+                                data-bs-target="#updateBoardModal">
+                            Update Board
+                        </button>
                     </form>
                 </div>
             </div>

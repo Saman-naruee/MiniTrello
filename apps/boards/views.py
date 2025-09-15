@@ -215,8 +215,7 @@ class HTMXBoardDeleteView(LoginRequiredMixin, DeleteView):
         return HttpResponseRedirect(success_url)
 
 class HTMXBoardUpdateView(LoginRequiredMixin, UpdateView):
-    """Update a board via HTMX"""
-
+    """Update a board via HTMX inside a modal"""
     model = Board
     template_name = "boards/partials/update_board.html"
     form_class = BoardForm
@@ -224,19 +223,19 @@ class HTMXBoardUpdateView(LoginRequiredMixin, UpdateView):
     def get_object(self):
         return get_user_board(self.kwargs['board_id'], self.request.user)
 
-    def get(self, request, *args, **kwargs):
-        board = self.get_object()
-        form = self.form_class(instance=board)
-        return render(request, self.template_name, {"form": form, "board": board})
+    def get_success_url(self):
+        return reverse_lazy("boards:board_detail", kwargs={"board_id": self.object.id})
 
-    def post(self, request, *args, **kwargs):
-        board = self.get_object()
-        form = self.form_class(request.POST, instance=board)
-        if form.is_valid():
-            form.save()
-            return render_partial_response("boards/partials/board_card.html", {"board": board})
-        return render_partial_response("boards/partials/update_board.html", {"form": form, "board": board})
+    def form_valid(self, form):
+        board = form.save()
+        custom_logger(f"[BoardUpdate] Board updated → {board}")
+        if self.request.htmx:
+            return render(self.request, "boards/partials/board_card.html", {"board": board})
+        return redirect(self.get_success_url())
 
+    def form_invalid(self, form):
+        custom_logger("[BoardUpdate] Form invalid")
+        return render(self.request, self.template_name, {"form": form, "board": self.get_object()})
 
 class BoardMembersView(LoginRequiredMixin, DetailView):
     """View and manage board members"""
