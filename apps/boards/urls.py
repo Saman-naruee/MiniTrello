@@ -32,8 +32,8 @@ urlpatterns = [
 
     # Card operations (nested under lists)
     path("<int:board_id>/lists/<int:list_id>/cards/create/", HTMXCardCreateView.as_view(), name="create_card"),
-    path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/update/", HTMXCardUpdateView.as_view(), name="update_card"),
-    path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/delete/", HTMXCardDeleteView.as_view(), name="delete_card"),
+    path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/update/", HTMXCardUpdateView.as_view(), name="card_update"),
+    path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/delete/", HTMXCardDeleteView.as_view(), name="card_delete"),
     path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/", HTMXCardDetailView.as_view(), name="card_detail"),
 
 ]

@@ -391,18 +391,30 @@ class HTMXCardCreateView(LoginRequiredMixin, CreateView):
 class HTMXCardUpdateView(LoginRequiredMixin, View):
     """Update a card via HTMX"""
     
+    def get(self, request, board_id, list_id, card_id):
+        card = get_user_card(card_id, request.user)
+        form = CardForm(instance=card, board=card.list.board)
+        context = {
+            "form": form,
+            "card": card,
+            "board": card.list.board,
+            "list_id": list_id
+        }
+        return render(request, "boards/card_update.html", context)
+
     def post(self, request, board_id, list_id, card_id):
         card = get_user_card(card_id, request.user)
-        form = CardForm(request.POST or None, instance=card)
+        form = CardForm(request.POST, instance=card)
         if form.is_valid():
             form.save()
-            return render_partial_response(
-                "boards/partials/card_item.html",
-                {"card": card, "list": card.list}
-            )
-        else:
-            # Re-render the form with errors
-            return render(request, "boards/partials/card_item.html", {"form": form, "card": card, "list": card.list}, status=400)
+            messages.success(request, "Card updated successfully")
+            return redirect("boards:card_detail", board_id=board_id, list_id=list_id, card_id=card_id)
+        
+        return render(request,
+            "boards/card_update.html",
+            {"form": form, "card": card, "board": card.list.board, "list_id": list_id},
+            status=400
+        )    
 
 
 class HTMXCardDetailView(LoginRequiredMixin, DetailView):
