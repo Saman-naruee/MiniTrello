@@ -39,7 +39,7 @@ class CardAdmin(admin.ModelAdmin):
     list_display = ('title', 'list', 'priority', 'due_date', 'order', 'created_at', 'updated_at')
     list_filter = ('list', 'priority', 'due_date', 'created_at', 'updated_at')
     search_fields = ('title', 'description')
-    raw_id_fields = ('list', 'assignee')
+    raw_id_fields = ('list', 'assignees')
     date_hierarchy = 'created_at'
     ordering = ('list', 'priority', 'order')
 

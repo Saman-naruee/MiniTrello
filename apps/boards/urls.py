@@ -5,7 +5,8 @@ from .views import (
     HTMXBoardCreateView, HTMXListCreateView, HTMXCardCreateView,
     HTMXBoardDeleteView, HTMXListDeleteView, HTMXCardDeleteView,
     HTMXCardUpdateView, HTMXBoardUpdateView, BoardMembersView,
-    HTMXListUpdateView, HTMXListDetailView, add_member_to_board
+    HTMXListUpdateView, HTMXListDetailView, add_member_to_board,
+    HTMXCardAssignMembersView
 )
 
 app_name = "boards"
@@ -35,6 +36,9 @@ urlpatterns = [
     path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/update/", HTMXCardUpdateView.as_view(), name="card_update"),
     path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/delete/", HTMXCardDeleteView.as_view(), name="card_delete"),
     path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/", HTMXCardDetailView.as_view(), name="card_detail"),
+
+    # HTMX endpoints
+    path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/assign/", HTMXCardAssignMembersView.as_view(), name="card_assign_members"),
 
 ]
 

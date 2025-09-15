@@ -1,6 +1,7 @@
 from django import forms
 from .models import Board, List, Card, Membership
 from django.utils import timezone
+from apps.accounts.models import User
 
 
 class BoardForm(forms.ModelForm):
@@ -30,6 +31,11 @@ class ListForm(forms.ModelForm):
         return title
 
 class CardForm(forms.ModelForm):
+    assignees = forms.ModelMultipleChoiceField(
+        queryset=User.objects.none(),
+        widget=forms.SelectMultiple(attrs={'class': 'form-control'}),
+        required=False,
+    )
     due_date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         required=False
@@ -37,12 +43,11 @@ class CardForm(forms.ModelForm):
 
     class Meta:
         model = Card
-        fields = ["title", "description", "priority", "due_date", "assignee"]
+        fields = ["title", "description", "priority", "due_date", "assignees"]
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'priority': forms.Select(attrs={'class': 'form-control'}),
-            'assignee': forms.Select(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -50,17 +55,18 @@ class CardForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if self.board:
             # Filter assignee choices to only show board members
-            members = self.board.memberships.select_related('user').values_list('user', flat=True)
-            self.fields['assignee'].queryset = self.fields['assignee'].queryset.filter(id__in=members)
+            members = self.board.memberships.select_related('user').all()
+            self.fields['assignees'].queryset = User.objects.filter(id__in=[m.user.id for m in members])
 
-    def clean_assignee(self):
-        assignee = self.cleaned_data.get('assignee')
-        if assignee and self.board:
-            # Verify the assigned user is a board member
-            is_member = self.board.memberships.filter(user=assignee).exists()
-            if not is_member:
-                raise forms.ValidationError("Assignee must be a member of this board")
-        return assignee
+    def clean_assignees(self):
+        assignees = self.cleaned_data.get('assignees')
+        if assignees and self.board:
+            # Verify all assigned users are board members
+            for assignee in assignees:
+                is_member = self.board.memberships.filter(user=assignee).exists()
+                if not is_member:
+                    raise forms.ValidationError(f"{assignee} must be a member of this board")
+        return assignees
 
     def clean_title(self):
         title = self.cleaned_data["title"] = self.cleaned_data["title"].strip()

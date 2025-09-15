@@ -6,6 +6,23 @@
     <h2>{{ card.title }}</h2>
     <p>{{ card.description }}</p>
     <p>Priority: {{ card.get_priority_display }}</p>
+    <p>Assignees:</p>
+    <ul>
+        {% for assignee in card.assignees.all %}
+            <li>{{ assignee.username }}</li>
+        {% empty %}
+            <li>No assignees</li>
+        {% endfor %}
+    </ul>
+    <form action="{% url 'boards:card_assign_members' board.id list.id card.id %}" method="post">
+        {% csrf_token %}
+        <select name="member_ids" multiple>
+            {% for member in board.memberships.all %}
+                <option value="{{ member.user.id }}">{{ member.user.username }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary">Assign Members</button>
+    </form>
     <a href="{% url 'boards:card_update' board_id=board.id list_id=list.id card_id=card.id %}" class="btn btn-primary">Update Card</a>
     <a href="{% url 'boards:board_detail' board_id=board.id %}" class="btn btn-secondary">Back to Board</a>
 {% endblock %}

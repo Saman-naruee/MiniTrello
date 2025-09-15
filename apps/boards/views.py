@@ -17,6 +17,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 
 from .models import Board, List, Card, Membership
+from apps.accounts.models import User
 from custom_tools.logger import custom_logger
 from .forms import *
 from colorama import Fore
@@ -54,7 +55,7 @@ def get_board_lists(board):
         .prefetch_related(
             Prefetch(
                 'cards',
-                queryset=Card.objects.select_related("assignee").order_by("priority", "order"),
+                queryset=Card.objects.prefetch_related("assignees").order_by("priority", "order"),
                 to_attr='prefetched_cards'
             )
         )
@@ -437,6 +438,32 @@ class HTMXCardDetailView(LoginRequiredMixin, DetailView):
         context["list"] = card.list
         context["board"] = card.list.board
         return context
+
+
+
+class HTMXCardAssignMembersView(LoginRequiredMixin, View):
+    """Assign multiple members to a card via HTMX"""
+
+    def post(self, request, board_id, list_id, card_id):
+        card = get_user_card(card_id, request.user)
+        member_ids = request.POST.getlist('member_ids')
+
+        # Validate member_ids
+        valid_members = card.list.board.memberships.filter(user_id__in=member_ids).values_list('user_id', flat=True)
+        invalid_members = set(member_ids) - set(map(str, valid_members))
+
+        if invalid_members:
+            messages.error(request, f"Invalid member(s) selected: {', '.join(invalid_members)}")
+            return redirect("boards:card_detail", board_id=board_id, list_id=list_id, card_id=card_id)
+
+        # Assign members to the card
+        card.assignees.clear()
+        for member_id in member_ids:
+            card.assignees.add(User.objects.get(id=member_id))
+
+        messages.success(request, "Members assigned to the card successfully")
+        return redirect("boards:card_detail", board_id=board_id, list_id=list_id, card_id=card_id)
+
 
 
 

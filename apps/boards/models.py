@@ -58,11 +58,10 @@ class Card(models.Model):
 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    assignee = models.ForeignKey(
+    assignees = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        null=True, blank=True,
-        on_delete=models.SET_NULL,
-        help_text="User assigned to this card."
+        blank=True,
+        help_text="Users assigned to this card."
     )
 
     list = models.ForeignKey('List', on_delete=models.CASCADE, related_name="cards")
