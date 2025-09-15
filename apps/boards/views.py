@@ -413,7 +413,16 @@ class HTMXCardDetailView(LoginRequiredMixin, DetailView):
     context_object_name = "card"
 
     def get_object(self, queryset=None):
-        return get_user_card(self.kwargs['card_id'], self.request.user)
+        card_id = self.kwargs.get("card_id")
+        return get_user_card(card_id, self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        card = self.object
+        context["card"] = card
+        context["list"] = card.list
+        context["board"] = card.list.board
+        return context
 
 
 
