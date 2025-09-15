@@ -162,6 +162,7 @@ class HTMXBoardCreateView(LoginRequiredMixin, CreateView):
         
         if user_boards_count >= max_boards:
             form.add_error(None, "Board limit reached")
+            messages.error(self.request, "Board limit reached")
             return self.form_invalid(form)
 
         # Create board
