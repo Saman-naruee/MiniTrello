@@ -19,6 +19,10 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 from django.views.i18n import set_language
+from apps.boards.views import custom_404
+
+
+handler404 = custom_404
 
 urlpatterns = [
     path('admin/', admin.site.urls),

@@ -454,7 +454,7 @@ def add_member_to_board(request, board_id):
         if form.is_valid():
             membership = form.save(commit=False)
             membership.board = board
-            membership.invited_by = request.user # کاربری که دعوت کرده را مشخص می‌کنیم
+            membership.invited_by = request.user
             membership.save()
             
             messages.success(request, f"{membership.user.username} was added to the board.")
@@ -463,3 +463,7 @@ def add_member_to_board(request, board_id):
         form = MembershipForm(board=board)
         
     return render(request, 'boards/add_member.html', {'form': form, 'board': board})
+
+
+def custom_404(request, exception):
+    return render(request, '404.html', status=404)
