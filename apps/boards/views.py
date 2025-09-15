@@ -139,6 +139,7 @@ class BoardDetailView(LoginRequiredMixin, DetailView):
         # context['cards_by_list'] is no longer needed as cards are attached to each list object
         context['board'] = board
         context['board_id'] = board.id
+        context['update_board_form'] = BoardForm(instance=self.get_object())
         return context
 
 
@@ -215,7 +216,7 @@ class HTMXBoardDeleteView(LoginRequiredMixin, DeleteView):
 
 class HTMXBoardUpdateView(LoginRequiredMixin, UpdateView):
     """Update a board via HTMX"""
-    
+
     model = Board
     template_name = "boards/partials/update_board.html"
     form_class = BoardForm
@@ -223,9 +224,14 @@ class HTMXBoardUpdateView(LoginRequiredMixin, UpdateView):
     def get_object(self):
         return get_user_board(self.kwargs['board_id'], self.request.user)
 
+    def get(self, request, *args, **kwargs):
+        board = self.get_object()
+        form = self.form_class(instance=board)
+        return render(request, self.template_name, {"form": form, "board": board})
+
     def post(self, request, *args, **kwargs):
         board = self.get_object()
-        form = self.get_form()
+        form = self.form_class(request.POST, instance=board)
         if form.is_valid():
             form.save()
             return render_partial_response("boards/partials/board_card.html", {"board": board})

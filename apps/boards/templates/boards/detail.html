@@ -293,6 +293,27 @@
             </div>
         </div>
     </div>
+
+    <!-- Update Board Modal -->
+    <div class="modal fade" id="updateBoardModal" tabindex="-1" aria-labelledby="updateBoardModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="updateBoardModalLabel">Update Board</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form hx-post="{% url 'boards:update_board' board.id %}" 
+                          hx-target="#boards-container"
+                          hx-swap="outerHTML">
+                        {% csrf_token %}
+                        {{ update_board_form.as_p }}
+                        <button type="submit" class="btn btn-primary">Update Board</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>

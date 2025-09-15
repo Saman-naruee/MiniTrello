@@ -1,48 +1,10 @@
 {% comment %} This partial should not extend base.html {% endcomment %}
 <div id="update-board-form-{{ board.id }}">
-    <form hx-post="{% url 'boards:update_board' board_id=board.id %}" hx-swap="outerHTML" hx-target="#update-board-form-{{ board.id }}">
+    <form hx-post="{% url 'boards:update_board' board.id %}" 
+          hx-target="#boards-container"
+          hx-swap="outerHTML">
         {% csrf_token %}
-        <div class="mb-3">
-            <label for="{{ form.title.id_for_label }}" class="form-label">Board Title</label>
-            <input type="text" class="form-control" id="{{ form.title.id_for_label }}" name="{{ form.title.name }}" value="{{ form.title.value|default:'' }}">
-            {% if form.title.errors %}
-                <div class="text-danger">
-                    {% for error in form.title.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
-        <div class="mb-3">
-            <label for="{{ form.description.id_for_label }}" class="form-label">Description</label>
-            <textarea class="form-control" id="{{ form.description.id_for_label }}" name="{{ form.description.name }}">{{ form.description.value|default:'' }}</textarea>
-            {% if form.description.errors %}
-                <div class="text-danger">
-                    {% for error in form.description.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
-        <div class="mb-3">
-            <label for="{{ form.color.id_for_label }}" class="form-label">Color</label>
-            <input type="color" class="form-control form-control-color" id="{{ form.color.id_for_label }}" name="{{ form.color.name }}" value="{{ form.color.value|default:'#000000' }}">
-            {% if form.color.errors %}
-                <div class="text-danger">
-                    {% for error in form.color.errors %}
-                        {{ error }}
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
-        {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-                {% for error in form.non_field_errors %}
-                    {{ error }}
-                {% endfor %}
-            </div>
-        {% endif %}
+        {{ form.as_p }}
         <button type="submit" class="btn btn-primary">Update Board</button>
-        <button type="button" class="btn btn-secondary" hx-get="{% url 'boards:board_detail' board_id=board.id %}" hx-swap="outerHTML" hx-target="#update-board-form-{{ board.id }}">Cancel</button>
     </form>
 </div>
