@@ -182,6 +182,7 @@ class HTMXBoardCreateView(LoginRequiredMixin, CreateView):
         custom_logger(f"membership created for user {self.request.user.username}, membership: {membership}")
 
         response = render_partial_response("boards/partials/board_card.html", {"board": board})
+        messages.success(self.request, "Board created successfully")
         response['HX-Trigger'] = 'boardCreated'
         return response
 
