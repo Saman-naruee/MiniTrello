@@ -152,6 +152,8 @@
                 <div class="card-body p-2" id="cards-container-{{ list.id }}">
                     {% for card in list.prefetched_cards %}
                     {% include "boards/partials/card_item.html" with card=card board_id=board.id list_id=list.id %}
+                    <!-- Card detail link -->
+                    <a href="{% url 'boards:card_detail' board_id=board.id list_id=list.id card_id=card.id %}" class="btn btn-primary mt-2">View Details</a>
                     {% empty %}
                     <div class="text-center py-3">
                         <p class="text-muted small mb-0">No cards yet</p>

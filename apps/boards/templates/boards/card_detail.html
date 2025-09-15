@@ -1,0 +1,10 @@
+<!-- {% extends "base.html" %} -->
+
+{% block title %}Card {{ card.title }}{% endblock %}
+
+{% block content %}
+<h2>{{ card.title }}</h2>
+<p>{{ card.description }}</p>
+<p>Priority: {{ card.get_priority_display }}</p>
+<!-- <a href="{% url 'boards:card_detail' board_id=board.id list_id=list.id card_id=card.id %}" class="btn btn-secondary">Back to Board</a> -->
+{% endblock %}

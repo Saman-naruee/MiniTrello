@@ -65,25 +65,33 @@ def get_board_lists(board):
 
 def get_user_list(list_id, user, board):
     """Get a specific list for a user with permission check, ensuring it belongs to the given board"""
-    custom_logger(f"get_user_list called with list_id: {list_id}, user: {user.email}, board_id: {board.id}", Fore.MAGENTA)
-    custom_logger(f"Attempting to retrieve List with id={list_id}, board={board.id}, and user {user.email} as active member.", Fore.MAGENTA)
-    return get_object_or_404(
-        List,
-        id=list_id,
-        board=board, # Explicitly filter by the board object
-        # board__memberships__user=user,
-        # board__memberships__is_active=True
-    )
+    
+    if board.owner == user or board.memberships.filter(user=user, is_active=True).exists():
+        return get_object_or_404(
+            List,
+            id=list_id,
+            board=board, # Explicitly filter by the board object
+        )
+    return False
+
+
+def is_owner_or_member(card_id, user):
+    board_of_this_card = Card.objects.get(id=card_id).list.board
+    return True if board_of_this_card.owner == user \
+        or board_of_this_card.memberships.filter(user=user, is_active=True).exists()\
+        else False
 
 
 def get_user_card(card_id, user):
     """Get a specific card for a user with permission check"""
-    return get_object_or_404(
-        Card, 
-        id=card_id, 
-        list__board__memberships__user=user, 
-        list__board__memberships__is_active=True
-    )
+    is_o_or_m = is_owner_or_member(card_id, user)
+    custom_logger(is_o_or_m, Fore.MAGENTA)
+    if is_o_or_m:
+        return get_object_or_404(
+            Card, 
+            id=card_id, 
+        )
+    raise Http404("Card not found")
 
 
 def get_next_order(model_class, filter_kwargs):
@@ -401,9 +409,10 @@ class HTMXCardDetailView(LoginRequiredMixin, DetailView):
     """View a card's details via HTMX"""
 
     model = Card
-    template_name = "boards/partials/card_detail.html"
+    template_name = "boards/card_detail.html"
+    context_object_name = "card"
 
-    def get_object(self):
+    def get_object(self, queryset=None):
         return get_user_card(self.kwargs['card_id'], self.request.user)
 
 
