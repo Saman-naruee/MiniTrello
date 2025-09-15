@@ -1,0 +1,39 @@
+{% extends "boards/base.html" %}
+
+{% block content %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="well">
+                    <h2 class="text-center">Update Card</h2>
+                    <form action="{% url 'boards:card_update' board_id=board.id list_id=card.list.id card_id=card.id %}" method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="title" class="form-label">Card Title</label>
+                            <input type="text" class="form-control" id="title" name="title" value="{{ card.title }}" required maxlength="255" placeholder="Enter card title">
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description (Optional)</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter card description">{{ card.description }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="priority" class="form-label">Priority</label>
+                            <select class="form-select" id="priority" name="priority">
+                                <option value="60" {% if card.priority == 60 %}selected{% endif %}>Low</option>
+                                <option value="50" {% if card.priority == 50 %}selected{% endif %}>Medium</option>
+                                <option value="40" {% if card.priority == 40 %}selected{% endif %}>High</option>
+                                <option value="30" {% if card.priority == 30 %}selected{% endif %}>Important</option>
+                                <option value="20" {% if card.priority == 20 %}selected{% endif %}>Important and Urgent</option>
+                                <option value="10" {% if card.priority == 10 %}selected{% endif %}>Top</option>
+                            </select>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">Update Card</button>
+                            <a href="{% url 'boards:board_detail' board_id=board.id %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
