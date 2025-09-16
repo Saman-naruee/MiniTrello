@@ -138,7 +138,6 @@ class BoardDetailView(LoginRequiredMixin, DetailView):
         board = self.get_object()
         lists = get_board_lists(board)
         context['lists'] = lists
-        # context['cards_by_list'] is no longer needed as cards are attached to each list object
         context['board'] = board
         context['board_id'] = board.id
         context['update_board_form'] = BoardForm(instance=self.get_object())
