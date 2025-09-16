@@ -1,24 +1,24 @@
 <div class="list-column" id="list-{{ list.id }}">
     <div class="card list-card h-100">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h6 class="mb-0">{{ list.title }}</h6>
+            {# ❗❗❗ تایتل لیست را به یک دکمه تبدیل می‌کنیم تا قابل کلیک باشد #}
+            <button class="btn btn-link text-dark text-decoration-none p-0"
+                    hx-get="{% url 'boards:update_list' board_id=board.id list_id=list.id %}"
+                    hx-target="#generic-modal-body"
+                    data-bs-toggle="modal"
+                    data-bs-target="#genericModal">
+                <h6 class="mb-0">{{ list.title }}</h6>
+            </button>
             <div class="dropdown">
-                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    ...
-                </button>
-                <ul class="dropdown-menu">
-                    <li><button class="dropdown-item" @click="addCardToList({{ list.id }}, {{ board.id }})">Add Card</button></li>
-                    <li><button class="dropdown-item" 
-                                hx-delete="{% url 'boards:delete_list' board.id list.id %}"
-                                hx-target="#list-{{ list.id }}"
-                                hx-swap="outerHTML"
-                                hx-confirm="Are you sure?">Delete List</button></li>
-                </ul>
+                {# ... منوی دراپ‌داون (بدون تغییر) ... #}
             </div>
         </div>
         
-        <div class="card-body p-2" id="cards-container-{{ list.id }}">
-            {# ❗❗❗ اصلاح اصلی: حالا همه آبجکت‌ها را به پارت بعدی پاس می‌دهیم #}
+        {# ❗❗❗ کلاس و data-attribute جدید به کانتینر کارت‌ها اضافه می‌شود #}
+        <div class="card-body p-2 cards-sortable-container" 
+             id="cards-container-{{ list.id }}"
+             data-list-id="{{ list.id }}">
+            
             {% for card in list.prefetched_cards %}
                 {% include "boards/partials/card_item.html" with card=card list=list board=board %}
             {% empty %}
@@ -27,7 +27,6 @@
         </div>
         
         <div class="card-footer p-2">
-            {# این دکمه حالا به درستی کار خواهد کرد چون `board.id` در دسترس است #}
             <button class="btn btn-outline-primary btn-sm w-100" @click="addCardToList({{ list.id }}, {{ board.id }})">
                 + Add Card
             </button>

@@ -1,18 +1,29 @@
-<a href="{% url 'boards:card_detail' board_id=board.id list_id=list.id card_id=card.id %}" class="text-decoration-none text-dark">
+{# این تگ a اصلی است که کل کارت را قابل کلیک می‌کند و به صفحه جزئیات می‌برد #}
+{# data-card-id برای شناسایی کارت در جاوا اسکریپت (SortableJS) استفاده می‌شود #}
+<a href="{% url 'boards:card_detail' board_id=board.id list_id=list.id card_id=card.id %}" 
+   class="text-decoration-none text-dark"
+   data-card-id="{{ card.id }}">
+    
     <div class="card card-item mb-2" id="card-{{ card.id }}">
         <div class="card-body p-2">
             <div class="d-flex justify-content-between align-items-start">
                 <h6 class="card-title small mb-1">{{ card.title }}</h6>
+                
+                {# دکمه سه نقطه برای عملیات سریع مانند حذف #}
                 <div class="dropdown">
+                    {# event.stopPropagation() از فعال شدن لینک پدر جلوگیری می‌کند #}
+                    {# event.preventDefault() از هرگونه رفتار پیش‌فرض دکمه جلوگیری می‌کند #}
                     <button class="btn btn-sm btn-light py-0 px-1" type="button" data-bs-toggle="dropdown" onclick="event.stopPropagation(); event.preventDefault();">
                         ...
                     </button>
                     <ul class="dropdown-menu">
                         <li>
+                            {# این دکمه هم به توقف رویداد نیاز دارد تا فقط عملیات htmx اجرا شود #}
                             <button class="dropdown-item text-danger"
                                     hx-delete="{% url 'boards:card_delete' board.id list.id card.id %}"
-                                    hx-target="#card-{{ card.id }}" hx-swap="outerHTML"
-                                    hx-confirm="Are you sure?"
+                                    hx-target="#card-{{ card.id }}"
+                                    hx-swap="outerHTML"
+                                    hx-confirm="Are you sure you want to delete card '{{ card.title }}'?"
                                     onclick="event.stopPropagation(); event.preventDefault();">
                                 Delete
                             </button>
@@ -26,10 +37,11 @@
             {% endif %}
 
             <div class="d-flex flex-wrap gap-1 align-items-center">
-                {# Fix for showing all assignees #}
+                {# نمایش تمام کاربرانی که به کارت اختصاص داده شده‌اند #}
                 {% for assignee in card.assignees.all %}
                     <span class="badge bg-secondary small">{{ assignee.username }}</span>
                 {% endfor %}
+                
                 {% if card.due_date %}
                     <span class="badge bg-info small">{{ card.due_date|date:"M d" }}</span>
                 {% endif %}
@@ -37,4 +49,3 @@
         </div>
     </div>
 </a>
-

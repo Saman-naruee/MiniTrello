@@ -8,6 +8,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Max, Q, Prefetch
+from django.db import transaction
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.urls import reverse_lazy
@@ -319,6 +320,24 @@ class HTMXListUpdateView(LoginRequiredMixin, UpdateView):
         return render_partial_response("boards/partials/update_list.html", {"form": form, "list": list_obj})
 
 
+    def form_valid(self, form):
+        list_obj = form.save()
+        # Render the updated list_column HTML
+        list_column_html = render_to_string(
+            "boards/partials/list_column.html", 
+            {"list": list_obj, "board": list_obj.board}
+        )
+        response = HttpResponse(list_column_html)
+        # Trigger to display a message to the user
+        trigger_data = {
+            "listCreated": True, # Use this trigger to display a message
+            "showMessage": f"List '{list_obj.title}' updated successfully!"
+        }
+        response['HX-Trigger'] = json.dumps(trigger_data)
+        return response
+
+
+
 class HTMXListDetailView(LoginRequiredMixin, DetailView):
     """View a list's details via HTMX"""
 
@@ -519,3 +538,41 @@ def add_member_to_board(request, board_id):
 
 def custom_404(request, exception):
     return render(request, '404.html', status=404)
+
+
+class HTMXCardMoveView(LoginRequiredMixin, View):
+    
+    @transaction.atomic
+    # Main fix: get all parameters from URL
+    def put(self, request, board_id, list_id, card_id):
+        # Currently, this log should work
+        custom_logger(f"In PUT method for moving card_id: {card_id}", Fore.GREEN)
+        
+        # Use card_id and user to check initial access
+        card = get_user_card(card_id, request.user)
+        
+        data = json.loads(request.body)
+        to_list_id = data.get('to_list_id')
+        new_index = int(data.get('new_index', 0))
+
+        # Get the destination list
+        # Also check if the destination list belongs to the same board
+        to_list = get_object_or_404(List, id=to_list_id, board_id=board_id)
+        
+        # 1. Move the card to the new list (this part is not changed)
+        card.list = to_list
+        card.save(update_fields=['list'])
+
+        custom_logger(f"Card '{card.title}' moved to list '{to_list.title}'", Fore.CYAN)
+        
+        # 2. Update the order of cards in the new list (this part is not changed)
+        other_cards = to_list.cards.exclude(id=card.id).order_by('order')
+        card_list_for_reorder = list(other_cards)
+        card_list_for_reorder.insert(new_index, card)
+        
+        for index, c in enumerate(card_list_for_reorder):
+            c.order = index
+            c.save(update_fields=['order'])
+        
+        custom_logger("Card reordering complete.", Fore.GREEN)
+        return HttpResponse(status=200, reason="Card moved and reordered successfully.")
