@@ -569,6 +569,7 @@ class HTMXCardMoveView(LoginRequiredMixin, View):
         except json.JSONDecodeError:
             custom_logger(f"Invalid JSON in request.body", Fore.RED)
             return HttpResponse(status=400, content="Invalid JSON")
+        from_list_id = data.get('from_list_id')
         to_list_id = data.get('to_list_id')
         new_index = int(data.get('new_index', 0))
 

@@ -129,14 +129,19 @@ function boardApp() {
 
 // Drag & Drop script for moving cards
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("[Init] DOMContentLoaded → sortable init start");
+    // Helper function to get the CSRF token from the meta tag
+    function getCSRFToken() {
+        const tokenEl = document.querySelector('meta[name="csrf-token"]');
+        console.log(`tokenEl: ${tokenEl}`); // Debugging log
+        if (tokenEl) {
+            return tokenEl.getAttribute('content');
+        }
+        console.error('CSRF token meta tag not found!');
+        return ''; // Return empty string if not found
+    }
 
     let containers = document.querySelectorAll('.cards-sortable-container');
-    console.log(`[Init] Found ${containers.length} containers`);
-
     containers.forEach(container => {
-        console.log(`[Init] Init sortable for listId=${container.dataset.listId}`);
-
         new Sortable(container, {
             group: 'cards',
             animation: 150,
@@ -145,32 +150,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 const cardId = evt.item.dataset.cardId;
                 const toListId = evt.to.dataset.listId;
                 const fromListId = evt.from.dataset.listId;
-                const boardId = evt.to.dataset.boardId;
+                const boardId = evt.from.closest('.list-container').dataset.boardId;
                 const newIndex = evt.newIndex;
-
-                console.log("[DragEnd] ---");
-                console.log("cardId:", cardId);
-                console.log("fromListId:", fromListId);
-                console.log("toListId:", toListId);
-                console.log("boardId:", boardId);
-                console.log("newIndex:", newIndex);
-
                 const url = `/boards/${boardId}/lists/${fromListId}/cards/${cardId}/move/`;
-                const payload = { to_list_id: toListId, new_index: newIndex };
 
-                console.log("[Request] URL:", url);
-                console.log("[Request] Payload:", payload);
-
+                const payload = {
+                    to_list_id: toListId,
+                    from_list_id: fromListId,
+                    new_index: newIndex
+                };
+                
+                // ❗❗❗ CORE FIX: Use the helper function to get the real token
                 htmx.ajax('PUT', url, {
-                    headers: {
-                        'X-CSRFToken': '{{ csrf_token }}',
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(payload),
-                    handler: function (xhr, elt) {
-                        console.log("[Response] status:", xhr.status);
-                        console.log("[Response] responseText:", xhr.responseText);
+                    headers: {
+                        'X-CSRFToken': getCSRFToken(), // Use the function here
+                        'Content-Type': 'application/json'
                     }
+                }).catch(err => {
+                    console.error("HTMX request failed:", err);
                 });
             }
         });
