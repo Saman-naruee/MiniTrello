@@ -4,6 +4,7 @@ from allauth.account.adapter import DefaultAccountAdapter
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.conf import settings
+from .models import User
 import random
 
 # from premailer import transform  # pip install premailer (if you want to inline CSS)
