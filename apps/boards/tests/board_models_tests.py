@@ -72,3 +72,11 @@ class CardModelTest(TestCase):
         new_list = List.objects.create(board=self.board, title='New List', order=2)
         self.card.move_to(new_list)
         self.assertEqual(self.card.list, new_list)
+
+
+class MembershipModelTest(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user('testuser', email='test@example.com', password='password')
+        self.board = Board.objects.create(owner=self.user, title='Test Board', color='blue')
+        self.membership = Membership.objects.create(user=self.user, board=self.board, role=Membership.ROLE_OWNER)
+

@@ -84,7 +84,7 @@ def is_owner_or_member(card_id, user):
         or board_of_this_card.memberships.filter(user=user, is_active=True).exists()\
         else False
 
-
+@transaction.atomic
 def get_user_card(card_id, user):
     """Get a specific card for a user with permission check"""
     is_o_or_m = is_owner_or_member(card_id, user)
