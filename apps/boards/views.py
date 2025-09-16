@@ -302,36 +302,37 @@ class HTMXListCreateView(LoginRequiredMixin, CreateView):
 
 class HTMXListUpdateView(LoginRequiredMixin, UpdateView):
     """Update a list via HTMX"""
-
     model = List
     template_name = "boards/partials/update_list.html"
     form_class = ListForm
 
-    def get_object(self):
+    def get_object(self, queryset=None):
+        # This method correctly finds the list based on permissions
         board = get_user_board(self.kwargs['board_id'], self.request.user)
         return get_user_list(self.kwargs['list_id'], self.request.user, board)
 
-    def post(self, request, *args, **kwargs):
-        list_obj = self.get_object()
-        form = self.get_form()
-        if form.is_valid():
-            form.save()
-            return render_partial_response("boards/partials/list_column.html", {"list": list_obj})
-        return render_partial_response("boards/partials/update_list.html", {"form": form, "list": list_obj})
-
+    def get_context_data(self, **kwargs):
+        # ❗❗❗ CORE FIX: Add this method to pass all necessary context
+        context = super().get_context_data(**kwargs)
+        context['board'] = self.get_object().board
+        context['list'] = self.get_object()
+        return context
 
     def form_valid(self, form):
+        # This method handles a successful form submission
         list_obj = form.save()
-        # Render the updated list_column HTML
+        
+        # We need to re-render the entire list_column to reflect the changes
         list_column_html = render_to_string(
             "boards/partials/list_column.html", 
-            {"list": list_obj, "board": list_obj.board}
+            {"list": list_obj, "board": list_obj.board, "request": self.request} # Pass request for CSRF token
         )
         response = HttpResponse(list_column_html)
-        # Trigger to display a message to the user
+        
+        # Send a trigger to close the modal and show a success message
         trigger_data = {
-            "listCreated": True, # Use this trigger to display a message
-            "showMessage": f"List '{list_obj.title}' updated successfully!"
+            "listUpdated": True, # Custom event name for closing modal
+            "showMessage": f"List '{list_obj.title}' updated successfully."
         }
         response['HX-Trigger'] = json.dumps(trigger_data)
         return response
