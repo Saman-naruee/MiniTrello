@@ -129,16 +129,11 @@ function boardApp() {
 
 // Drag & Drop script for moving cards
 document.addEventListener('DOMContentLoaded', () => {
-    // Helper function to get the CSRF token from the meta tag
-    function getCSRFToken() {
-        const tokenEl = document.querySelector('meta[name="csrf-token"]');
-        console.log(`tokenEl: ${tokenEl}`); // Debugging log
-        if (tokenEl) {
-            return tokenEl.getAttribute('content');
-        }
-        console.error('CSRF token meta tag not found!');
-        return ''; // Return empty string if not found
-    }
+    document.body.addEventListener('htmx:configRequest', function(evt) {
+        // ❗❗❗ CORE FIX: This is the standard way to add the CSRF token for all HTMX requests.
+        // It reads the token from the cookie Django sets.
+        evt.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    });
 
     let containers = document.querySelectorAll('.cards-sortable-container');
     containers.forEach(container => {
@@ -156,19 +151,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const payload = {
                     to_list_id: toListId,
-                    from_list_id: fromListId,
                     new_index: newIndex
                 };
                 
-                // ❗❗❗ CORE FIX: Use the helper function to get the real token
+                // ❗❗❗ SIMPLIFIED CALL: No manual headers needed anymore!
+                // We use hx-vals to let HTMX handle encoding.
                 htmx.ajax('PUT', url, {
-                    body: JSON.stringify(payload),
-                    headers: {
-                        'X-CSRFToken': getCSRFToken(), // Use the function here
-                        'Content-Type': 'application/json'
-                    }
+                    swap: 'none', // We don't need to swap any content on success
+                    values: payload // Use 'values' instead of 'body' for automatic encoding
                 }).catch(err => {
                     console.error("HTMX request failed:", err);
+                    // Optionally, show an error message to the user here
                 });
             }
         });

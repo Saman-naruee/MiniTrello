@@ -553,38 +553,29 @@ def custom_404(request, exception):
 class HTMXCardMoveView(LoginRequiredMixin, View):
     
     @transaction.atomic
-    # Main fix: get all parameters from URL
     def put(self, request, board_id, list_id, card_id):
-        # Currently, this log should work
         custom_logger(f"In PUT method for moving card_id: {card_id}", Fore.GREEN)
-        custom_logger(f"\n\nrequest body:\n{request.body}\n\n######", Fore.LIGHTBLUE_EX)
-        custom_logger(f"\n\nself.request body:\n{self.request.body}\n\n########", Fore.LIGHTBLUE_EX)
-        if not request.body:
-            custom_logger(f"request.body is empty", Fore.RED)
-            return HttpResponse(status=400, content="request.body is empty")
-        # Use card_id and user to check initial access
-        card = get_user_card(card_id, request.user)
-        try:
-            data = json.loads(request.body)
-        except json.JSONDecodeError:
-            custom_logger(f"Invalid JSON in request.body", Fore.RED)
-            return HttpResponse(status=400, content="Invalid JSON")
-        from_list_id = data.get('from_list_id')
-        to_list_id = data.get('to_list_id')
-        new_index = int(data.get('new_index', 0))
+        
+        # ❗❗❗ CORE FIX: Read data from request.POST instead of request.body
+        # Django automatically parses 'x-www-form-urlencoded' data into request.POST for PUT requests as well.
+        # We access it using a QueryDict-like object from the request.
+        
+        # To handle PUT request body as form data, we can parse it
+        from django.http import QueryDict
+        put_data = QueryDict(request.body)
 
-        # Get the destination list
-        # Also check if the destination list belongs to the same board
+        to_list_id = put_data.get('to_list_id')
+        new_index = int(put_data.get('new_index', 0))
+
+        if not to_list_id:
+            return HttpResponse("Missing 'to_list_id' in request.", status=400)
+
+        card = get_user_card(card_id, request.user)
         to_list = get_object_or_404(List, id=to_list_id, board_id=board_id)
         
-        # 1. Move the card to the new list (this part is not changed)
-        # card.list = to_list
-        # card.save(update_fields=['list'])
-        card.move_to(to_list)
-
-        custom_logger(f"Card '{card.title}' moved to list '{to_list.title}'", Fore.CYAN)
+        card.list = to_list
+        card.save(update_fields=['list'])
         
-        # 2. Update the order of cards in the new list (this part is not changed)
         other_cards = to_list.cards.exclude(id=card.id).order_by('order')
         card_list_for_reorder = list(other_cards)
         card_list_for_reorder.insert(new_index, card)
@@ -594,4 +585,4 @@ class HTMXCardMoveView(LoginRequiredMixin, View):
             c.save(update_fields=['order'])
         
         custom_logger("Card reordering complete.", Fore.GREEN)
-        return HttpResponse(status=200, reason="Card moved and reordered successfully.")
+        return HttpResponse(status=200)
