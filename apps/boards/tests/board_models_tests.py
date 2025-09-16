@@ -80,3 +80,18 @@ class MembershipModelTest(TestCase):
         self.board = Board.objects.create(owner=self.user, title='Test Board', color='blue')
         self.membership = Membership.objects.create(user=self.user, board=self.board, role=Membership.ROLE_OWNER)
 
+    def test_membership_is_owner(self):
+        self.assertTrue(self.membership.is_owner())
+
+    def test_membership_promote(self):
+        self.membership.promote(Membership.ROLE_ADMIN)
+        self.assertEqual(self.membership.role, Membership.ROLE_ADMIN)
+
+    def test_membership_deactivate(self):
+        self.membership.deactivate()
+        self.assertFalse(self.membership.is_active)
+
+    def test_membership_activate(self):
+        self.membership.deactivate()
+        self.membership.activate()
+        self.assertTrue(self.membership.is_active)
