@@ -557,11 +557,18 @@ class HTMXCardMoveView(LoginRequiredMixin, View):
     def put(self, request, board_id, list_id, card_id):
         # Currently, this log should work
         custom_logger(f"In PUT method for moving card_id: {card_id}", Fore.GREEN)
-        
+        custom_logger(f"\n\nrequest body:\n{request.body}\n\n######", Fore.LIGHTBLUE_EX)
+        custom_logger(f"\n\nself.request body:\n{self.request.body}\n\n########", Fore.LIGHTBLUE_EX)
+        if not request.body:
+            custom_logger(f"request.body is empty", Fore.RED)
+            return HttpResponse(status=400, content="request.body is empty")
         # Use card_id and user to check initial access
         card = get_user_card(card_id, request.user)
-        
-        data = json.loads(request.body)
+        try:
+            data = json.loads(request.body)
+        except json.JSONDecodeError:
+            custom_logger(f"Invalid JSON in request.body", Fore.RED)
+            return HttpResponse(status=400, content="Invalid JSON")
         to_list_id = data.get('to_list_id')
         new_index = int(data.get('new_index', 0))
 
@@ -570,8 +577,9 @@ class HTMXCardMoveView(LoginRequiredMixin, View):
         to_list = get_object_or_404(List, id=to_list_id, board_id=board_id)
         
         # 1. Move the card to the new list (this part is not changed)
-        card.list = to_list
-        card.save(update_fields=['list'])
+        # card.list = to_list
+        # card.save(update_fields=['list'])
+        card.move_to(to_list)
 
         custom_logger(f"Card '{card.title}' moved to list '{to_list.title}'", Fore.CYAN)
         

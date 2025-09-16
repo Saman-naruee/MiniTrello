@@ -128,10 +128,15 @@ function boardApp() {
 }
 
 // Drag & Drop script for moving cards
-document.addEventListener('DOMContentLoaded', (event) => {
-    let cardContainers = document.querySelectorAll('.cards-sortable-container');
-    
-    cardContainers.forEach(container => {
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("[Init] DOMContentLoaded → sortable init start");
+
+    let containers = document.querySelectorAll('.cards-sortable-container');
+    console.log(`[Init] Found ${containers.length} containers`);
+
+    containers.forEach(container => {
+        console.log(`[Init] Init sortable for listId=${container.dataset.listId}`);
+
         new Sortable(container, {
             group: 'cards',
             animation: 150,
@@ -139,31 +144,42 @@ document.addEventListener('DOMContentLoaded', (event) => {
             onEnd: function (evt) {
                 const cardId = evt.item.dataset.cardId;
                 const toListId = evt.to.dataset.listId;
-                const boardId = evt.from.closest('.list-container').dataset.boardId;
-                const fromListId = evt.from.dataset.listId; 
+                const fromListId = evt.from.dataset.listId;
+                const boardId = evt.to.dataset.boardId;
                 const newIndex = evt.newIndex;
-                
-                // Construct the correct dynamic URL
+
+                console.log("[DragEnd] ---");
+                console.log("cardId:", cardId);
+                console.log("fromListId:", fromListId);
+                console.log("toListId:", toListId);
+                console.log("boardId:", boardId);
+                console.log("newIndex:", newIndex);
+
                 const url = `/boards/${boardId}/lists/${fromListId}/cards/${cardId}/move/`;
-                
-                // Prepare the data payload
-                const payload = {
-                    to_list_id: toListId,
-                    new_index: newIndex
-                };
-                
-                // Send data as a JSON string and set the correct header
+                const payload = { to_list_id: toListId, new_index: newIndex };
+
+                console.log("[Request] URL:", url);
+                console.log("[Request] Payload:", payload);
+
                 htmx.ajax('PUT', url, {
-                    body: JSON.stringify(payload),
                     headers: {
                         'X-CSRFToken': '{{ csrf_token }}',
                         'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload),
+                    handler: function (xhr, elt) {
+                        console.log("[Response] status:", xhr.status);
+                        console.log("[Response] responseText:", xhr.responseText);
                     }
                 });
             }
         });
     });
 });
+
+
+
+
 
 // General event listener for closing modals and showing messages after successful HTMX swaps
 document.body.addEventListener('htmx:afterSwap', function(evt) {
