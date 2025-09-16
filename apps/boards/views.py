@@ -280,7 +280,7 @@ class BoardMembersView(LoginRequiredMixin, DetailView):
 class HTMXListCreateView(LoginRequiredMixin, CreateView):
     """Create a new list via HTMX"""
     model = List
-    template_name = "boards/partials/create_list.html"  # Assuming this template exists or will be created
+    template_name = "boards/partials/create_list.html"
     form_class = ListForm
 
     def get(self, request, *args, **kwargs):
@@ -296,8 +296,19 @@ class HTMXListCreateView(LoginRequiredMixin, CreateView):
         list_obj.board = board
         list_obj.order = get_next_order(List, {"board": board})
         list_obj.save()
-        response = render_partial_response("boards/partials/list_column.html", {"list": list_obj})
-        response['HX-Trigger'] = 'listCreated'
+
+        # ❗❗❗ CORE FIX 1: Pass the full 'board' object to the partial
+        list_column_html = render_to_string(
+            "boards/partials/list_column.html", 
+            {"list": list_obj, "board": board}
+        )
+
+        response = HttpResponse(list_column_html)
+        trigger_data = {
+            "listCreated": True,
+            "showMessage": f"List '{list_obj.title}' created successfully."
+        }
+        response['HX-Trigger'] = json.dumps(trigger_data)
         return response
 
 class HTMXListUpdateView(LoginRequiredMixin, UpdateView):
@@ -384,49 +395,48 @@ class HTMXCardCreateView(LoginRequiredMixin, CreateView):
         kwargs = super().get_form_kwargs()
         board = get_user_board(self.kwargs['board_id'], self.request.user)
         kwargs['board'] = board
-        custom_logger(f"HTMXCardCreateView.get_form_kwargs called with kwargs: {kwargs}", Fore.YELLOW)
         return kwargs
 
     def get(self, request, *args, **kwargs):
         board = get_user_board(self.kwargs['board_id'], self.request.user)
         form = self.form_class(board=board)
-        custom_logger(f"HTMXCardCreateView.get called with args: {args}, kwargs: {kwargs}", Fore.YELLOW)
-        response = render(request, self.template_name, {
+        return render(request, self.template_name, {
             "form": form,
             "board_id": self.kwargs['board_id'],
             "list_id": self.kwargs['list_id']
         })
 
-        response.headers['HX-Trigger'] = 'cardFormShown'
-        response.headers['HX-Target'] = '#card-form-container-' + str(self.kwargs['list_id'])
-        response.headers['HX-Swap'] = 'innerHTML'
-        return response
-
     def form_valid(self, form):
-        custom_logger(f"HTMXCardCreateView.form_valid entered.", Fore.GREEN)
         board = get_user_board(self.kwargs['board_id'], self.request.user)
         card_list = get_user_list(self.kwargs['list_id'], self.request.user, board)
         
         card = form.save(commit=False)
         card.list = card_list
         card.order = get_next_order(Card, {"list": card_list})
-        custom_logger(f"Card object before save: {card.__dict__}", Fore.CYAN)
         card.save()
+        
+        # We need to manually add the assignees after saving the card
+        form.save_m2m()
 
-        custom_logger(f"Card '{card.title}' created in list '{card_list.title}' on board '{board.title}' by user '{self.request.user}'")
+        custom_logger(f"Card '{card.title}' created in list '{card_list.title}'")
 
-        response = HttpResponse(
-            render_to_string("boards/partials/card_item.html", {
-                "card": card,
-                "board_id": board.id,
-                "list_id": card_list.id
-            })
-        )
-        response.headers['HX-Trigger'] = 'cardCreated'
+        # ❗❗❗ CORE FIX 2: Pass the full 'board' and 'list' objects to the partial
+        card_item_html = render_to_string("boards/partials/card_item.html", {
+            "card": card,
+            "board": board,
+            "list": card_list
+        })
+        
+        response = HttpResponse(card_item_html)
+        trigger_data = {
+            "cardCreated": True,
+            "showMessage": f"Card '{card.title}' created."
+        }
+        response['HX-Trigger'] = json.dumps(trigger_data)
         return response
 
     def form_invalid(self, form):
-        custom_logger(f"HTMXCardCreateView.form_invalid called with form errors: {form.errors}", Fore.RED)
+        custom_logger(f"HTMXCardCreateView form invalid: {form.errors}", Fore.RED)
         return render(self.request, self.template_name, {
             "form": form,
             "board_id": self.kwargs['board_id'],
