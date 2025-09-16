@@ -7,108 +7,137 @@
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <link rel="stylesheet" href="{% static 'boards/css/boards.css' %}">
 <style>
-    /* Styles for displaying notification messages */
-    .toast-container {
-        position: fixed;
-        top: 1rem;
-        right: 1rem;
-        z-index: 1090;
-    }
+/* ... استایل‌های شما (بدون تغییر) ... */
+.board-header { background: linear-gradient(135deg, {{ board.color }}20, {{ board.color }}40); border-bottom: 3px solid {{ board.color }}; }
+.toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 1090; }
+.list-container { min-height: calc(100vh - 200px); overflow-x: auto; display: flex; gap: 1rem; padding: 1rem; }
+.list-column { min-width: 300px; max-width: 300px; }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid p-0" x-data="boardApp()">
 
-    <!-- Display notification messages -->
+    {# ==================== کانتینر برای نمایش پیام‌ها (Toast) ==================== #}
     <div class="toast-container" 
          x-data="{ show: false, message: '' }"
-         @show-message.window="show = true; message = $event.detail.message; setTimeout(() => show = false, 3000)">
+         @show-message.window="show = true; message = $event.detail.message; setTimeout(() => show = false, 4000)">
         <div x-show="show" x-transition class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header bg-success text-white">
                 <strong class="me-auto">Success</strong>
                 <button type="button" class="btn-close btn-close-white" @click="show = false"></button>
             </div>
-            <div class="toast-body" x-text="message">
-                Notification message.
-            </div>
+            <div class="toast-body" x-text="message"></div>
         </div>
     </div>
 
-    <!-- Buttons for adding members, updating board, and deleting board -->
-    <div class="mb-3 d-flex gap-2">
-        <a href="{% url 'boards:add_member' board_id=board.id %}" class="btn btn-success">
-            + Add Member
-        </a>
-        <button class="btn btn-warning"
-                hx-get="{% url 'boards:update_board' board.id %}"
-                hx-target="#generic-modal-body"
-                data-bs-toggle="modal"
-                data-bs-target="#genericModal">
-            Update Board
-        </button>
-        <button class="btn btn-danger"
-                hx-get="{% url 'boards:delete_board' board.id %}"
-                hx-target="#generic-modal-body"
-                data-bs-toggle="modal"
-                data-bs-target="#genericModal">
-            Delete Board
-        </button>
+    {# ==================== دکمه‌های اصلی بالای صفحه ==================== #}
+    <div class="p-3 d-flex gap-2 align-items-center">
+        <a href="{% url 'boards:boards_list' %}" class="btn btn-outline-secondary">← Back to Boards</a>
+        <h4 class="mb-0 mx-3">Board:</h4>
+        <div id="board-title-section-{{ board.id }}" class="d-flex align-items-center gap-3">
+             {% include 'boards/partials/board_title_section.html' %}
+        </div>
+        <div class="ms-auto d-flex gap-2">
+            <button class="btn btn-warning"
+                    hx-get="{% url 'boards:update_board' board.id %}"
+                    hx-target="#generic-modal-body"
+                    data-bs-toggle="modal"
+                    data-bs-target="#genericModal">
+                Update Board
+            </button>
+            <button class="btn btn-danger"
+                    hx-get="{% url 'boards:delete_board' board.id %}"
+                    hx-target="#generic-modal-body"
+                    data-bs-toggle="modal"
+                    data-bs-target="#genericModal">
+                Delete Board
+            </button>
+        </div>
     </div>
-
-    <!-- Generic modal -->
+    
+    {# ==================== مودال‌های عمومی برای فرم‌ها ==================== #}
     <div class="modal fade" id="genericModal" tabindex="-1">
         <div class="modal-dialog">
-            <div class="modal-content" id="generic-modal-body">
-                <!-- Content will be rendered by HTMX -->
-            </div>
+            <div class="modal-content" id="generic-modal-body"></div>
         </div>
     </div>
-
-    <!-- Board header -->
+    <div class="modal fade" id="addCardModal" tabindex="-1">
+        <div class="modal-dialog"><div class="modal-content" id="create-card-form-container"></div></div>
+    </div>
+    
+    <!-- Header Board با دکمه Add List -->
     <div class="board-header p-3 mb-3">
-        <div class="container-fluid">
-            <div id="board-title-section-{{ board.id }}">
-                {% include 'boards/partials/board_title_section.html' %}
-            </div>
+        <div class="d-flex justify-content-end align-items-center">
+             <button class="btn btn-outline-light btn-sm"
+                    hx-get="{% url 'boards:create_list' board_id=board.id %}"
+                    hx-target="#generic-modal-body"
+                    data-bs-toggle="modal"
+                    data-bs-target="#genericModal">
+                <i class="fas fa-plus me-1"></i>Add List
+            </button>
         </div>
     </div>
 
-    <!-- Lists container -->
-    <div class="list-container d-flex gap-3 px-3" id="lists-container">
-        {% for list in board.lists.all %}
-            {% include "boards/partials/list_column.html" %}
+    <!-- Lists Container -->
+    <div class="list-container" id="lists-container">
+        {% for list in lists %}
+             {# اینجا کل آبجکت‌های board و list را به پارت پاس می‌دهیم #}
+             {% include "boards/partials/list_column.html" with list=list board=board %}
+        {% empty %}
+            <div class="col-12 text-center py-5">
+                <h4 class="text-muted">No lists yet. Create your first list!</h4>
+            </div>
         {% endfor %}
     </div>
 </div>
 
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 <script>
-function boardApp() { return { /* ... */ } }
+function boardApp() { 
+    return {
+        addCardToList(listId, boardId) {
+            const addCardModal = new bootstrap.Modal(document.getElementById('addCardModal'));
+            htmx.ajax('GET', `/boards/${boardId}/lists/${listId}/cards/create/`, {
+                target: '#create-card-form-container',
+                swap: 'innerHTML'
+            }).then(() => {
+                addCardModal.show();
+            });
+        }
+    } 
+}
 
-// ========= Listen for HTMX events and show notification messages =========
+// ========= شنونده رویداد عمومی برای بستن مودال و نمایش پیام =========
 document.body.addEventListener('htmx:afterSwap', function(evt) {
-    if (evt.detail.xhr.status < 400) { // Only for successful requests
+    if (evt.detail.xhr.status >= 400) return; // Ignore failed requests
 
-        const triggerData = JSON.parse(evt.detail.xhr.getResponseHeader('HX-Trigger'));
+    const hxTrigger = evt.detail.xhr.getResponseHeader('HX-Trigger');
+    if (!hxTrigger) return;
+    
+    try {
+        const triggerData = JSON.parse(hxTrigger);
 
-        // If boardUpdated trigger is sent, hide the modal
-        if (triggerData && triggerData.boardUpdated) {
-            const modalElement = document.getElementById('genericModal');
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) {
-                modal.hide();
+        if (triggerData.boardUpdated || triggerData.listCreated || triggerData.cardCreated) {
+            // هر کدام از این رویدادها اتفاق افتاد، مودال مربوطه را ببند
+            const genericModalEl = document.getElementById('genericModal');
+            if (genericModalEl) {
+                const modal = bootstrap.Modal.getInstance(genericModalEl);
+                if (modal) modal.hide();
+            }
+            const addCardModalEl = document.getElementById('addCardModal');
+            if (addCardModalEl) {
+                const modal = bootstrap.Modal.getInstance(addCardModalEl);
+                if (modal) modal.hide();
             }
         }
 
-        // If a message for display is sent, send a custom event for AlpineJS
-        if (triggerData && triggerData.showMessage) {
+        if (triggerData.showMessage) {
             window.dispatchEvent(new CustomEvent('show-message', {
                 detail: { message: triggerData.showMessage }
             }));
         }
-    }
+    } catch (e) { /* Ignore if trigger is not valid JSON */ }
 });
 </script>
 {% endblock %}
-

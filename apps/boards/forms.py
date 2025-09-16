@@ -31,11 +31,6 @@ class ListForm(forms.ModelForm):
         return title
 
 class CardForm(forms.ModelForm):
-    assignees = forms.ModelMultipleChoiceField(
-        queryset=User.objects.none(),
-        widget=forms.SelectMultiple(attrs={'class': 'form-control'}),
-        required=False,
-    )
     due_date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         required=False
@@ -48,25 +43,20 @@ class CardForm(forms.ModelForm):
             'title': forms.TextInput(attrs={'class': 'form-control'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'priority': forms.Select(attrs={'class': 'form-control'}),
+            # Using checkbox for assignees
+            'assignees': forms.CheckboxSelectMultiple,
         }
 
+    # This method is crucial for filtering the assignees options
     def __init__(self, *args, **kwargs):
-        self.board = kwargs.pop('board', None)
+        # Get the board object from the view
+        board = kwargs.pop('board', None)
         super().__init__(*args, **kwargs)
-        if self.board:
-            # Filter assignee choices to only show board members
-            members = self.board.memberships.select_related('user').all()
-            self.fields['assignees'].queryset = User.objects.filter(id__in=[m.user.id for m in members])
 
-    def clean_assignees(self):
-        assignees = self.cleaned_data.get('assignees')
-        if assignees and self.board:
-            # Verify all assigned users are board members
-            for assignee in assignees:
-                is_member = self.board.memberships.filter(user=assignee).exists()
-                if not is_member:
-                    raise forms.ValidationError(f"{assignee} must be a member of this board")
-        return assignees
+        if board:
+            # Limit the assignees field options to only the members of this board.
+            board_members = User.objects.filter(memberships__board=board, memberships__is_active=True)
+            self.fields['assignees'].queryset = board_members
 
     def clean_title(self):
         title = self.cleaned_data["title"] = self.cleaned_data["title"].strip()
@@ -76,8 +66,8 @@ class CardForm(forms.ModelForm):
 
     def clean_due_date(self):
         due_date = self.cleaned_data.get("due_date")
-        if due_date and due_date <= timezone.now().date():
-            raise forms.ValidationError("Due date cannot be in the past or today")
+        if due_date and due_date < timezone.now().date():
+            raise forms.ValidationError("Due date cannot be in the past")
         return due_date
 
 

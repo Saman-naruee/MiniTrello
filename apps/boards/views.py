@@ -347,8 +347,8 @@ class HTMXListDeleteView(LoginRequiredMixin, View):
 # Card Views
 class HTMXCardDeleteView(LoginRequiredMixin, DeleteView):
     """Delete a card via HTMX"""
-    
-    def delete(self, request, card_id):
+
+    def delete(self, request, board_id, list_id, card_id):
         card = get_user_card(card_id, request.user)
         card.delete()
         return JsonResponse({"success": True})

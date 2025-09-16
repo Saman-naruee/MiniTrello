@@ -1,28 +1,59 @@
 {% extends "base.html" %}
 
-{% block title %}Card {{ card.title }}{% endblock %}
+{% block title %}Card: {{ card.title }}{% endblock %}
 
 {% block content %}
-    <h2>{{ card.title }}</h2>
-    <p>{{ card.description }}</p>
-    <p>Priority: {{ card.get_priority_display }}</p>
-    <p>Assignees:</p>
-    <ul>
-        {% for assignee in card.assignees.all %}
-            <li>{{ assignee.username }}</li>
-        {% empty %}
-            <li>No assignees</li>
-        {% endfor %}
-    </ul>
-    <form action="{% url 'boards:card_assign_members' board.id list.id card.id %}" method="post">
-        {% csrf_token %}
-        <select name="member_ids" multiple>
-            {% for member in board.memberships.all %}
-                <option value="{{ member.user.id }}">{{ member.user.username }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit" class="btn btn-primary">Assign Members</button>
-    </form>
-    <a href="{% url 'boards:card_update' board_id=board.id list_id=list.id card_id=card.id %}" class="btn btn-primary">Update Card</a>
-    <a href="{% url 'boards:board_detail' board_id=board.id %}" class="btn btn-secondary">Back to Board</a>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">Card Details: {{ card.title }}</h2>
+            <a href="{% url 'boards:board_detail' board_id=board.id %}" class="btn btn-secondary">← Back to Board</a>
+        </div>
+        <div class="card-body">
+            {% if card.description %}
+                <p><strong>Description:</strong></p>
+                <blockquote class="blockquote"><p>{{ card.description|linebreaks }}</p></blockquote>
+            {% endif %}
+            
+            <p><strong>Priority:</strong> {{ card.get_priority_display }}</p>
+            
+            <hr>
+            
+            <h4>Assigned Members</h4>
+            {# Fix for showing all assignees #}
+            <ul>
+                {% for assignee in card.assignees.all %}
+                    <li>{{ assignee.username }}</li>
+                {% empty %}
+                    <li class="text-muted">No one is assigned to this card yet.</li>
+                {% endfor %}
+            </ul>
+
+            <hr>
+
+            {# Fix for updating form with correct URL #}
+            <h4>Assign/Update Members</h4>
+            <p class="text-muted small">Select members from the board to assign to this card. Use Ctrl+Click to select multiple.</p>
+            <form action="{% url 'boards:card_assign_members' board.id list.id card.id %}" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <select name="member_ids" multiple class="form-select" size="5">
+                        {% for member_membership in board.memberships.all %}
+                            <option value="{{ member_membership.user.id }}" 
+                                    {% if member_membership.user in card.assignees.all %}selected{% endif %}>
+                                {{ member_membership.user.username }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Assignments</button>
+            </form>
+        </div>
+        <div class="card-footer text-end">
+            {# This link still needs to be connected to the related view, but it will not be ignored #}
+            <a href="{% url 'boards:card_update' board_id=board.id list_id=list.id card_id=card.id %}" class="btn btn-warning">Update Card Details</a>
+        </div>
+    </div>
+</div>
 {% endblock %}
+

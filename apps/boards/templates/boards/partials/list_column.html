@@ -1,72 +1,36 @@
 <div class="list-column" id="list-{{ list.id }}">
-    <div class="card list-card">
+    <div class="card list-card h-100">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h6 class="mb-0">{{ list.title }}</h6>
             <div class="dropdown">
-                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
-                        type="button" 
-                        data-bs-toggle="dropdown" 
-                        aria-expanded="false">
-                    <i class="fas fa-ellipsis-v"></i>
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                    ...
                 </button>
                 <ul class="dropdown-menu">
-                    <li>
-                        <button class="dropdown-item" @click="addCardToList({{ list.id }})">
-                            <i class="fas fa-plus me-2"></i>Add Card
-                        </button>
-                    </li>
-                    <li>
-                        <button class="dropdown-item" 
-                                hx-delete="{% url 'boards:delete_list' list.id board.id %}"
+                    <li><button class="dropdown-item" @click="addCardToList({{ list.id }}, {{ board.id }})">Add Card</button></li>
+                    <li><button class="dropdown-item" 
+                                hx-delete="{% url 'boards:delete_list' board.id list.id %}"
                                 hx-target="#list-{{ list.id }}"
                                 hx-swap="outerHTML"
-                                hx-confirm="Are you sure you want to delete this list?">
-                            <i class="fas fa-trash me-2"></i>Delete List
-                        </button>
-                    </li>
+                                hx-confirm="Are you sure?">Delete List</button></li>
                 </ul>
             </div>
         </div>
         
-        <div id="cards-container-{{ list.id }}">
-            {% for card in list.cards %}
-                {% include "boards/partials/card_item.html" with card=card %}
+        <div class="card-body p-2" id="cards-container-{{ list.id }}">
+            {# ❗❗❗ اصلاح اصلی: حالا همه آبجکت‌ها را به پارت بعدی پاس می‌دهیم #}
+            {% for card in list.prefetched_cards %}
+                {% include "boards/partials/card_item.html" with card=card list=list board=board %}
             {% empty %}
-                <div class="text-center py-3">
-                    <p class="text-muted small mb-0">No cards yet</p>
-                    <button class="btn btn-outline-primary btn-sm mt-2" @click="addCardToList({{ list.id }})">
-                        <i class="fas fa-plus me-1"></i>Add Card
-                    </button>
-                </div>
+                <div class="text-center text-muted p-3">No cards yet.</div>
             {% endfor %}
-            <div id="card-form-container-{{ list.id }}"></div> <!-- Add this container -->
         </div>
         
-        <div class="card-footer bg-transparent p-2">
-            <button class="btn btn-outline-primary btn-sm w-100" 
-                    @click="addCardToList({{ list.id }})"
-                    :disabled="isLoading">
-                <i class="fas fa-plus me-1"></i>Add Card
+        <div class="card-footer p-2">
+            {# این دکمه حالا به درستی کار خواهد کرد چون `board.id` در دسترس است #}
+            <button class="btn btn-outline-primary btn-sm w-100" @click="addCardToList({{ list.id }}, {{ board.id }})">
+                + Add Card
             </button>
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener('htmx:afterSwap', function(evt) {
-        if (evt.detail.target.id.startsWith('card-form-container-')) {
-            const cancelButton = evt.detail.target.querySelector('button[type="button"]');
-            if (cancelButton) {
-                cancelButton.addEventListener('click', function() {
-                    const containerId = evt.detail.target.id;
-                    const container = document.getElementById(containerId);
-                    container.innerHTML = '';
-                });
-            }
-        }
-    });
-
-    document.addEventListener('cardFormShown', function() {
-        // You can add any additional logic here when the card form is shown
-    });
-</script>
