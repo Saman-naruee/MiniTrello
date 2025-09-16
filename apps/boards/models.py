@@ -67,6 +67,7 @@ class Card(models.Model):
     list = models.ForeignKey('List', on_delete=models.CASCADE, related_name="cards")
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=PRIORITY_MEDIUM)
     due_date = models.DateField(null=True, blank=True)
+    is_done = models.BooleanField(default=False)
     order = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
