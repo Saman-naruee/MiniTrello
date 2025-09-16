@@ -90,10 +90,12 @@ def get_user_card(card_id, user):
     is_o_or_m = is_owner_or_member(card_id, user)
     custom_logger(is_o_or_m, Fore.MAGENTA)
     if is_o_or_m:
-        return get_object_or_404(
-            Card, 
-            id=card_id, 
-        )
+        if card_id:
+            try:
+                card = Card.objects.select_for_update().get(id=card_id)
+                return card
+            except Card.DoesNotExist:
+                pass
     raise Http404("Card not found")
 
 
@@ -563,6 +565,7 @@ class HTMXCardMoveView(LoginRequiredMixin, View):
         # To handle PUT request body as form data, we can parse it
         from django.http import QueryDict
         put_data = QueryDict(request.body)
+        client_version = int(put_data.get('version'))
 
         to_list_id = put_data.get('to_list_id')
         new_index = int(put_data.get('new_index', 0))
@@ -574,8 +577,10 @@ class HTMXCardMoveView(LoginRequiredMixin, View):
         to_list = get_object_or_404(List, id=to_list_id, board_id=board_id)
         
         card.list = to_list
-        card.save(update_fields=['list'])
+        card.version += 1
+        card.save(update_fields=['list', 'version'])
         
+        # Reorder cards
         other_cards = to_list.cards.exclude(id=card.id).order_by('order')
         card_list_for_reorder = list(other_cards)
         card_list_for_reorder.insert(new_index, card)

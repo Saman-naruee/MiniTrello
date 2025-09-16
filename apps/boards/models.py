@@ -71,6 +71,7 @@ class Card(models.Model):
     order = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    version = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['priority', 'order']
