@@ -1,12 +1,12 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 import random
-
+from base_test import BaseTestCase
 
 from apps.accounts.models import User
 from apps.boards.models import Board, List, Card, Membership
-
-class BoardViewsTests(TestCase):
+    
+class BoardViewsTests(TestCase): # inherit from BaseTestCase
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(email='test@example', username='testuser', password='testpass')
