@@ -39,6 +39,7 @@ class BoardViewsTests(TestCase):
         """
         Test that the board detail view is accessible.
         """
+        self.client.force_login(self.user)
         response = self.client.get(reverse('boards:board_detail', args=[self.board.id]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'boards/detail.html')
