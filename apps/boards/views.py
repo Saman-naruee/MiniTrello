@@ -14,6 +14,7 @@ from django.conf import settings
 from django.urls import reverse_lazy
 from django.views import View
 from django.http import Http404, HttpResponseRedirect, HttpResponse
+from django.db import models
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -44,8 +45,8 @@ def get_user_board(board_id, user):
     """Get a specific board for a user with permission check"""
     try:
         board = get_object_or_404(Board, id=board_id)
-        if board.owner == user or board.memberships.filter(user=user, is_active=True).exists():
-            return board
+        return board if is_owner_or_member(board_id, user, Board) \
+            else False
     except Board.DoesNotExist:
         raise Http404("Board not found")
 
@@ -69,7 +70,7 @@ def get_board_lists(board):
 def get_user_list(list_id, user, board):
     """Get a specific list for a user with permission check, ensuring it belongs to the given board"""
     
-    if board.owner == user or board.memberships.filter(user=user, is_active=True).exists():
+    if is_owner_or_member(list_id, user, List):
         return get_object_or_404(
             List,
             id=list_id,
@@ -78,16 +79,30 @@ def get_user_list(list_id, user, board):
     return False
 
 
-def is_owner_or_member(card_id, user):
-    board_of_this_card = Card.objects.get(id=card_id).list.board
-    return True if board_of_this_card.owner == user \
-        or board_of_this_card.memberships.filter(user=user, is_active=True).exists()\
-        else False
+def is_owner_or_member(obj_id, user, model_class=None) -> bool:
+    if model_class == Card:
+        board_of_this_card = model_class.objects.get(id=obj_id).list.board
+        return True if board_of_this_card.owner == user \
+            or board_of_this_card.memberships.filter(user=user, is_active=True).exists()\
+            else False
+
+    elif model_class == List:
+        board_of_this_list = model_class.objects.get(id=obj_id).board
+        return True if board_of_this_list.owner == user \
+            or board_of_this_list.memberships.filter(user=user, is_active=True).exists()\
+            else False
+    elif model_class == Board:
+        return True if model_class.objects.get(id=obj_id).owner == user \
+            or model_class.objects.get(id=obj_id).memberships.filter(user=user, is_active=True).exists()\
+            else False
+    custom_logger(f"Invalid model class: {model_class} . Please provide a valid model class.", Fore.RED)
+    return False
+
 
 @transaction.atomic
 def get_user_card(card_id, user):
     """Get a specific card for a user with permission check"""
-    is_o_or_m = is_owner_or_member(card_id, user)
+    is_o_or_m = is_owner_or_member(card_id, user, Card)
     custom_logger(is_o_or_m, Fore.MAGENTA)
     if is_o_or_m:
         if card_id:
@@ -138,6 +153,8 @@ class BoardDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         board = self.get_object()
+        # board  = self.object
+        custom_logger(f"Board: {board}", Fore.GREEN)
         lists = get_board_lists(board)
         context['lists'] = lists
         context['board'] = board
