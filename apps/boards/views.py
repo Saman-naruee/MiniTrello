@@ -565,7 +565,7 @@ class HTMXCardMoveView(LoginRequiredMixin, View):
         # To handle PUT request body as form data, we can parse it
         from django.http import QueryDict
         put_data = QueryDict(request.body)
-        client_version = int(put_data.get('version'))
+        # client_version = int(put_data.get('version'))
 
         to_list_id = put_data.get('to_list_id')
         new_index = int(put_data.get('new_index', 0))
