@@ -12,6 +12,7 @@
 {% endblock %}
 {% block content %}
 <div class="container-fluid" x-data="boardsApp()">
+<<<<<<< HEAD
 {% trans "Header Section" %}
 <div class="row mb-4">
 <div class="col-12">
@@ -142,6 +143,158 @@
 </div>
 </div>
 </div>
+=======
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1 class="h2 mb-0">
+                    <i class="fas fa-trello text-primary me-2"></i>
+                    My Boards
+                </h1>
+                <button 
+                    class="btn btn-primary"
+                    hx-get="{% url 'boards:create_board' %}"
+                    hx-target="#create-board-form-container"
+                    hx-swap="innerHTML"
+                    data-bs-toggle="modal"
+                    data-bs-target="#createBoardModal"
+                >
+                    <i class="fas fa-plus me-2"></i>Create Board
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Boards Grid -->
+    <div class="row" id="boards-container">
+        {% for board in boards %}
+        <div class="col-lg-3 col-md-4 col-sm-6 mb-4" id="board-{{ board.id }}">
+            <div class="card h-100 board-card" 
+                 style="border-left: 4px solid {{ board.color }};">
+                <div class="card-body d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="card-title mb-0 text-truncate" title="{{ board.title }}">
+                            {{ board.title }}
+                        </h5>
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                                    type="button" 
+                                    data-bs-toggle="dropdown" 
+                                    aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'boards:board_detail' board.id %}">
+                                        <i class="fas fa-eye me-2"></i>View Board
+                                    </a>
+                                </li>
+                                <li>
+                                    <button class="dropdown-item" 
+                                            @click="confirmDelete({{ board.id }}, '{{ board.title }}')">
+                                        <i class="fas fa-trash me-2"></i>Delete
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    {% if board.description %}
+                    <p class="card-text text-muted small mb-3">
+                        {{ board.description|truncatewords:20 }}
+                    </p>
+                    {% endif %}
+                    
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-users me-1"></i>
+                                {{ board.memberships.count }} members
+                            </small>
+                            <small class="text-muted">
+                                {{ board.created_at|date:"M d, Y" }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-transparent">
+                    <a href="{% url 'boards:board_detail' board.id %}" 
+                       class="btn btn-primary btn-sm w-100">
+                        <i class="fas fa-trello me-1"></i>Open Board
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-trello fa-3x text-muted mb-3"></i>
+                <h4 class="text-muted">No boards yet</h4>
+                <p class="text-muted">Create your first board to get started!</p>
+                <button class="btn btn-primary"
+                        hx-get="{% url 'boards:create_board' %}"
+                        hx-target="#create-board-form-container"
+                        hx-swap="innerHTML"
+                        data-bs-toggle="modal"
+                        data-bs-target="#createBoardModal"
+                >
+                    <i class="fas fa-plus me-2"></i>Create Board
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Create Board Modal -->
+    <div class="modal fade" 
+         id="createBoardModal" {# Add an ID for Bootstrap to target #}
+         tabindex="-1" 
+         aria-labelledby="createBoardModalLabel" {# Add for accessibility #}
+         aria-hidden="true"
+    >
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createBoardModalLabel">Create New Board</h5> {# Add an ID for accessibility #}
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="create-board-form-container">
+                    <!-- HTMX will load the form here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" 
+         x-show="showDeleteModal" 
+         x-transition
+         style="display: none;"
+         tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Board</h5>
+                    <button type="button" class="btn-close" @click="showDeleteModal = false"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete "<span x-text="boardToDeleteTitle"></span>"?</p>
+                    <p class="text-danger"><small>This action cannot be undone.</small></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" @click="showDeleteModal = false">Cancel</button>
+                    <button type="button" 
+                            class="btn btn-danger"
+                            @click="deleteBoard()">
+                        Delete Board
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+>>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d
 </div>
 <script>
 function boardsApp() {

@@ -5,7 +5,8 @@ from .views import (
     HTMXBoardCreateView, HTMXListCreateView, HTMXCardCreateView,
     HTMXBoardDeleteView, HTMXListDeleteView, HTMXCardDeleteView,
     HTMXCardUpdateView, HTMXBoardUpdateView, BoardMembersView,
-    HTMXListUpdateView, HTMXListDetailView,
+    HTMXListUpdateView, HTMXListDetailView, add_member_to_board,
+    HTMXCardAssignMembersView, HTMXCardMoveView
 )
 
 app_name = "boards"
@@ -22,6 +23,7 @@ urlpatterns = [
 
     # Board members
     path("<int:board_id>/members/", BoardMembersView.as_view(), name="board_members"),
+    path("<int:board_id>/members/add/", add_member_to_board, name="add_member"),
 
     # List operations (nested under boards)
     path("<int:board_id>/lists/create/", HTMXListCreateView.as_view(), name="create_list"),
@@ -31,9 +33,13 @@ urlpatterns = [
 
     # Card operations (nested under lists)
     path("<int:board_id>/lists/<int:list_id>/cards/create/", HTMXCardCreateView.as_view(), name="create_card"),
-    path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/update/", HTMXCardUpdateView.as_view(), name="update_card"),
-    path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/delete/", HTMXCardDeleteView.as_view(), name="delete_card"),
+    path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/update/", HTMXCardUpdateView.as_view(), name="card_update"),
+    path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/delete/", HTMXCardDeleteView.as_view(), name="card_delete"),
     path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/", HTMXCardDetailView.as_view(), name="card_detail"),
+    path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/move/", HTMXCardMoveView.as_view(), name="move_card"),
+
+    # HTMX endpoints
+    path("<int:board_id>/lists/<int:list_id>/cards/<int:card_id>/assign/", HTMXCardAssignMembersView.as_view(), name="card_assign_members"),
 
 ]
 

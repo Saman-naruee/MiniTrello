@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<!--
+  HTMX-friendly delete confirmation.
+  Usage:
+  - If you open this template via a normal GET (non-HTMX), it will render a Bootstrap modal
+    and degrade to a normal form POST (works without JS).
+  - If opened via HTMX, you can request the template fragment and replace a modal container,
+    or use `hx-target` on the trigger to swap in the fragment.
+  - The form makes a POST to this view; DeleteView's delete() will respond with 204 for HX requests.
+-->
+
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Card wrapper for the confirmation UI (visible in non-HTMX fallback) -->
+      <div class="card border-danger">
+        <div class="card-header bg-danger text-white d-flex justify-content-between align-items-center">
+          <div>
+            <i class="bi bi-trash-fill me-2" aria-hidden="true"></i>
+            Delete board: <strong class="ms-1">{{ object.title }}</strong>
+          </div>
+          <!-- Close button: when using HTMX, you'd usually remove the element client-side.
+               For non-HTMX, this goes back. -->
+          <div>
+            <a href="{% if request.META.HTTP_REFERER %}{{ request.META.HTTP_REFERER }}{% else %}{% url 'boards:boards_list' %}{% endif %}"
+               class="btn btn-sm btn-light text-dark"
+               aria-label="Cancel and go back">
+              Cancel
+            </a>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <p class="lead">
+            Are you sure you want to permanently delete this board?
+            <br>
+            <strong>{{ object.title }}</strong>
+          </p>
+
+          {% if object.description %}
+          <p class="text-muted mb-3">{{ object.description }}</p>
+          {% endif %}
+
+          <div class="alert alert-warning" role="alert">
+            <strong>Warning:</strong> Deleting a board will also delete all lists and cards within it.
+            This action cannot be undone.
+          </div>
+
+          <!-- HTMX-enabled form -->
+          <form method="post" 
+                hx-post="{% url 'boards:delete_board' board.id %}"
+                hx-target="body"
+                hx-push-url="true">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger">
+                <i class="bi bi-trash me-1"></i> Delete board
+              </button>
+
+              <a
+                href="{% if request.META.HTTP_REFERER %}{{ request.META.HTTP_REFERER }}{% else %}{% url 'boards:boards_list' %}{% endif %}"
+                class="btn btn-outline-secondary"
+              >
+                Cancel
+              </a>
+
+              <!-- Optional: allow client-side confirmation with Alpine before sending
+                   (uncomment if using alpine.js) -->
+              <!--
+              <button
+                x-data
+                x-on:click.prevent="$dispatch('open-delete-confirm')" 
+                class="btn btn-danger"
+              >Delete board</button>
+              -->
+            </form>
+
+          <!-- Helpful hint for HTMX: when the server returns 204, remove the board element client-side:
+               Example: hx-on:htmx:afterRequest or use hx-target on the trigger element to remove a container.
+               If you prefer server to return a snippet instead, adjust the view accordingly.
+          -->
+          <small class="text-muted d-block mt-3">
+            You can also delete the board using HTMX. If successful, the server will respond with
+            <code>204 No Content</code> and you should remove the corresponding DOM node on the page.
+          </small>
+        </div>
+      </div>
+
+      <!--
+        HTMX-only snippet: This block can be requested by hx-target to replace a small element
+        (for example, a board card in a list). If you prefer server to return a snippet on DELETE,
+        place that snippet in the view's delete() return. Keep this here as a template fragment.
+      -->
+      <div id="board-{{ object.pk }}-deleted-snippet" class="d-none">
+        <div class="alert alert-success small">
+          Board "{{ object.title }}" deleted.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

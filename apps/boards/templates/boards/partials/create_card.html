@@ -1,8 +1,40 @@
 {% load i18n %}
 <div id="create-card-form">
+<<<<<<< HEAD
 <form hx-post="{% url 'create_card' board_id list_id %}" hx-swap="beforeend" hx-target="#cards-container-{{ list_id }}">
 {% csrf_token %}
 {{ form.as_p }}
 <button class="btn btn-primary" type="submit">{% trans "Create Card" %}</button>
 </form>
 </div>
+=======
+    <form hx-post="{% url 'boards:create_card' board_id list_id %}"
+          hx-target="#cards-container-{{ list_id }}"
+          hx-swap="beforeend"
+          hx-trigger="submit"
+          hx-on::after-request="setTimeout(() => {
+            htmx.ajax('GET', '{% url 'boards:board_detail' board_id %}', {target: 'body', swap: 'outerHTML'});
+          }, 3000)"
+          class="p-3">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3">
+            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}
+                <div class="invalid-feedback d-block">{{ field.errors }}</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+        <div class="modal-footer">
+            <button type="button" 
+                    class="btn btn-secondary" 
+                    hx-get="{% url 'boards:board_detail' board_id %}"
+                    hx-target="body"
+                    hx-swap="outerHTML">Cancel</button>
+            <button type="submit" class="btn btn-primary">Create Card</button>
+        </div>
+    </form>
+</div>
+
+>>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d

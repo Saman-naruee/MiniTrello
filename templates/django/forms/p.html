@@ -1,0 +1,7 @@
+{# C:\Users\Sun\Desktop\projects\MiniTrello\templates\django\forms\p.html #}
+{{ errors }}
+{% if label %}<p {% with classes=label.attrs.class %}{% if classes %} class="{{ classes }}"{% endif %}{% endwith %}>{% endif %}
+    {% if label %}{{ label_tag }}{% endif %}
+    {{ field }}
+    {% if help_text %}<span class="helptext">{{ help_text|safe }}</span>{% endif %}
+{% if label %}</p>{% endif %}

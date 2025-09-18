@@ -1,8 +1,28 @@
 {% load i18n %}
 <div id="create-list-form">
+<<<<<<< HEAD
 <form hx-post="{% url 'create_list' board_id %}" hx-swap="beforeend" hx-target="#lists-container">
 {% csrf_token %}
 {{ form.as_p }}
 <button class="btn btn-primary" type="submit">{% trans "Create List" %}</button>
 </form>
 </div>
+=======
+    <form hx-post="{% url 'boards:create_list' board_id %}"
+          hx-target="#lists-container"
+          hx-swap="beforeend"
+          class="p-3">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+            {{ form.title }}
+            {% if form.title.errors %}
+            <div class="invalid-feedback d-block">
+                {{ form.title.errors }}
+            </div>
+            {% endif %}
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Create List</button>
+    </form>
+</div>
+>>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d

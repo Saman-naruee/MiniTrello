@@ -4,10 +4,96 @@
 {% block nav_home_active %}active{% endblock %}
 {% block content %}
 <div class="row">
+<<<<<<< HEAD
 <div class="col-md-8">
 <div class="card mb-4">
 <div class="card-header">
 <h2>{% trans "Welcome to MiniTrello" %}</h2>
+=======
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2>Welcome to MiniTrello</h2>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Manage your projects and tasks with our simple and intuitive interface.</p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'boards:boards_list' %}" class="btn btn-primary">View My Boards</a>
+                {% else %}
+                    <a href="{% url 'account_signup' %}" class="btn btn-success">Get Started</a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Features</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-tasks fa-3x mb-3 text-primary"></i>
+                            <h4>Task Management</h4>
+                            <p>Create and organize tasks with ease</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-users fa-3x mb-3 text-success"></i>
+                            <h4>Collaboration</h4>
+                            <p>Work together with your team</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="text-center">
+                            <i class="fas fa-chart-line fa-3x mb-3 text-info"></i>
+                            <h4>Progress Tracking</h4>
+                            <p>Monitor your project's progress</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        {% if user.is_authenticated %}
+            <div class="profile-section">
+                <h3>Your Profile</h3>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Joined:</strong> {{ user.date_joined|date:"M d, Y" }}</p>
+                
+                {% if user.socialaccount_set.all %}
+                    <p><strong>Connected with:</strong> 
+                    {% for account in user.socialaccount_set.all %}
+                        {{ account.provider|title }}
+                    {% endfor %}
+                    </p>
+                {% endif %}
+                
+                <a href="{% url 'profile' %}" class="btn btn-sm btn-outline-secondary">Edit Profile</a>
+            </div>
+        {% else %}
+            <div class="card">
+                <div class="card-header">
+                    <h3>Authentication</h3>
+                </div>
+                <div class="card-body">
+                    <p>Please login or register to access your boards.</p>
+                    <div class="auth-links">
+                        <a href="{% url 'account_login' %}" class="btn btn-primary mb-2 w-100">Login</a>
+                        <a href="{% url 'account_signup' %}" class="btn btn-outline-primary mb-2 w-100">Register</a>
+                        <hr>
+                        <a href="{% url 'socialaccount_connections' %}" class="btn btn-danger w-100">
+                            <i class="fab fa-google me-2"></i> Login with Google
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+>>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d
 </div>
 <div class="card-body">
 <p class="card-text">{% trans "Manage your projects and tasks with our simple and intuitive interface." %}</p>

@@ -19,6 +19,10 @@ from django.urls import path, include
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 from django.views.i18n import set_language
+from apps.boards.views import custom_404
+
+
+handler404 = custom_404
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,7 +38,11 @@ urlpatterns = [
     path('account/', include('apps.accounts.urls')),
     
     # Boards pages (template-based with htmx)
+<<<<<<< HEAD
     path('boards/', include('apps.boards.urls', 'boards')),
+=======
+    path('boards/', include(("apps.boards.urls", "boards"), namespace="boards")),
+>>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d
     
     # i18n - Language selection
     path('i18n/setlang/', set_language, name='set_language'),

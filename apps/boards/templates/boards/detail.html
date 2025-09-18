@@ -4,15 +4,23 @@
 {% load board_extras %}
 {% block title %}{{ board.title }} - MiniTrello{% endblock %}
 {% block extra_head %}
+<<<<<<< HEAD
 <script defer="" src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 <!-- Custom CSS -->
 <link href="{% static 'boards/css/boards.css' %}" rel="stylesheet"/>
+=======
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<link rel="stylesheet" href="{% static 'boards/css/boards.css' %}">
+>>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d
 <style>
+/* --- Your original, correct styles for a column layout --- */
 .board-header {
 background: linear-gradient(135deg, {{ board.color }}20, {{ board.color }}40);
 border-bottom: 3px solid {{ board.color }};
 }
+<<<<<<< HEAD
 .list-container {
 min-height: calc(100vh - 200px);
 overflow-x: auto;
@@ -32,10 +40,35 @@ box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 .priority-badge {
 font-size: 0.7rem;
 padding: 0.2rem 0.4rem;
+=======
+.toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1090;
+}
+.list-container {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    min-height: calc(100vh - 250px); /* Adjusted for header height */
+    overflow-x: auto;
+    align-items: flex-start; /* Aligns lists to the top */
+}
+.list-column {
+    min-width: 300px;
+    max-width: 300px;
+    flex-shrink: 0; /* Prevents lists from shrinking */
+}
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: #c8ebfb;
+>>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d
 }
 </style>
 {% endblock %}
 {% block content %}
+<<<<<<< HEAD
 <!-- In your board detail page -->
 <button class="btn btn-danger" data-bs-target="#modal-container" data-bs-toggle="modal" hx-get="{% url 'delete_board' board.id %}" hx-swap="innerHTML" hx-target="#modal-container">{% trans "Delete Board" %}</button>
 <div class="container-fluid p-0" x-data="boardApp()">
@@ -282,6 +315,175 @@ if (evt.detail.target.closest('[id^="cards-container-"]') && evt.detail.xhr.stat
 const addCardModal = new bootstrap.Modal(document.getElementById('addCardModal'));
 addCardModal.hide();
 }
+=======
+<div class="container-fluid p-0" x-data="boardApp()">
+    
+    {# --- Toast container for displaying messages --- #}
+    <div class="toast-container" 
+         x-data="{ show: false, message: '' }"
+         @show-message.window="show = true; message = $event.detail.message; setTimeout(() => show = false, 4000)">
+        <div x-show="show" x-transition class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" @click="show = false"></button>
+            </div>
+            <div class="toast-body" x-text="message">
+                Notification message.
+            </div>
+        </div>
+    </div>
+    
+    {# --- Your original, more detailed Board Header --- #}
+    <div class="board-header p-3 mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <a href="{% url 'boards:boards_list' %}" class="btn btn-sm btn-outline-secondary mb-2">← Back to Boards</a>
+                <div id="board-title-section-{{ board.id }}">
+                    {% include 'boards/partials/board_title_section.html' %}
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-light" hx-get="{% url 'boards:create_list' board_id=board.id %}" hx-target="#generic-modal-content" data-bs-toggle="modal" data-bs-target="#genericModal">+ Add List</button>
+                <a href="{% url 'boards:add_member' board_id=board.id %}" class="btn btn-sm btn-success">+ Add Member</a>
+                <button class="btn btn-sm btn-warning" hx-get="{% url 'boards:update_board' board.id %}" hx-target="#generic-modal-content" data-bs-toggle="modal" data-bs-target="#genericModal">Update</button>
+                <button class="btn btn-sm btn-danger" hx-get="{% url 'boards:delete_board' board.id %}" hx-target="#generic-modal-content" data-bs-toggle="modal" data-bs-target="#genericModal">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    {# --- Generic modals used by different HTMX actions --- #}
+    <div class="modal fade" id="genericModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content" id="generic-modal-content">
+                {# Content (forms for update/delete list/board) is loaded here by HTMX #}
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="addCardModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content" id="create-card-form-container">
+                {# Content (form for creating cards) is loaded here by HTMX #}
+            </div>
+        </div>
+    </div>
+
+    {# --- The main container for all lists, now with correct classes --- #}
+    <div class="list-container" id="lists-container" data-board-id="{{ board.id }}">
+        {% for list in lists %}
+            {% include "boards/partials/list_column.html" with list=list board=board %}
+        {% empty %}
+            <div class="w-100 text-center py-5">
+                <h4 class="text-muted">No lists yet.</h4>
+                <button class="btn btn-primary mt-3"
+                        hx-get="{% url 'boards:create_list' board_id=board.id %}"
+                        hx-target="#generic-modal-content"
+                        data-bs-toggle="modal"
+                        data-bs-target="#genericModal">
+                    Create your first list
+                </button>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://unpkg.com/htmx.org@1.9.10"></script>
+<script>
+// AlpineJS function for client-side interactions
+function boardApp() { 
+    return {
+        addCardToList(listId, boardId) {
+            const addCardModal = new bootstrap.Modal(document.getElementById('addCardModal'));
+            htmx.ajax('GET', `/boards/${boardId}/lists/${listId}/cards/create/`, {
+                target: '#create-card-form-container',
+                swap: 'innerHTML'
+            }).then(() => {
+                addCardModal.show();
+            });
+        }
+    } 
+}
+
+// Drag & Drop script for moving cards
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.addEventListener('htmx:configRequest', function(evt) {
+        // ❗❗❗ CORE FIX: This is the standard way to add the CSRF token for all HTMX requests.
+        // It reads the token from the cookie Django sets.
+        evt.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+    });
+
+    let containers = document.querySelectorAll('.cards-sortable-container');
+    containers.forEach(container => {
+        new Sortable(container, {
+            group: 'cards',
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            onEnd: function (evt) {
+                const cardId = evt.item.dataset.cardId;
+                const toListId = evt.to.dataset.listId;
+                const fromListId = evt.from.dataset.listId;
+                const boardId = evt.from.closest('.list-container').dataset.boardId;
+                const newIndex = evt.newIndex;
+                const url = `/boards/${boardId}/lists/${fromListId}/cards/${cardId}/move/`;
+
+                const payload = {
+                    to_list_id: toListId,
+                    new_index: newIndex
+                };
+                
+                // ❗❗❗ SIMPLIFIED CALL: No manual headers needed anymore!
+                // We use hx-vals to let HTMX handle encoding.
+                htmx.ajax('PUT', url, {
+                    swap: 'none', // We don't need to swap any content on success
+                    values: payload // Use 'values' instead of 'body' for automatic encoding
+                }).catch(err => {
+                    console.error("HTMX request failed:", err);
+                    // Optionally, show an error message to the user here
+                });
+            }
+        });
+    });
+});
+
+
+
+
+
+// General event listener for closing modals and showing messages after successful HTMX swaps
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+    if (evt.detail.xhr.status >= 400) return; // Ignore failed requests
+
+    const hxTrigger = evt.detail.xhr.getResponseHeader('HX-Trigger');
+    if (!hxTrigger) return;
+    
+    try {
+        const triggerData = JSON.parse(hxTrigger);
+
+        // Check for any of our custom events that should close a modal
+        if (triggerData.boardUpdated || triggerData.listCreated || triggerData.cardCreated || triggerData.listUpdated) {
+            
+            const genericModalEl = document.getElementById('genericModal');
+            if (genericModalEl) {
+                const modal = bootstrap.Modal.getInstance(genericModalEl);
+                if (modal) modal.hide();
+            }
+
+            const addCardModalEl = document.getElementById('addCardModal');
+            if (addCardModalEl) {
+                const modal = bootstrap.Modal.getInstance(addCardModalEl);
+                if (modal) modal.hide();
+            }
+        }
+
+        // Check for a message to show in a toast
+        if (triggerData.showMessage) {
+            window.dispatchEvent(new CustomEvent('show-message', {
+                detail: { message: triggerData.showMessage }
+            }));
+        }
+    } catch (e) {
+        // This can happen if the trigger is a simple string, which is fine.
+    }
+>>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d
 });
 </script>
 {% endblock %}

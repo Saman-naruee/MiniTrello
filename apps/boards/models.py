@@ -58,19 +58,20 @@ class Card(models.Model):
 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
-    assignee = models.ForeignKey(
+    assignees = models.ManyToManyField(
         settings.AUTH_USER_MODEL,
-        null=True, blank=True,
-        on_delete=models.SET_NULL,
-        help_text="User assigned to this card."
+        blank=True,
+        help_text="Users assigned to this card."
     )
 
     list = models.ForeignKey('List', on_delete=models.CASCADE, related_name="cards")
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=PRIORITY_MEDIUM)
     due_date = models.DateField(null=True, blank=True)
-    order = models.IntegerField()
+    is_done = models.BooleanField(default=False)
+    order = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    version = models.IntegerField(default=0)
 
     class Meta:
         ordering = ['priority', 'order']

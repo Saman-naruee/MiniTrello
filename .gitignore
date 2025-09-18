@@ -23,4 +23,8 @@ custom_tools/custom_settings.py
 db/
 staticfiles/
 *_prompt.txt
+<<<<<<< HEAD
 template_prompt.txt
+=======
+db.sqlite3
+>>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d

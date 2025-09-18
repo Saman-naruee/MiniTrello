@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% load i18n %}
 <div class="list-column" id="list-{{ list.id }}">
 <div class="card list-card">
@@ -17,6 +18,59 @@
 <i class="fas fa-trash me-2"></i>{% trans "Delete List" %}</button>
 </li>
 </ul>
+=======
+{# --- This is the container for a single list column --- #}
+<div class="list-column" id="list-{{ list.id }}">
+    <div class="card list-card h-100 border-0 bg-light shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <button class="btn btn-link text-dark text-decoration-none p-0 fw-bold"
+                    hx-get="{% url 'boards:update_list' board_id=board.id list_id=list.id %}"
+                    hx-target="#generic-modal-content"
+                    data-bs-toggle="modal"
+                    data-bs-target="#genericModal">
+                {{ list.title }}
+            </button>
+            
+            {# --- The dropdown menu with all actions, including DELETE --- #}
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary py-0 px-1" type="button" data-bs-toggle="dropdown">
+                    ...
+                </button>
+                <ul class="dropdown-menu">
+                    <li><button class="dropdown-item" @click="addCardToList({{ list.id }}, {{ board.id }})">Add Card</button></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        {# ❗❗❗ The Delete List button is back! #}
+                        <button class="dropdown-item text-danger" 
+                                hx-delete="{% url 'boards:delete_list' board.id list.id %}"
+                                hx-target="#list-{{ list.id }}"
+                                hx-swap="outerHTML"
+                                hx-confirm="Are you sure you want to delete this list and all its cards?">
+                            Delete List
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="card-body p-2 cards-sortable-container" 
+             id="cards-container-{{ list.id }}"
+             data-list-id="{{ list.id }}">
+            
+            {% for card in list.prefetched_cards %}
+                {% include "boards/partials/card_item.html" with card=card list=list board=board %}
+            {% empty %}
+                <div class="text-center text-muted p-3 small">No cards yet.</div>
+            {% endfor %}
+        </div>
+        
+        <div class="card-footer p-2 bg-transparent border-0">
+            <button class="btn btn-outline-secondary btn-sm w-100" @click="addCardToList({{ list.id }}, {{ board.id }})">
+                + Add Card
+            </button>
+        </div>
+    </div>
+>>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d
 </div>
 </div>
 <div id="cards-container-{{ list.id }}">
