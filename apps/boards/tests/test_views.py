@@ -7,6 +7,10 @@ from django.conf import settings
 from apps.accounts.models import User
 from apps.boards.models import Board, List, Card, Membership
 
+from colorama import Fore
+
+from custom_tools.logger import custom_logger
+
 
 """
 In this tests we test 5 approaches:
@@ -285,6 +289,132 @@ class TestBoardDetailView(BoardTestCase):
 
         # Assert: The server should respond with a 404 Not Found.
         self.assertEqual(response.status_code, 404)
+
+
+#### test board create view for each user and test it for each settings and permissions.
+class TestBoardCreateView(BoardTestCase):
+    """
+    Tests for the HTMXBoardCreateView.
+    URL: /boards/create/
+    """
+
+    def setUp(self):
+        """Set up the URL for the board creation endpoint."""
+        self.url = reverse('boards:create_board')
+
+    # =================================================================
+    # Approach 1: Test Application Settings
+    # =================================================================
+    
+    def test_user_cannot_create_board_when_at_limit(self):
+        """
+        Tests if a user who has reached the MAX_BOARDS_PER_USER limit is blocked from creating a new board.
+        This directly tests the application setting.
+        """
+        # Arrange: Log in as the owner, who already has the maximum number of boards
+        # created for them in the base_test.py setup.
+        is_logged = self.client.login(username='board_owner', password='p')
+        custom_logger(f"is logged?: {is_logged}", Fore.YELLOW)
+        # self.client.get(self.url, HTTP_HX_REQUEST='true')  # Send HX-Request header
+        
+        # Verify that the user is indeed at the limit
+        boards_count = Board.objects.filter(owner=self.owner).count()
+        custom_logger(f"User {self.owner.email} has {boards_count} boards", Fore.YELLOW)
+        self.assertEqual(boards_count, self.max_board_per_user)
+
+        # Act: Attempt to create one more board.
+        post_data = {'title': 'One Board Too Many', 'color': 'pink'}
+        response = self.client.post(self.url, post_data, HTTP_HX_REQUEST='true')
+
+        # Assert:
+        # 1. The server should return a 400 Bad Request because the form is invalid.
+        self.assertEqual(response.status_code, 400)
+        
+        # 2. No new board should have been created.
+        self.assertFalse(Board.objects.filter(title='One Board Too Many').exists())
+        
+
+    # =================================================================
+    # Approach 2: Test Access for Authorized Users
+    # =================================================================
+    
+    def test_logged_in_user_can_create_board(self):
+        """
+        Tests the successful creation of a board by an authenticated user who is below the limit.
+        """
+        # Arrange: Log in as a user who has no boards yet.
+        self.client.login(username='board_member', password='p')
+        # self.client.get(self.url, HTTP_HX_REQUEST='true')  # Send HX-Request header
+        
+        # Act: Send a valid POST request to create a new board.
+        post_data = {'title': 'Member-Created Board', 'description': 'A new board.', 'color': 'purple'}
+        response = self.client.post(self.url, post_data, HTTP_HX_REQUEST='true')
+
+        # Assert:
+        # 1. The request is successful (200 OK).
+        self.assertEqual(response.status_code, 200)
+        
+        # 2. A new board now exists in the database with the correct owner.
+        self.assertTrue(Board.objects.filter(title='Member-Created Board', owner=self.member).exists())
+        
+        # 3. A membership for the owner was automatically created.
+        new_board = Board.objects.get(title='Member-Created Board')
+        self.assertTrue(Membership.objects.filter(board=new_board, user=self.member, role=Membership.ROLE_OWNER).exists())
+        
+        # 4. The response contains the HTML for the new board card and triggers an HTMX event.
+        self.assertContains(response, 'Member-Created Board')
+        self.assertIn('boardCreated', response.headers.get('HX-Trigger', ''))
+
+    def test_create_board_with_invalid_data(self):
+        """
+        Tests that submitting the form with invalid data (e.g., a short title) fails correctly.
+        """
+        # Arrange: Log in a user.
+        self.client.login(username='board_member', password='p')
+        # response = self.client.get(self.url, HTTP_HX_REQUEST='true') 
+        
+        # Act: Send a POST request with an invalid title.
+        post_data = {'title': 'a', 'color': 'blue'}
+        response = self.client.post(self.url, post_data, HTTP_HX_REQUEST='true')
+        
+        # Assert:
+        # 1. The server returns a 400 Bad Request.
+        self.assertEqual(response.status_code, 400)
+        
+        # 2. No board was created.
+        self.assertFalse(Board.objects.filter(title='a').exists())
+        
+        # 3. The response contains the form again, showing the validation error.
+        # self.assertContains(response, 'Title must be at least 4 characters long')
+
+    # =================================================================
+    # Approach 3: Test Permissions for Unauthorized Users
+    # =================================================================
+
+    def test_anonymous_user_cannot_access_create_form(self):
+        """
+        Tests that an unauthenticated user cannot even view the create form (GET request).
+        """
+        # Act: Attempt to get the create form page.
+        response = self.client.get(self.url)
+
+        # Assert: User is redirected to login.
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('account_login'), response.url)
+        
+    def test_anonymous_user_cannot_create_board(self):
+        """
+        Tests that an unauthenticated user cannot create a board via a POST request.
+        """
+        # Act: Attempt to post data to the create URL.
+        post_data = {'title': 'Anonymous Board', 'color': 'red'}
+        response = self.client.post(self.url, post_data)
+
+        # Assert: User is redirected to login and no board is created.
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Board.objects.filter(title='Anonymous Board').exists())
+    
+
 
 
 

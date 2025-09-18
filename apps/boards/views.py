@@ -15,6 +15,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.http import Http404, HttpResponseRedirect, HttpResponse
 from django.db import models
+from django.http import HttpResponseBadRequest
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -173,6 +174,9 @@ class HTMXBoardCreateView(LoginRequiredMixin, CreateView):
     form_class = BoardForm
 
     def get(self, request, *args, **kwargs):
+        if not request.headers.get('HX-Request'):
+            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
+        
         form = self.form_class()
         return render(request, self.template_name, {"form": form})
 
@@ -210,6 +214,13 @@ class HTMXBoardCreateView(LoginRequiredMixin, CreateView):
         messages.success(self.request, "Board created successfully")
         response['HX-Trigger'] = 'boardCreated'
         return response
+    
+    def post(self, request, *args, **kwargs):
+        # Ensure this is an HTMX request
+        if not request.headers.get('HX-Request'):
+            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
+        
+        return super().post(request, *args, **kwargs)
 
 class HTMXBoardDeleteView(LoginRequiredMixin, DeleteView):
     """Delete a board via HTMX"""
