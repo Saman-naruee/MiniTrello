@@ -154,13 +154,15 @@ class BoardDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         board = self.get_object()
         # board  = self.object
-        custom_logger(f"Board: {board}", Fore.GREEN)
-        lists = get_board_lists(board)
-        context['lists'] = lists
-        context['board'] = board
-        context['board_id'] = board.id
-        context['update_board_form'] = BoardForm(instance=self.get_object())
-        return context
+        if board:
+            custom_logger(f"Board: {board}", Fore.GREEN)
+            lists = get_board_lists(board)
+            context['lists'] = lists
+            context['board'] = board
+            context['board_id'] = board.id
+            context['update_board_form'] = BoardForm(instance=self.get_object())
+            return context
+        raise Http404("Board not found")
 
 
 # HTMX Views for dynamic interactions
