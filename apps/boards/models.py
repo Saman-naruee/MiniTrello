@@ -68,7 +68,7 @@ class Card(models.Model):
     priority = models.IntegerField(choices=PRIORITY_CHOICES, default=PRIORITY_MEDIUM)
     due_date = models.DateField(null=True, blank=True)
     is_done = models.BooleanField(default=False)
-    order = models.IntegerField()
+    order = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     version = models.IntegerField(default=0)

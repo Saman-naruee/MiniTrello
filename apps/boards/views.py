@@ -339,11 +339,26 @@ class HTMXListDetailView(LoginRequiredMixin, DetailView):
 
     model = List
     template_name = "boards/partials/list_detail.html"
+    context_object_name = 'list'
 
     def get_object(self):
         board = get_user_board(self.kwargs['board_id'], self.request.user)
         return get_user_list(self.kwargs['list_id'], self.request.user, board)
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        
+        # Get the list object that was already fetched by get_object
+        list_obj = self.get_object()
+        
+        # Add the cards of this list to the context
+        context['cards'] = list_obj.cards.all().order_by('order')
+        
+        # Also pass board for any potential URL lookups in the template
+        context['board'] = list_obj.board
+        
+        return context
 
 class HTMXListDeleteView(LoginRequiredMixin, View):
     """Delete a list via HTMX"""
