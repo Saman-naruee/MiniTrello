@@ -7,6 +7,32 @@ from django.conf import settings
 from apps.accounts.models import User
 from apps.boards.models import Board, List, Card, Membership
 
+
+"""
+In this tests we test 5 approaches:
+    1. test board list objects
+        a. testing for application itself settings like max_member_per_user... .
+        b. testing for members (include owner itself) right access to CRUD operations.
+        c. testing for right permissions on object(s) like an anonymous user can access other users data?
+    2. test board detail of an object
+        a. testing for application itself settings like max_member_per_user... .
+        b. testing for members (include owner itself) right access to CRUD operations.
+        c. testing for right permissions on object(s) like an anonymous user can access other users data?
+    3. test board creation object
+        a. testing for application itself settings like max_member_per_user... .
+        b. testing for members (include owner itself) right access to CRUD operations.
+        c. testing for right permissions on object(s) like an anonymous user can access other users data?
+    4. test board update object
+        a. testing for application itself settings like max_member_per_user... .
+        b. testing for members (include owner itself) right access to CRUD operations.
+        c. testing for right permissions on object(s) like an anonymous user can access other users data?
+    5. test board delete object
+        a. testing for application itself settings like max_member_per_user... .
+        b. testing for members (include owner itself) right access to CRUD operations.
+        c. testing for right permissions on object(s) like an anonymous user can access other users data?
+"""
+
+
     
 class BoardViewsTests(TestCase): # inherit from BaseTestCase
     def setUp(self):
@@ -73,3 +99,23 @@ class BoardViewsTests(TestCase): # inherit from BaseTestCase
         self.assertEqual(self.membership.user, self.user)
         self.assertEqual(self.membership.board, self.board)
         self.assertEqual(self.membership.role, Membership.ROLE_OWNER)
+    
+
+    #### test board creation for each user and test it for each settings and permissions.
+    
+    ### tests for creation by members with different access, test it for each settings and permissions
+
+
+    #### test board detail view for each user and test it for each settings and permissions.
+
+
+
+    #### test board list view for each user and test it for each settings and permissions.
+
+
+
+    #### test board delete view for each user and test it for each settings and permissions.
+
+
+
+    #### test board update view for each user and test it for each settings and permissions.

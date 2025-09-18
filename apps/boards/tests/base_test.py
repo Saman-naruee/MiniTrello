@@ -1,60 +1,98 @@
 from django.test import TestCase
 from django.conf import settings
-from apps.accounts.views import User
+from apps.accounts.models import User
 from apps.boards.models import Board, List, Card, Membership
 
-max_board_per_user = settings.MAX_BOARDS_PER_USER
-max_member_per_board = settings.MAX_MEMBERS_PER_BOARD
-max_membership_per_user = settings.MAX_MEMBERSHIP_PER_USER
 
 
-class BaseTestCase(TestCase):
-    def setUp(self):
-        # Users
-        self.user = User.objects.create_user('testuser', email='test@example.com', password='password')
-        self.user2 = User.objects.create_user('testuser2', email='test2@example.com', password='password2')
+
+class BoardTestCase(TestCase):
+    """
+    A base TestCase providing a rich, pre-populated environment for all board-related tests.
+    
+    This class reduces code duplication by creating a comprehensive set of objects:
+    - Users: An owner, a member, a non-member, and other users for various scenarios.
+    - Boards: A primary board for detailed testing, a secondary board for access separation,
+      and a set of additional boards to test user limits.
+    - Lists & Cards: A populated structure within the primary board.
+    - Memberships: Clear roles for users on the primary board.
+    
+    Test classes for specific views should inherit from this class.
+    """
+
+    @classmethod
+    def setUpTestData(self):
+        """Create all common objects used across multiple test classes."""
+        self._create_users()
+        self._create_boards()
+        self._create_memberships()
+        self._create_lists_and_cards()
+
+        # Get the maximum values from the settings
+        self.max_board_per_user = settings.MAX_BOARDS_PER_USER
+        self.max_member_per_board = settings.MAX_MEMBERS_PER_BOARD
+        self.max_membership_per_user = settings.MAX_MEMBERSHIP_PER_USER
+
+    @classmethod
+    def _create_users(cls):
+        """Create a standard set of users with clear roles."""
+        cls.owner = User.objects.create_user(username='board_owner', email='owner@test.com', password='p')
+        cls.member = User.objects.create_user(username='board_member', email='member@test.com', password='p')
+        cls.non_member = User.objects.create_user(username='non_member', email='nonmember@test.com', password='p')
+        # This user will own the secondary board and can be used for invitation/membership limit tests
+        cls.another_user = User.objects.create_user(username='another_user', email='another@test.com', password='p')
+
+    @classmethod
+    def _create_boards(cls):
+        """Create a primary board, a secondary board, and extra boards for limit testing."""
+        # The main board used for most tests (CRUD on lists, cards, etc.)
+        cls.board = Board.objects.create(
+            owner=cls.owner,
+            title='Primary Test Board',
+            color='blue'
+        )
+
+        # A secondary board to test access control (e.g., owner/member of cls.board cannot see this)
+        cls.other_board = Board.objects.create(
+            owner=cls.another_user,
+            title='Secondary Board (Private)',
+            color='green'
+        )
+
+        # Create boards up to the user limit for the owner user, for testing creation limits
+        cls.owner_extra_boards = []
+        # We already created one board for the owner, so we create MAX-1 more.
+        for i in range(cls.max_boards_per_user - 1):
+            board = Board.objects.create(
+                owner=cls.owner,
+                title=f'Owner Board {i+2}',
+                color='red'
+            )
+            cls.owner_extra_boards.append(board)
+
+    @classmethod
+    def _create_memberships(cls):
+        """Create memberships to define user roles on the primary board."""
+        # The owner is automatically a member with the 'Owner' role.
+        Membership.objects.create(user=cls.owner, board=cls.board, role=Membership.ROLE_OWNER)
+        # Add 'member' user to the primary board with the 'Member' role.
+        Membership.objects.create(user=cls.member, board=cls.board, role=Membership.ROLE_MEMBER)
+
+    @classmethod
+    def _create_lists_and_cards(cls):
+        """Create a basic structure of lists and cards within the primary board."""
+        cls.list1 = List.objects.create(board=cls.board, title='To Do', order=1)
+        cls.list2 = List.objects.create(board=cls.board, title='In Progress', order=2)
         
-        # Boards
-        self.board = Board.objects.create(owner=self.user, title='Test Board', color='blue')
-        self.board2 = Board.objects.create(owner=self.user, title='Test Board 2', color='green')
-        self.board3 = Board.objects.create(owner=self.user, title='Test Board 3', color='red')
-        self.board4 = Board.objects.create(owner=self.user, title='Test Board 4', color='orange')
-        self.board5 = Board.objects.create(owner=self.user, title='Test Board 5', color='yellow')
-        self.board6 = Board.objects.create(owner=self.user, title='Test Board 6', color='violet')
-        self.board7 = Board.objects.create(owner=self.user, title='Test Board 7', color='indigo')
-        self.board8 = Board.objects.create(owner=self.user, title='Test Board 8', color='cyan')
-        self.board9 = Board.objects.create(owner=self.user, title='Test Board 9', color='magenta')
+        cls.card1 = Card.objects.create(list=cls.list1, title='Card 1 in To Do', order=1)
+        cls.card2 = Card.objects.create(list=cls.list1, title='Card 2 in To Do', order=2)
+        cls.card3 = Card.objects.create(list=cls.list2, title='Card 3 in Progress', order=1)
+        
+        # Add assignees to a card for testing permissions/display
+        cls.card1.assignees.add(cls.owner, cls.member)
 
-        # lists
-        self.list = List.objects.create(board=self.board, title='Test List', order=1)
-        self.list2 = List.objects.create(board=self.board, title='Test List 2', order=2)
-        self.list3 = List.objects.create(board=self.board, title='Test List 3', order=3)
-        self.list4 = List.objects.create(board=self.board, title='Test List 4', order=4)
-        self.list5 = List.objects.create(board=self.board, title='Test List 5', order=5)
-        self.list6 = List.objects.create(board=self.board, title='Test List 6', order=6)
-        self.list7 = List.objects.create(board=self.board, title='Test List 7', order=7)
-        self.list8 = List.objects.create(board=self.board, title='Test List 8', order=8)
-        self.list9 = List.objects.create(board=self.board, title='Test List 9', order=9)
-
-        # cards
-        self.card = Card.objects.create(list=self.list, title='Test Card', order=1)
-        self.card2 = Card.objects.create(list=self.list, title='Test Card 2', order=2)
-        self.card3 = Card.objects.create(list=self.list, title='Test Card 3', order=3)
-        self.card4 = Card.objects.create(list=self.list, title='Test Card 4', order=4)
-        self.card5 = Card.objects.create(list=self.list, title='Test Card 5', order=5)
-        self.card6 = Card.objects.create(list=self.list, title='Test Card 6', order=6)
-        self.card7 = Card.objects.create(list=self.list, title='Test Card 7', order=7)
-        self.card8 = Card.objects.create(list=self.list, title='Test Card 8', order=8)
-        self.card9 = Card.objects.create(list=self.list, title='Test Card 9', order=9)
-
-        # memberships
-        self.membership = Membership.objects.create(user=self.user, board=self.board, role=Membership.ROLE_OWNER)
-        self.membership2 = Membership.objects.create(user=self.user2, board=self.board, role=Membership.ROLE_MEMBER)
-        self.membership3 = Membership.objects.create(user=self.user, board=self.board2, role=Membership.ROLE_MEMBER)
-        self.membership4 = Membership.objects.create(user=self.user, board=self.board3, role=Membership.ROLE_MEMBER)
-        self.membership5 = Membership.objects.create(user=self.user, board=self.board4, role=Membership.ROLE_MEMBER)
-        self.membership6 = Membership.objects.create(user=self.user, board=self.board5, role=Membership.ROLE_MEMBER)
-        self.membership7 = Membership.objects.create(user=self.user, board=self.board6, role=Membership.ROLE_MEMBER)
-        self.membership8 = Membership.objects.create(user=self.user, board=self.board7, role=Membership.ROLE_MEMBER)
-        self.membership9 = Membership.objects.create(user=self.user, board=self.board8, role=Membership.ROLE_MEMBER)
-        self.membership10 = Membership.objects.create(user=self.user, board=self.board9, role=Membership.ROLE_MEMBER)
+    def setUp(self):
+        """This method is run before each individual test, ensuring a clean client."""
+        # It's good practice to not log in any user by default.
+        # Each test method will explicitly log in the user whose perspective it is testing.
+        pass
