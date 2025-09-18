@@ -2,10 +2,10 @@
 
 import json
 from django.urls import reverse
-from .base_test import BoardTestCase
+from .base_test import BaseBoardTestCase
 from apps.boards.models import Card, List
 
-class TestCardListView(BoardTestCase):
+class TestCardListView(BaseBoardTestCase):
     """
     Tests for listing cards within a list.
     Note: Card listing is part of BoardDetailView, which is already tested.
@@ -14,7 +14,7 @@ class TestCardListView(BoardTestCase):
     """
     pass
 
-class TestCardDetailView(BoardTestCase):
+class TestCardDetailView(BaseBoardTestCase):
     """
     Tests for the HTMXCardDetailView.
     URL: /boards/<board_id>/lists/<list_id>/cards/<card_id>/
@@ -45,7 +45,7 @@ class TestCardDetailView(BoardTestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class TestCardCreateView(BoardTestCase):
+class TestCardCreateView(BaseBoardTestCase):
     """
     Tests for the HTMXCardCreateView.
     URL: /boards/<board_id>/lists/<list_id>/cards/create/
@@ -85,7 +85,7 @@ class TestCardCreateView(BoardTestCase):
         self.assertFalse(Card.objects.filter(title='Illegal Card').exists())
 
 
-class TestCardUpdateView(BoardTestCase):
+class TestCardUpdateView(BaseBoardTestCase):
     """
     Tests for the HTMXCardUpdateView.
     URL: /boards/<board_id>/lists/<list_id>/cards/<card_id>/update/
@@ -125,7 +125,7 @@ class TestCardUpdateView(BoardTestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class TestCardDeleteView(BoardTestCase):
+class TestCardDeleteView(BaseBoardTestCase):
     """
     Tests for the HTMXCardDeleteView.
     URL: /boards/<board_id>/lists/<list_id>/cards/<card_id>/delete/

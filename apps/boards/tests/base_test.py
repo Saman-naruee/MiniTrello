@@ -9,7 +9,7 @@ class BaseTestCase(TestCase):
 
 
 
-class BoardTestCase(TestCase):
+class BaseBoardTestCase(BaseTestCase):
     """
     A base TestCase providing a rich, pre-populated environment for all board-related tests.
     

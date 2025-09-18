@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 import random
-from .base_test import BoardTestCase
+from .base_test import BaseBoardTestCase
 from django.conf import settings
 
 from apps.accounts.models import User
@@ -38,7 +38,7 @@ In this tests we test 5 approaches:
 
 
 #### test board list view for each user and test it for each settings and permissions.
-class TestBoardListView(BoardTestCase):
+class TestBoardListView(BaseBoardTestCase):
     """
     Tests for the BoardListView (the main page listing a user's boards).
     URL: /boards/
@@ -174,7 +174,7 @@ class TestBoardListView(BoardTestCase):
 
 
 #### test board detail as the same but test the board's lists and lists' cards
-class TestBoardDetailView(BoardTestCase):
+class TestBoardDetailView(BaseBoardTestCase):
     """
     Tests for the BoardDetailView (the page displaying a single board with its lists and cards).
     URL: /boards/<board_id>/
@@ -292,7 +292,7 @@ class TestBoardDetailView(BoardTestCase):
 
 
 #### test board create view for each user and test it for each settings and permissions.
-class TestBoardCreateView(BoardTestCase):
+class TestBoardCreateView(BaseBoardTestCase):
     """
     Tests for the HTMXBoardCreateView.
     URL: /boards/create/
@@ -418,7 +418,7 @@ class TestBoardCreateView(BoardTestCase):
 
 
 #### test board update view for each user and test it for each settings and permissions.
-class TestBoardUpdateView(BoardTestCase):
+class TestBoardUpdateView(BaseBoardTestCase):
     """
     Tests for the HTMXBoardUpdateView.
     URL: /boards/<board_id>/update/
@@ -539,7 +539,7 @@ class TestBoardUpdateView(BoardTestCase):
 
 
 #### test board delete view for each user and test it for each settings and permissions.
-class TestBoardDeleteView(BoardTestCase):
+class TestBoardDeleteView(BaseBoardTestCase):
     """
     Tests for the HTMXBoardDeleteView.
     URL: /boards/<board_id>/delete/

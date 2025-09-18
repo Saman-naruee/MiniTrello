@@ -1,10 +1,10 @@
 import json
 from django.urls import reverse
-from .base_test import BoardTestCase # Import our rich base test case
+from .base_test import BaseBoardTestCase # Import our rich base test case
 
 from apps.boards.models import List, Card
 
-class TestListCreateView(BoardTestCase):
+class TestListCreateView(BaseBoardTestCase):
     """
     Tests for the HTMXListCreateView.
     URL: /boards/<board_id>/lists/create/
@@ -91,7 +91,7 @@ class TestListCreateView(BoardTestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class TestListUpdateView(BoardTestCase):
+class TestListUpdateView(BaseBoardTestCase):
     """
     Tests for the HTMXListUpdateView.
     URL: /boards/<board_id>/lists/<list_id>/update/
@@ -130,7 +130,7 @@ class TestListUpdateView(BoardTestCase):
         self.assertEqual(response.status_code, 403)
 
 
-class TestListDeleteView(BoardTestCase):
+class TestListDeleteView(BaseBoardTestCase):
     """
     Tests for the HTMXListDeleteView.
     URL: /boards/<board_id>/lists/<list_id>/delete/
@@ -174,7 +174,7 @@ class TestListDeleteView(BoardTestCase):
         self.assertTrue(List.objects.filter(id=self.list_to_delete.id).exists())
 
 
-class TestListDetailView(BoardTestCase):
+class TestListDetailView(BaseBoardTestCase):
     """
     Tests for the HTMXListDetailView.
     URL: /boards/<board_id>/lists/<list_id>/
