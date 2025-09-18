@@ -2,7 +2,7 @@ import json
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import HttpResponseForbidden, JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -25,8 +25,9 @@ from apps.accounts.models import User
 from custom_tools.logger import custom_logger
 from .forms import *
 from colorama import Fore
-
-
+from django.core.exceptions import ValidationError
+from django.http import HttpResponseForbidden as HttpResponse403
+from django.core.exceptions import PermissionDenied
 
 # Helper functions to avoid repetition
 def get_user_boards(user):
@@ -46,8 +47,7 @@ def get_user_board(board_id, user):
     """Get a specific board for a user with permission check"""
     try:
         board = get_object_or_404(Board, id=board_id)
-        return board if is_owner_or_member(board_id, user, Board) \
-            else False
+        return board if is_owner_or_member(board_id, user, Board) else False
     except Board.DoesNotExist:
         raise Http404("Board not found")
 
@@ -79,25 +79,46 @@ def get_user_list(list_id, user, board):
         )
     return False
 
+def can_modify_board(board, user):
+    """
+    Check if user has permission to modify (update/delete) the board
+    """
+    # Check if user is owner
+    if board.owner == user:
+        return True
+    
+    # Check if user is admin
+    membership = board.memberships.filter(user=user, is_active=True).first()
+    custom_logger(f"method: can_modify_board/nMembership: {membership.role}", Fore.YELLOW)
+    return membership and membership.role in [Membership.ROLE_OWNER, Membership.ROLE_ADMIN]
 
 def is_owner_or_member(obj_id, user, model_class=None) -> bool:
-    if model_class == Card:
-        board_of_this_card = model_class.objects.get(id=obj_id).list.board
-        return True if board_of_this_card.owner == user \
-            or board_of_this_card.memberships.filter(user=user, is_active=True).exists()\
-            else False
+    """
+    Check if the user is the owner or a member of the object.
+        . At this level created for Card, List, Board
+    """
+    result = False
+    if model_class:
+        if model_class == Card:
+            board_of_this_card = model_class.objects.get(id=obj_id).list.board
+            result = True if board_of_this_card.owner == user \
+                or board_of_this_card.memberships.filter(user=user, is_active=True).exists()\
+                else False
 
-    elif model_class == List:
-        board_of_this_list = model_class.objects.get(id=obj_id).board
-        return True if board_of_this_list.owner == user \
-            or board_of_this_list.memberships.filter(user=user, is_active=True).exists()\
-            else False
-    elif model_class == Board:
-        return True if model_class.objects.get(id=obj_id).owner == user \
-            or model_class.objects.get(id=obj_id).memberships.filter(user=user, is_active=True).exists()\
-            else False
-    custom_logger(f"Invalid model class: {model_class} . Please provide a valid model class.", Fore.RED)
-    return False
+        elif model_class == List:
+            board_of_this_list = model_class.objects.get(id=obj_id).board
+            result = True if board_of_this_list.owner == user \
+                or board_of_this_list.memberships.filter(user=user, is_active=True).exists()\
+                else False
+        elif model_class == Board:
+            result = True if model_class.objects.get(id=obj_id).owner == user \
+                or model_class.objects.get(id=obj_id).memberships.filter(user=user, is_active=True).exists()\
+                else False
+
+        if not result:
+            raise PermissionDenied("You are not authorized to perform this action")
+        return result
+    raise ValidationError("Invalid model class")
 
 
 @transaction.atomic
@@ -229,7 +250,14 @@ class HTMXBoardDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("boards:boards_list")
 
     def get_object(self, queryset=None):
-        return  get_user_board(self.kwargs['board_id'], self.request.user)
+        try:
+            user = self.request.user
+            board = get_user_board(self.kwargs['board_id'], self.request.user)
+            if not can_modify_board(board, user):
+                raise HttpResponseForbidden("You are not allowed to delete this board.")
+            return board
+        except Exception as e:
+            raise Http404(str(e))
 
     def delete(self, request, *args, **kwargs):
         """
@@ -254,7 +282,14 @@ class HTMXBoardUpdateView(LoginRequiredMixin, UpdateView):
     form_class = BoardForm
 
     def get_object(self):
-        return get_user_board(self.kwargs['board_id'], self.request.user)
+        try:
+            user = self.request.user
+            board = get_user_board(self.kwargs['board_id'], user)
+            if not can_modify_board(board, user):
+                raise HttpResponseForbidden("You are not allowed to modify this board.")
+            return board
+        except Exception as e:
+            raise Http404(str(e))
 
     def get_success_url(self):
         return reverse_lazy("boards:board_detail", kwargs={"board_id": self.object.id})

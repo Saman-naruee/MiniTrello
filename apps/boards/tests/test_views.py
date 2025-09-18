@@ -417,9 +417,126 @@ class TestBoardCreateView(BoardTestCase):
 
 
 
+#### test board update view for each user and test it for each settings and permissions.
+class TestBoardUpdateView(BoardTestCase):
+    """
+    Tests for the HTMXBoardUpdateView.
+    URL: /boards/<board_id>/update/
+    """
+    
+    def setUp(self):
+        """Set up the URL for the board update endpoint."""
+        self.url = reverse('boards:update_board', kwargs={'board_id': self.board.id})
+
+    # =================================================================
+    # Approach 1: Test Application Settings
+    # =================================================================
+    # Note: Settings are not directly applicable to the update view.
+    # Logic like member limits would be in an "add member" view, not here.
+
+    # =================================================================
+    # Approach 2: Test Access for Authorized Users
+    # =================================================================
+    
+    def test_owner_can_get_update_form(self):
+        """
+        Tests if the board owner can successfully retrieve the update form.
+        """
+        # Arrange: Log in as the owner.
+        self.client.login(username='board_owner', password='p')
+
+        # Act: Request the update form via a GET request.
+        response = self.client.get(self.url, HTTP_HX_REQUEST='true')
+
+        # Assert:
+        # 1. The request is successful.
+        self.assertEqual(response.status_code, 200)
+        
+        # 2. The form in the response contains the current board's title.
+        self.assertContains(response, self.board.title)
+
+    def test_owner_can_update_board(self):
+        """
+        Tests if the board owner can successfully update the board's details.
+        """
+        # Arrange: Log in as the owner.
+        self.client.login(username='board_owner', password='p')
+        
+        # Act: Send a POST request with new data.
+        post_data = {'title': 'Title Updated by Owner', 'description': 'New desc.', 'color': 'yellow'}
+        response = self.client.post(self.url, post_data, HTTP_HX_REQUEST='true')
+
+        # Assert:
+        # 1. The request is successful.
+        self.assertEqual(response.status_code, 200)
+        
+        # 2. Refresh the board object from the database to check if the data was saved.
+        self.board.refresh_from_db()
+        self.assertEqual(self.board.title, 'Title Updated by Owner')
+        self.assertEqual(self.board.color, 'yellow')
+        
+        # 3. The response contains the updated content and triggers the correct event.
+        self.assertContains(response, 'Title Updated by Owner')
+        self.assertIn('boardUpdated', response.headers.get('HX-Trigger', ''))
+
+    # =================================================================
+    # Approach 3: Test Permissions for Unauthorized/Anonymous/Insufficient Role Users
+    # =================================================================
+
+    def test_anonymous_user_cannot_update_board(self):
+        """
+        Tests that an unauthenticated user is redirected when trying to access the update view.
+        """
+        # Act: Attempt GET and POST requests without logging in.
+        response_get = self.client.get(self.url)
+        response_post = self.client.post(self.url, {'title': 'test'})
+
+        # Assert: Both should redirect to the login page.
+        self.assertEqual(response_get.status_code, 302)
+        self.assertIn(reverse('account_login'), response_get.url)
+        self.assertEqual(response_post.status_code, 302)
+
+    def test_non_member_cannot_update_board(self):
+        """
+        Tests that an authenticated user who is not a member of the board gets a 404 error.
+        """
+        # Arrange: Log in as a user who is not part of the board.
+        self.client.login(username='non_member', password='p')
+
+        # Act: Attempt GET and POST requests.
+        response_get = self.client.get(self.url)
+        response_post = self.client.post(self.url, {'title': 'test'})
+        custom_logger(f"Get response status code : {response_get.status_code}", Fore.YELLOW)
+        custom_logger(f"Post response status code : {response_post.status_code}", Fore.YELLOW)
+
+        # Assert: Both should result in a 404 Not Found.
+        self.assertEqual(response_get.status_code, 404)
+        self.assertEqual(response_post.status_code, 404)
+
+    def test_member_with_insufficient_permissions_cannot_update_board(self):
+        """
+        Tests that a regular member (non-owner/admin) CANNOT update the board's main details.
+        This enforces our business rule that only owners/admins can edit the board.
+        """
+        # Arrange: Log in as a regular member.
+        self.client.login(username='board_member', password='p')
+        original_title = self.board.title
+
+        # Act: Attempt to update the board.
+        post_data = {'title': 'Title Updated by Member', 'color': 'pink'}
+        response = self.client.post(self.url, post_data, HTTP_HX_REQUEST='true')
+
+        # Assert:
+        # 1. The server should forbid the action. We expect a 404 because the get_user_board
+        # helper function will likely fail if we add an ownership check.
+        # If you were to implement a custom mixin, you might return a 403 Forbidden instead.
+        self.assertEqual(response.status_code, 404)
+        
+        # 2. The board's title should NOT have changed in the database.
+        self.board.refresh_from_db()
+        self.assertEqual(self.board.title, original_title)
+
+
+
 
 #### test board delete view for each user and test it for each settings and permissions.
-
-
-
-#### test board update view for each user and test it for each settings and permissions.
