@@ -4,6 +4,9 @@ from apps.accounts.models import User
 from apps.boards.models import Board, List, Card, Membership
 
 
+class BaseTestCase(TestCase):
+    pass
+
 
 
 class BoardTestCase(TestCase):
@@ -19,19 +22,19 @@ class BoardTestCase(TestCase):
     
     Test classes for specific views should inherit from this class.
     """
+    # Get the maximum values from the settings
+    max_board_per_user = settings.MAX_BOARDS_PER_USER
+    max_member_per_board = settings.MAX_MEMBERS_PER_BOARD
+    max_membership_per_user = settings.MAX_MEMBERSHIPS_PER_USER
 
     @classmethod
-    def setUpTestData(self):
+    def setUpTestData(cls):
         """Create all common objects used across multiple test classes."""
-        self._create_users()
-        self._create_boards()
-        self._create_memberships()
-        self._create_lists_and_cards()
+        cls._create_users()
+        cls._create_boards()
+        cls._create_memberships()
+        cls._create_lists_and_cards()
 
-        # Get the maximum values from the settings
-        self.max_board_per_user = settings.MAX_BOARDS_PER_USER
-        self.max_member_per_board = settings.MAX_MEMBERS_PER_BOARD
-        self.max_membership_per_user = settings.MAX_MEMBERSHIP_PER_USER
 
     @classmethod
     def _create_users(cls):
@@ -62,7 +65,7 @@ class BoardTestCase(TestCase):
         # Create boards up to the user limit for the owner user, for testing creation limits
         cls.owner_extra_boards = []
         # We already created one board for the owner, so we create MAX-1 more.
-        for i in range(cls.max_boards_per_user - 1):
+        for i in range(cls.max_board_per_user - 1):
             board = Board.objects.create(
                 owner=cls.owner,
                 title=f'Owner Board {i+2}',
