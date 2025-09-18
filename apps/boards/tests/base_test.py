@@ -1,7 +1,11 @@
 from django.test import TestCase
-
+from django.conf import settings
 from apps.accounts.views import User
 from apps.boards.models import Board, List, Card, Membership
+
+max_board_per_user = settings.MAX_BOARDS_PER_USER
+max_member_per_board = settings.MAX_MEMBERS_PER_BOARD
+max_membership_per_user = settings.MAX_MEMBERSHIP_PER_USER
 
 
 class BaseTestCase(TestCase):

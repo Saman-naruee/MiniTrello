@@ -2,9 +2,11 @@ from django.test import TestCase, Client
 from django.urls import reverse
 import random
 from base_test import BaseTestCase
+from django.conf import settings
 
 from apps.accounts.models import User
 from apps.boards.models import Board, List, Card, Membership
+
     
 class BoardViewsTests(TestCase): # inherit from BaseTestCase
     def setUp(self):
