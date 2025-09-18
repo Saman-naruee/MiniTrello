@@ -258,22 +258,35 @@ class HTMXBoardDeleteView(LoginRequiredMixin, DeleteView):
             return board
         except Exception as e:
             raise Http404(str(e))
-
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['board'] = self.get_object()
+        return context
+    
     def delete(self, request, *args, **kwargs):
         """
-        Perform delete and return an HTMX-friendly response when applicable.
+        Call the superclass's delete method to perform the deletion and
+        then return an HTMX-friendly response if applicable.
         """
-        custom_logger(f"HTMXBoardDeleteView.delete called with args: {args}, kwargs: {kwargs}")
+        # We need to get the object before it's deleted to log it or use its data.
         self.object = self.get_object()
         success_url = self.get_success_url()
+        
+        # This performs the actual deletion from the database.
         self.object.delete()
-        custom_logger(f"Deleted board: {self.object}")
 
-        if request.headers.get("HX-Request") == "true":
-            # Option A: 204 No Content — typical when the client-side will remove the row/card.
+        # Now, check if this was an HTMX request.
+        if self.request.htmx:
+            # For HTMX, return a 204 No Content response.
             return HttpResponse(status=204)
-    
-        return HttpResponseRedirect(success_url)
+        else:
+            # For regular form submissions, redirect to the success URL.
+            return HttpResponseRedirect(success_url)
+
+    def post(self, request, *args, **kwargs):
+        # We override post just to call our custom delete method.
+        return self.delete(request, *args, **kwargs)
 
 class HTMXBoardUpdateView(LoginRequiredMixin, UpdateView):
     """Update a board via HTMX inside a modal"""

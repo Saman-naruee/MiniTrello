@@ -276,9 +276,9 @@ class TestBoardDetailView(BoardTestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse('account_login'), response.url)
     
-    def test_non_member_gets_404_not_found(self):
+    def test_non_member_gets_403_forbidden(self):
         """
-        Tests that a logged-in user who is NOT a member of the board receives a 404 error,
+        Tests that a logged-in user who is NOT a member of the board receives a 403 Forbidden error,
         as if the board does not exist for them. This is crucial for privacy.
         """
         # Arrange: Log in as a user who is not a member of self.board.
@@ -287,8 +287,8 @@ class TestBoardDetailView(BoardTestCase):
         # Act: Request the detail page of a board they don't have access to.
         response = self.client.get(self.url)
 
-        # Assert: The server should respond with a 404 Not Found.
-        self.assertEqual(response.status_code, 404)
+        # Assert: The server should respond with a 403 Forbidden.
+        self.assertEqual(response.status_code, 403)
 
 
 #### test board create view for each user and test it for each settings and permissions.
@@ -538,5 +538,125 @@ class TestBoardUpdateView(BoardTestCase):
 
 
 
-
 #### test board delete view for each user and test it for each settings and permissions.
+class TestBoardDeleteView(BoardTestCase):
+    """
+    Tests for the HTMXBoardDeleteView.
+    URL: /boards/<board_id>/delete/
+    """
+
+    def setUp(self):
+        # self.owner.login() # Assuming you have a helper login method on your User model, or use self.client.login
+        self.client.login(username='board_owner', password='p')
+        self.board_to_delete = Board.objects.create(owner=self.owner, title='Board to be Deleted')
+        Membership.objects.create(user=self.owner, board=self.board_to_delete, role=Membership.ROLE_OWNER)
+        self.url = reverse('boards:delete_board', kwargs={'board_id': self.board_to_delete.id})
+
+    # =================================================================
+    # Approach 1: Test Application Settings
+    # =================================================================
+    # Note: No application settings are directly relevant to the delete action itself.
+
+    # =================================================================
+    # Approach 2: Test Access for Authorized Users
+    # =================================================================
+
+    def test_owner_can_get_delete_confirmation_page(self): # Test name changed for clarity
+        """
+        Tests if the board owner can successfully retrieve the full delete confirmation page.
+        """
+        response = self.client.get(self.url) # No HTMX header for a full page load
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Are you sure you want to permanently delete this board?')
+        self.assertContains(response, self.board_to_delete.title)
+        
+    def test_owner_can_delete_board_with_htmx(self):
+        """
+        Tests if the board owner can successfully delete the board via an HTMX POST request.
+        """
+        board_id = self.board_to_delete.id
+        self.assertTrue(Board.objects.filter(id=board_id).exists())
+
+        # ❗❗❗ CORE FIX: Simulate an HTMX POST request
+        response = self.client.post(self.url, HTTP_HX_REQUEST='true')
+
+        # Assert: The response for a successful HTMX delete should be 204 No Content.
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(Board.objects.filter(id=board_id).exists())
+
+    def test_owner_can_delete_board_with_regular_form_post(self):
+        """
+        Tests the fallback for non-JavaScript users.
+        The deletion should work and redirect to the success_url.
+        """
+        board_id = self.board_to_delete.id
+        
+        # Act: Send a regular POST request (no HTMX header)
+        response = self.client.post(self.url)
+
+        # Assert: The user should be redirected to the board list page.
+        self.assertEqual(response.status_code, 302)
+        self.assertIn(reverse('boards:boards_list'), response.url)
+        self.assertFalse(Board.objects.filter(id=board_id).exists())
+    
+    # =================================================================
+    # Approach 3: Test Permissions for Unauthorized/Anonymous/Insufficient Role Users
+    # =================================================================
+    
+    def test_anonymous_user_cannot_delete_board(self):
+        """
+        Tests that an unauthenticated user is redirected when trying to delete a board.
+        """
+        # Act: Attempt GET (for form) and POST (for action) requests.
+        self.client.logout()
+        response_get = self.client.get(self.url)
+        response_post = self.client.post(self.url)
+
+        # Assert: Both should now correctly redirect to the login page.
+        self.assertEqual(response_get.status_code, 302)
+        self.assertIn(reverse('account_login'), response_get.url)
+
+        self.assertEqual(response_post.status_code, 302)
+        self.assertIn(reverse('account_login'), response_post.url)
+        
+        # Verify the board was NOT deleted
+        self.assertTrue(Board.objects.filter(id=self.board_to_delete.id).exists())
+
+    def test_non_member_cannot_delete_board(self):
+        """
+        Tests that a non-member gets a 404 error when trying to delete a board.
+        """
+        # Arrange: Log in as a non-member.
+        self.client.login(username='non_member', password='p')
+
+        # Act & Assert for both GET and POST
+        response_get = self.client.get(self.url)
+        self.assertEqual(response_get.status_code, 404)
+        
+        response_post = self.client.post(self.url)
+        self.assertEqual(response_post.status_code, 404)
+        
+        # Verify the board was not deleted.
+        self.assertTrue(Board.objects.filter(id=self.board_to_delete.id).exists())
+
+    def test_member_cannot_delete_board(self):
+        """
+        Tests that a regular member (non-owner) CANNOT delete the board.
+        This is a critical permission check.
+        """
+        # Arrange:
+        # 1. Add our 'member' user to the board we are about to delete.
+        Membership.objects.create(user=self.member, board=self.board_to_delete, role=Membership.ROLE_MEMBER)
+        # 2. Log in as that member.
+        self.client.login(username='board_member', password='p')
+        
+        # Act & Assert for both GET and POST attempts
+        response_get = self.client.get(self.url)
+        self.assertEqual(response_get.status_code, 404)
+        
+        response_post = self.client.post(self.url)
+        self.assertEqual(response_post.status_code, 404)
+        
+        # Assert: Crucially, verify the board still exists.
+        self.assertTrue(Board.objects.filter(id=self.board_to_delete.id).exists())
