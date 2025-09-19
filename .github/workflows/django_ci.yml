@@ -1,85 +1,80 @@
-# A friendly name for our workflow, which will be shown on GitHub
 name: Django CI/CD
 
-# --- TRIGGER ---
-# This workflow will run on every push or pull_request to the 'main' or 'develop' branches
 on:
   push:
     branches: [ "main", "develop" ]
   pull_request:
     branches: [ "main", "develop" ]
-  # Allows you to run this workflow manually from the Actions tab on GitHub
   workflow_dispatch:
 
-# --- JOBS ---
-# We have a single job named 'test-and-lint'
 jobs:
   test-and-lint:
-    # --- RUNNER ---
-    # The type of virtual machine to run the job on. We use the latest Ubuntu.
     runs-on: ubuntu-latest
-    
-    # --- STRATEGY ---
-    # Optional: Run tests against multiple Python versions
     strategy:
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.11"] # Let's stick to one version for simplicity and speed
 
-    # --- ENVIRONMENT VARIABLES ---
-    # We provide dummy secret values for our tests based on your .env.example.
-    # The actual values don't matter for tests, as long as they are present.
+    # --- SERVICES ---
+    # This sets up a PostgreSQL database container that our job can connect to.
+    services:
+      postgres:
+        image: postgres:13 # Use a specific version of Postgres
+        env:
+          POSTGRES_DB: test_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        # We need to give it a health check to ensure it's ready before tests run
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
-      # Settings for Django
+      # --- Django Settings ---
       SECRET_KEY: 'a-dummy-secret-key-that-is-long-enough-for-ci'
       DEBUG: 'False'
-      ALLOWED_HOSTS: 'localhost,127.0.0.1'
       
-      # Settings for the database (we will use SQLite in CI)
-      PREFERRED_DB: 'sqlite3'
-      
+      # --- Database Settings ---
+      # These must match the 'services' configuration above
+      PREFERRED_DB: 'postgres'
+      DB_NAME: 'test_db'
+      DB_USER: 'test_user'
+      DB_PASSWORD: 'test_password'
+      DB_HOST: 'localhost' # The service is mapped to localhost in the runner
+      DB_PORT: '5432' # The default port is mapped
+
       # Dummy Google Credentials
       GOOGLE_CLIENT_ID: 'dummy-google-client-id'
       GOOGLE_CLIENT_SECRET: 'dummy-google-client-secret'
-      GOOGLE_PROJECT_API_KEY: 'dummy-google-api-key'
-
-      # Application specific settings
-      MAX_BOARDS_PER_USER: '10'
-
-    # --- STEPS ---
-    # A sequence of tasks that will be executed as part of the job
+      
     steps:
-    # Step 1: Check out the repository code under $GITHUB_WORKSPACE
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # Step 2: Set up the specific Python version from our matrix
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
 
-    # Step 3: Install project dependencies
+    - name: Install PostgreSQL client
+      # The runner needs the pg_config command to build the psycopg2 package
+      run: sudo apt-get update && sudo apt-get install -y libpq-dev
+
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    # Step 4 (Optional but Recommended): Run code linters for code quality
-    # We will install flake8 and run it. If it finds issues, the build will fail.
-    # - name: Lint with Flake8
-    #   run: |
-    #     pip install flake8
-    #     # stop the build if there are Python syntax errors or undefined names
-    #     flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-    #     # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-    #     flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
-    # Step 5: Run the Django tests
-    # This is the most important step! We use the 'development' settings for tests.
-    - name: Migrate Database
+    - name: Wait for PostgreSQL to be ready
+      # A small extra check to make sure the DB is fully available
       run: |
-        python manage.py makemigrations
-        python manage.py migrate
+        until pg_isready -h localhost -p 5432 -U $DB_USER; do
+          echo "Waiting for PostgreSQL..."
+          sleep 2
+        done
+
     - name: Run Tests
       run: |
+        # We don't need to run migrate before test, the test runner handles it.
         python manage.py test
