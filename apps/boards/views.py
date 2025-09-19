@@ -127,7 +127,7 @@ class HTMXBoardCreateView(LoginRequiredMixin, CreateView):
         
         return super().post(request, *args, **kwargs)
 
-class HTMXBoardDeleteView(LoginRequiredMixin, BoardAdminRequiredMixin, DeleteView):
+class HTMXBoardDeleteView(LoginRequiredMixin, BoardMemberRequiredMixin, DeleteView):
     """Delete a board via HTMX"""
     model = Board
     template_name = "boards/delete_confirm_board.html"
@@ -138,7 +138,20 @@ class HTMXBoardDeleteView(LoginRequiredMixin, BoardAdminRequiredMixin, DeleteVie
         context = super().get_context_data(**kwargs)
         context['board'] = self.object
         return context
-    
+
+    def get(self, request, *args, **kwargs):
+        # Check if user has permission to delete (admin/owner only)
+        if not (self.board.owner == request.user or
+                self.board.memberships.filter(user=request.user, role__in=[Membership.ROLE_ADMIN, Membership.ROLE_OWNER]).exists()):
+            return HttpResponse(status=403)
+
+        # For HTMX requests, return partial template
+        if request.headers.get('HX-Request'):
+            return render(request, "boards/partials/board_delete.html", {"board": self.board})
+
+        # For regular requests, return full page
+        return super().get(request, *args, **kwargs)
+
     def delete(self, request, *args, **kwargs):
         """
         Call the superclass's delete method to perform the deletion and
@@ -147,12 +160,12 @@ class HTMXBoardDeleteView(LoginRequiredMixin, BoardAdminRequiredMixin, DeleteVie
         # We need to get the object before it's deleted to log it or use its data.
         self.object = self.get_object()
         success_url = self.get_success_url()
-        
+
         # This performs the actual deletion from the database.
         self.object.delete()
 
         # Now, check if this was an HTMX request.
-        if self.request.htmx:
+        if self.request.headers.get('HX-Request'):
             # For HTMX, return a 204 No Content response.
             return HttpResponse(status=204)
         else:
@@ -160,6 +173,11 @@ class HTMXBoardDeleteView(LoginRequiredMixin, BoardAdminRequiredMixin, DeleteVie
             return HttpResponseRedirect(success_url)
 
     def post(self, request, *args, **kwargs):
+        # Check if user has permission to delete (admin/owner only)
+        if not (self.board.owner == request.user or
+                self.board.memberships.filter(user=request.user, role__in=[Membership.ROLE_ADMIN, Membership.ROLE_OWNER]).exists()):
+            return HttpResponse(status=403)
+
         # We override post just to call our custom delete method.
         return self.delete(request, *args, **kwargs)
 
@@ -178,7 +196,7 @@ class HTMXBoardUpdateView(LoginRequiredMixin, BoardAdminRequiredMixin, UpdateVie
         custom_logger(f"[BoardUpdate] Board updated to {board.title}")
 
         # currently, this condition is true
-        if self.request.htmx:
+        if self.request.headers.get('HX-Request'):
             # render the updated title section
             updated_title_partial = render_to_string("boards/partials/board_title_section.html", {"board": board})
             
@@ -226,6 +244,11 @@ class HTMXListCreateView(LoginRequiredMixin, BoardMemberRequiredMixin, CreateVie
     template_name = "boards/partials/create_list.html"
     form_class = ListForm
 
+    def get(self, request, *args, **kwargs):
+        if not request.headers.get('HX-Request'):
+            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
+        return super().get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         """Pass board_id to the template for the form's action URL."""
         context = super().get_context_data(**kwargs)
@@ -269,6 +292,11 @@ class HTMXListUpdateView(LoginRequiredMixin, BoardMemberRequiredMixin, UpdateVie
     template_name = "boards/partials/update_list.html"
     form_class = ListForm
 
+    def get(self, request, *args, **kwargs):
+        if not request.headers.get('HX-Request'):
+            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
+        return super().get(request, *args, **kwargs)
+
     def get_object(self, queryset=None):
         return get_object_or_404(List, id=self.kwargs['list_id'], board=self.board)
 
@@ -306,6 +334,11 @@ class HTMXListDetailView(LoginRequiredMixin, BoardMemberRequiredMixin, DetailVie
     template_name = "boards/partials/list_detail.html"
     context_object_name = 'list'
 
+    def get(self, request, *args, **kwargs):
+        if not request.headers.get('HX-Request'):
+            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
+        return super().get(request, *args, **kwargs)
+
     def get_object(self):
         return get_object_or_404(List, id=self.kwargs['list_id'], board=self.board)
 
@@ -318,23 +351,23 @@ class HTMXListDetailView(LoginRequiredMixin, BoardMemberRequiredMixin, DetailVie
 
 class HTMXListDeleteView(LoginRequiredMixin, BoardMemberRequiredMixin, View):
     """Delete a list via HTMX"""
-    
+
     def delete(self, request, board_id, list_id):
         list_obj = get_object_or_404(List, id=list_id, board=self.board)
         list_obj.delete()
-        return JsonResponse({"success": True})
+        return JsonResponse({"success": True}, status=200)
 
 
 
 
 # Card Views
-class HTMXCardDeleteView(LoginRequiredMixin, BoardMemberRequiredMixin, DeleteView):
+class HTMXCardDeleteView(LoginRequiredMixin, BoardMemberRequiredMixin, View):
     """Delete a card via HTMX"""
 
     def delete(self, request, board_id, list_id, card_id):
         card = get_object_or_404(Card, id=card_id, list__board=self.board)
         card.delete()
-        return JsonResponse({"success": True})
+        return JsonResponse({"success": True}, status=200)
 
 
 class HTMXCardCreateView(LoginRequiredMixin, BoardMemberRequiredMixin, CreateView):
@@ -349,6 +382,8 @@ class HTMXCardCreateView(LoginRequiredMixin, BoardMemberRequiredMixin, CreateVie
         return kwargs
 
     def get(self, request, *args, **kwargs):
+        if not request.headers.get('HX-Request'):
+            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
         form = self.form_class(board=self.board)
         return render(request, self.template_name, {
             "form": form,
@@ -394,8 +429,12 @@ class HTMXCardCreateView(LoginRequiredMixin, BoardMemberRequiredMixin, CreateVie
 
 class HTMXCardUpdateView(LoginRequiredMixin, BoardMemberRequiredMixin, View):
     """Update a card via HTMX"""
-    
+
     def get(self, request, board_id, list_id, card_id):
+        # Check if this is an HTMX request
+        if not request.headers.get('HX-Request'):
+            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
+
         card = get_object_or_404(Card, id=card_id, list__board=self.board)
         form = CardForm(instance=card, board=self.board)
         context = {
@@ -404,29 +443,57 @@ class HTMXCardUpdateView(LoginRequiredMixin, BoardMemberRequiredMixin, View):
             "board": self.board,
             "list_id": list_id
         }
-        return render(request, "boards/card_update.html", context)
+        return render(request, "boards/partials/card_update.html", context)
 
     def post(self, request, board_id, list_id, card_id):
+        # Check if this is an HTMX request
+        if not request.headers.get('HX-Request'):
+            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
+
         card = get_object_or_404(Card, id=card_id, list__board=self.board)
         form = CardForm(request.POST, instance=card)
         if form.is_valid():
             form.save()
             messages.success(request, "Card updated successfully")
-            return redirect("boards:card_detail", board_id=board_id, list_id=list_id, card_id=card_id)
-        
-        return render(request,
-            "boards/card_update.html",
-            {"form": form, "card": card, "board": self.board, "list_id": list_id},
-            status=400
-        )
+
+            # For HTMX requests, return the updated card HTML
+            if request.headers.get('HX-Request'):
+                card_item_html = render_to_string("boards/partials/card_item.html", {
+                    "card": card,
+                    "board": self.board,
+                    "list": card.list
+                })
+                response = HttpResponse(card_item_html)
+                trigger_data = {
+                    "cardUpdated": True,
+                    "showMessage": f"Card '{card.title}' updated successfully."
+                }
+                response['HX-Trigger'] = json.dumps(trigger_data)
+                return response
+            else:
+                return redirect("boards:card_detail", board_id=board_id, list_id=list_id, card_id=card_id)
+
+        # For invalid forms, return the form with errors
+        context = {
+            "form": form,
+            "card": card,
+            "board": self.board,
+            "list_id": list_id
+        }
+        return render(request, "boards/partials/card_update.html", context, status=400)
 
 
 class HTMXCardDetailView(LoginRequiredMixin, BoardMemberRequiredMixin, DetailView):
     """View a card's details via HTMX"""
 
     model = Card
-    template_name = "boards/card_detail.html"
+    template_name = "boards/partials/card_detail.html"
     context_object_name = "card"
+
+    def get(self, request, *args, **kwargs):
+        if not request.headers.get('HX-Request'):
+            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
+        return super().get(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
         card_id = self.kwargs.get("card_id")
@@ -446,6 +513,9 @@ class HTMXCardAssignMembersView(LoginRequiredMixin, BoardMemberRequiredMixin, Vi
     """Assign multiple members to a card via HTMX"""
 
     def post(self, request, board_id, list_id, card_id):
+        if not request.headers.get('HX-Request'):
+            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
+
         card = get_object_or_404(Card, id=card_id, list__board=self.board)
         member_ids = request.POST.getlist('member_ids')
 
@@ -506,6 +576,9 @@ class HTMXCardMoveView(LoginRequiredMixin, BoardMemberRequiredMixin, View):
     
     @transaction.atomic
     def put(self, request, board_id, list_id, card_id):
+        if not request.headers.get('HX-Request'):
+            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
+
         custom_logger(f"In PUT method for moving card_id: {card_id}", Fore.GREEN)
         
         from django.http import QueryDict

@@ -161,3 +161,7 @@ class TestCardDeleteView(BaseBoardTestCase):
 
         self.assertEqual(response.status_code, 403)
         self.assertTrue(Card.objects.filter(id=self.card_to_delete.id).exists())
+
+
+class TestCardMoveView(BaseBoardTestCase):
+    pass

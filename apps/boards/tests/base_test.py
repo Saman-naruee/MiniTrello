@@ -5,6 +5,10 @@ from apps.boards.models import Board, List, Card, Membership
 
 
 class BaseTestCase(TestCase):
+    """
+    A base class for all tests for all models in this project.
+    To Reusablity.
+    """
     pass
 
 
