@@ -1,3 +1,4 @@
+from django.views import View
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.db.models import Max, Prefetch
@@ -137,3 +138,89 @@ def render_partial_response(template_name, context):
     html = render_to_string(template_name, context)
     return JsonResponse({"html": html})
 
+
+
+class BoardMemberRequiredMixin:
+    """
+    A mixin that verifies the logged-in user is an active member of the board
+    specified in the URL kwargs ('board_id'). This is for actions where any
+    member (including owner, admin, member) has access.
+    
+    It fetches the board and attaches it to the view as `self.board`.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        board_id = self.kwargs.get('board_id')
+        if not board_id:
+            raise ValueError("BoardMemberRequiredMixin requires a 'board_id' in the URL.")
+
+        self.board = get_object_or_404(Board, pk=board_id)
+
+        is_member = self.board.memberships.filter(user=request.user, is_active=True).exists()
+        
+        if not is_member:
+            raise PermissionDenied("You are not a member of this board.")
+            
+        return super().dispatch(request, *args, **kwargs)
+
+
+class BoardAdminRequiredMixin:
+    """
+    A mixin that verifies the logged-in user has administrative privileges
+    (owner or admin) on the board specified by 'board_id'.
+    
+    It fetches the board and attaches it to the view as `self.board`.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        board_id = self.kwargs.get('board_id')
+        if not board_id:
+            raise ValueError("BoardAdminRequiredMixin requires a 'board_id' in the URL.")
+            
+        self.board = get_object_or_404(Board.objects.select_related('owner'), pk=board_id)
+
+        # A simple check for owner role first for efficiency.
+        if self.board.owner == request.user:
+            return super().dispatch(request, *args, **kwargs)
+
+        # If not the owner, check for admin membership.
+        try:
+            membership = self.board.memberships.get(user=request.user, is_active=True)
+            if membership.role not in [Membership.ROLE_OWNER, Membership.ROLE_ADMIN]:
+                raise PermissionDenied("You must be an admin or owner to perform this action.")
+        except Membership.DoesNotExist:
+            # If no membership exists, they cannot be an admin.
+            raise PermissionDenied("You are not a member of this board.")
+        
+        return super().dispatch(request, *args, **kwargs)
+
+
+
+
+class BoardObjectPermissionMixin(View):
+    # This mixin will be the new parent for almost all our views.
+    
+    # We define attributes that child views can override
+    model_to_check = None # e.g., Card, List
+    id_kwarg_name = None # e.g., 'card_id', 'list_id'
+
+    def dispatch(self, request, *args, **kwargs):
+        # 1. Check if user is authenticated
+        if not request.user.is_authenticated:
+            # Handle redirection...
+            pass
+
+        # 2. Get the object (Card, List, etc.) based on the attributes
+        obj_id = self.kwargs.get(self.id_kwarg_name)
+        obj = get_object_or_404(self.model_to_check, pk=obj_id)
+
+        # 3. Find the board this object belongs to
+        board = obj.list.board # Example for Card
+        
+        # 4. Check if the user is a member of that board
+        if not board.memberships.filter(user=request.user, is_active=True).exists():
+            raise PermissionDenied("You are not a member of this board.")
+            
+        # Attach objects to the view for easy access
+        self.board = board
+        self.object = obj
+        
+        return super().dispatch(request, *args, **kwargs)
