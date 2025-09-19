@@ -23,7 +23,7 @@ jobs:
     # Optional: Run tests against multiple Python versions
     strategy:
       matrix:
-        python-version: ["3.11", "3.12"]
+        python-version: ["3.11", "3.12", "3.13"]
 
     # --- ENVIRONMENT VARIABLES ---
     # We provide dummy secret values for our tests based on your .env.example.
@@ -76,6 +76,10 @@ jobs:
 
     # Step 5: Run the Django tests
     # This is the most important step! We use the 'development' settings for tests.
+    - name: Migrate Database
+      run: |
+        python manage.py makemigrations
+        python manage.py migrate
     - name: Run Tests
       run: |
         python manage.py test
