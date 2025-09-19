@@ -23,4 +23,5 @@ custom_tools/custom_settings.py
 db/
 staticfiles/
 *_prompt.txt
+db.sqlite3
 template_prompt.txt

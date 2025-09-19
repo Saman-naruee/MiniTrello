@@ -1,5 +1,6 @@
 {% load i18n %}
 <div id="create-board-form">
+<<<<<<< HEAD
 <div class="modal-dialog">
 <div class="modal-content">
 <div class="modal-header">
@@ -7,6 +8,17 @@
 <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
 </div>
 <form hx-post="{% url 'create_board' %}" hx-swap="beforeend" hx-target="#boards-container">
+=======
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Create New Board</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form hx-post="{% url 'boards:create_board' %}" 
+                  hx-target="#boards-container"
+                  hx-swap="beforeend">
+>>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button class="btn btn-primary" type="submit">{% trans "Create Board" %}</button>

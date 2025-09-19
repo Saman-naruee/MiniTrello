@@ -1,6 +1,30 @@
+<<<<<<< HEAD
 {% load i18n %}
 <form class="edit-list-form" hx-post="{% url 'update_list' board.id list.id %}" hx-target="this">
     {% csrf_token %}
     {{ form.as_p }}
     <button class="btn btn-primary" type="submit">{% trans "Save List" %}</button>
+=======
+<div class="modal-header">
+    <h5 class="modal-title">Update List</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<form 
+    method="post"
+    {# We still need to update the list URL which we previously retrieved #}
+    hx-post="{% url 'boards:update_list' board_id=board.id list_id=list.id %}"
+    {# After successfully updating the list, replace the list with the new one on the main page #}
+    hx-target="#list-{{ list.id }}" 
+    hx-swap="outerHTML" 
+    class="modal-body"
+>
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </div>
+>>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d
 </form>
+
