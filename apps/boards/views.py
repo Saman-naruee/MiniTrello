@@ -31,6 +31,7 @@ from django.core.exceptions import PermissionDenied
 
 # Fetch Helper functions to avoid repetition
 from .permissions import *
+from .mixins import BoardAccessMixin, BoardModifyMixin, ListAccessMixin, CardAccessMixin, BoardOwnerMixin
 
 
 
@@ -47,26 +48,25 @@ class BoardListView(LoginRequiredMixin, ListView):
         ).distinct()
 
 
-class BoardDetailView(LoginRequiredMixin, DetailView):
+class BoardDetailView(LoginRequiredMixin, BoardAccessMixin, DetailView):
     """Display a specific board with its lists and cards"""
     model = Board
     template_name = "boards/detail.html"
     context_object_name = "board"
-    
+
     def get_object(self):
-        return get_user_board(self.kwargs['board_id'], self.request.user)
-    
+        return self.board
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        board = self.get_object()
-        # board  = self.object
+        board = self.object
         if board:
             custom_logger(f"Board: {board}", Fore.GREEN)
             lists = get_board_lists(board)
             context['lists'] = lists
             context['board'] = board
             context['board_id'] = board.id
-            context['update_board_form'] = BoardForm(instance=self.get_object())
+            context['update_board_form'] = BoardForm(instance=board)
             return context
         raise Http404("Board not found")
 
@@ -127,25 +127,18 @@ class HTMXBoardCreateView(LoginRequiredMixin, CreateView):
         
         return super().post(request, *args, **kwargs)
 
-class HTMXBoardDeleteView(LoginRequiredMixin, DeleteView):
+class HTMXBoardDeleteView(LoginRequiredMixin, BoardModifyMixin, DeleteView):
     """Delete a board via HTMX"""
     model = Board
     template_name = "boards/delete_confirm_board.html"
     success_url = reverse_lazy("boards:boards_list")
 
     def get_object(self, queryset=None):
-        try:
-            user = self.request.user
-            board = get_user_board(self.kwargs['board_id'], self.request.user)
-            if not can_modify_board(board, user):
-                raise HttpResponseForbidden("You are not allowed to delete this board.")
-            return board
-        except Exception as e:
-            raise Http404(str(e))
-    
+        return self.board
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['board'] = self.get_object()
+        context['board'] = self.object
         return context
     
     def delete(self, request, *args, **kwargs):
@@ -172,21 +165,14 @@ class HTMXBoardDeleteView(LoginRequiredMixin, DeleteView):
         # We override post just to call our custom delete method.
         return self.delete(request, *args, **kwargs)
 
-class HTMXBoardUpdateView(LoginRequiredMixin, UpdateView):
+class HTMXBoardUpdateView(LoginRequiredMixin, BoardModifyMixin, UpdateView):
     """Update a board via HTMX inside a modal"""
     model = Board
     template_name = "boards/partials/update_board.html"
     form_class = BoardForm
 
     def get_object(self):
-        try:
-            user = self.request.user
-            board = get_user_board(self.kwargs['board_id'], user)
-            if not can_modify_board(board, user):
-                raise HttpResponseForbidden("You are not allowed to modify this board.")
-            return board
-        except Exception as e:
-            raise Http404(str(e))
+        return self.board
 
     def get_success_url(self):
         return reverse_lazy("boards:board_detail", kwargs={"board_id": self.object.id})
@@ -219,14 +205,14 @@ class HTMXBoardUpdateView(LoginRequiredMixin, UpdateView):
         return render(self.request, self.template_name, {"form": form, "board": self.get_object()})
 
 
-class BoardMembersView(LoginRequiredMixin, DetailView):
+class BoardMembersView(LoginRequiredMixin, BoardAccessMixin, DetailView):
     """View and manage board members"""
     model = Board
     template_name = "boards/partials/board_members.html"
     context_object_name = "board"
 
     def get_object(self):
-        return get_user_board(self.kwargs['board_id'], self.request.user)
+        return self.board
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -240,24 +226,11 @@ class BoardMembersView(LoginRequiredMixin, DetailView):
 
 
 # List Views
-class HTMXListCreateView(LoginRequiredMixin, CreateView):
+class HTMXListCreateView(BoardAccessMixin, CreateView):
     """Create a new list via HTMX"""
     model = List
     template_name = "boards/partials/create_list.html"
     form_class = ListForm
-
-    def dispatch(self, request, *args, **kwargs):
-        """
-        This method runs before get() or post().
-        It's the perfect place to check permissions.
-        """
-        # First, get the board using our secure helper function.
-        # This will raise PermissionDenied (403) or Http404 if the user is not a member.
-        self.board = get_user_board(self.kwargs['board_id'], request.user)
-        if not self.board: # get_user_board might return False
-            raise PermissionDenied("You are not authorized to access this board.")
-            
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         """Pass board_id to the template for the form's action URL."""
@@ -295,16 +268,14 @@ class HTMXListCreateView(LoginRequiredMixin, CreateView):
         response['HX-Trigger'] = json.dumps(trigger_data)
         return response
 
-class HTMXListUpdateView(LoginRequiredMixin, UpdateView):
+class HTMXListUpdateView(LoginRequiredMixin, ListAccessMixin, UpdateView):
     """Update a list via HTMX"""
     model = List
     template_name = "boards/partials/update_list.html"
     form_class = ListForm
 
     def get_object(self, queryset=None):
-        # This method correctly finds the list based on permissions
-        board = get_user_board(self.kwargs['board_id'], self.request.user)
-        return get_user_list(self.kwargs['list_id'], self.request.user, board)
+        return self.list_obj
 
     def get_context_data(self, **kwargs):
         # ❗❗❗ CORE FIX: Add this method to pass all necessary context
@@ -334,7 +305,7 @@ class HTMXListUpdateView(LoginRequiredMixin, UpdateView):
 
 
 
-class HTMXListDetailView(LoginRequiredMixin, DetailView):
+class HTMXListDetailView(LoginRequiredMixin, ListAccessMixin, DetailView):
     """View a list's details via HTMX"""
 
     model = List
@@ -342,8 +313,7 @@ class HTMXListDetailView(LoginRequiredMixin, DetailView):
     context_object_name = 'list'
 
     def get_object(self):
-        board = get_user_board(self.kwargs['board_id'], self.request.user)
-        return get_user_list(self.kwargs['list_id'], self.request.user, board)
+        return self.list_obj
 
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get a context
@@ -360,31 +330,28 @@ class HTMXListDetailView(LoginRequiredMixin, DetailView):
         
         return context
 
-class HTMXListDeleteView(LoginRequiredMixin, View):
+class HTMXListDeleteView(LoginRequiredMixin, ListAccessMixin, View):
     """Delete a list via HTMX"""
-    
+
     def delete(self, request, board_id, list_id):
-        board = get_user_board(board_id, request.user)
-        list_obj = get_user_list(list_id, request.user, board)
-        if list_obj.board.id != board_id:
+        if self.list_obj.board.id != board_id:
             raise Http404("List not found")
-        list_obj.delete()
+        self.list_obj.delete()
         return JsonResponse({"success": True})
 
 
 
 
 # Card Views
-class HTMXCardDeleteView(LoginRequiredMixin, DeleteView):
+class HTMXCardDeleteView(LoginRequiredMixin, CardAccessMixin, DeleteView):
     """Delete a card via HTMX"""
 
     def delete(self, request, board_id, list_id, card_id):
-        card = get_user_card(card_id, request.user)
-        card.delete()
+        self.card.delete()
         return JsonResponse({"success": True})
 
 
-class HTMXCardCreateView(LoginRequiredMixin, CreateView):
+class HTMXCardCreateView(LoginRequiredMixin, BoardAccessMixin, CreateView):
     """Create a new card via HTMX"""
     model = Card
     form_class = CardForm
@@ -392,13 +359,11 @@ class HTMXCardCreateView(LoginRequiredMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        board = get_user_board(self.kwargs['board_id'], self.request.user)
-        kwargs['board'] = board
+        kwargs['board'] = self.board
         return kwargs
 
     def get(self, request, *args, **kwargs):
-        board = get_user_board(self.kwargs['board_id'], self.request.user)
-        form = self.form_class(board=board)
+        form = self.form_class(board=self.board)
         return render(request, self.template_name, {
             "form": form,
             "board_id": self.kwargs['board_id'],
@@ -406,8 +371,7 @@ class HTMXCardCreateView(LoginRequiredMixin, CreateView):
         })
 
     def form_valid(self, form):
-        board = get_user_board(self.kwargs['board_id'], self.request.user)
-        card_list = get_user_list(self.kwargs['list_id'], self.request.user, board)
+        card_list = get_user_list(self.kwargs['list_id'], self.request.user, self.board)
         
         card = form.save(commit=False)
         card.list = card_list
@@ -422,7 +386,7 @@ class HTMXCardCreateView(LoginRequiredMixin, CreateView):
         # ❗❗❗ CORE FIX 2: Pass the full 'board' and 'list' objects to the partial
         card_item_html = render_to_string("boards/partials/card_item.html", {
             "card": card,
-            "board": board,
+            "board": self.board,
             "list": card_list
         })
         
@@ -443,36 +407,34 @@ class HTMXCardCreateView(LoginRequiredMixin, CreateView):
         }, status=400)
 
 
-class HTMXCardUpdateView(LoginRequiredMixin, View):
+class HTMXCardUpdateView(LoginRequiredMixin, CardAccessMixin, View):
     """Update a card via HTMX"""
-    
+
     def get(self, request, board_id, list_id, card_id):
-        card = get_user_card(card_id, request.user)
-        form = CardForm(instance=card, board=card.list.board)
+        form = CardForm(instance=self.card, board=self.card.list.board)
         context = {
             "form": form,
-            "card": card,
-            "board": card.list.board,
+            "card": self.card,
+            "board": self.card.list.board,
             "list_id": list_id
         }
         return render(request, "boards/card_update.html", context)
 
     def post(self, request, board_id, list_id, card_id):
-        card = get_user_card(card_id, request.user)
-        form = CardForm(request.POST, instance=card)
+        form = CardForm(request.POST, instance=self.card)
         if form.is_valid():
             form.save()
             messages.success(request, "Card updated successfully")
             return redirect("boards:card_detail", board_id=board_id, list_id=list_id, card_id=card_id)
-        
+
         return render(request,
             "boards/card_update.html",
-            {"form": form, "card": card, "board": card.list.board, "list_id": list_id},
+            {"form": form, "card": self.card, "board": self.card.list.board, "list_id": list_id},
             status=400
-        )    
+        )
 
 
-class HTMXCardDetailView(LoginRequiredMixin, DetailView):
+class HTMXCardDetailView(LoginRequiredMixin, CardAccessMixin, DetailView):
     """View a card's details via HTMX"""
 
     model = Card
@@ -480,8 +442,7 @@ class HTMXCardDetailView(LoginRequiredMixin, DetailView):
     context_object_name = "card"
 
     def get_object(self, queryset=None):
-        card_id = self.kwargs.get("card_id")
-        return get_user_card(card_id, self.request.user)
+        return self.card
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -493,15 +454,14 @@ class HTMXCardDetailView(LoginRequiredMixin, DetailView):
 
 
 
-class HTMXCardAssignMembersView(LoginRequiredMixin, View):
+class HTMXCardAssignMembersView(LoginRequiredMixin, CardAccessMixin, View):
     """Assign multiple members to a card via HTMX"""
 
     def post(self, request, board_id, list_id, card_id):
-        card = get_user_card(card_id, request.user)
         member_ids = request.POST.getlist('member_ids')
 
         # Validate member_ids
-        valid_members = card.list.board.memberships.filter(user_id__in=member_ids).values_list('user_id', flat=True)
+        valid_members = self.card.list.board.memberships.filter(user_id__in=member_ids).values_list('user_id', flat=True)
         invalid_members = set(member_ids) - set(map(str, valid_members))
 
         if invalid_members:
@@ -509,9 +469,9 @@ class HTMXCardAssignMembersView(LoginRequiredMixin, View):
             return redirect("boards:card_detail", board_id=board_id, list_id=list_id, card_id=card_id)
 
         # Assign members to the card
-        card.assignees.clear()
+        self.card.assignees.clear()
         for member_id in member_ids:
-            card.assignees.add(User.objects.get(id=member_id))
+            self.card.assignees.add(User.objects.get(id=member_id))
 
         messages.success(request, "Members assigned to the card successfully")
         return redirect("boards:card_detail", board_id=board_id, list_id=list_id, card_id=card_id)
@@ -550,16 +510,16 @@ def custom_404(request, exception):
     return render(request, '404.html', status=404)
 
 
-class HTMXCardMoveView(LoginRequiredMixin, View):
-    
+class HTMXCardMoveView(LoginRequiredMixin, CardAccessMixin, View):
+
     @transaction.atomic
     def put(self, request, board_id, list_id, card_id):
         custom_logger(f"In PUT method for moving card_id: {card_id}", Fore.GREEN)
-        
+
         # ❗❗❗ CORE FIX: Read data from request.POST instead of request.body
         # Django automatically parses 'x-www-form-urlencoded' data into request.POST for PUT requests as well.
         # We access it using a QueryDict-like object from the request.
-        
+
         # To handle PUT request body as form data, we can parse it
         from django.http import QueryDict
         put_data = QueryDict(request.body)
@@ -571,18 +531,17 @@ class HTMXCardMoveView(LoginRequiredMixin, View):
         if not to_list_id:
             return HttpResponse("Missing 'to_list_id' in request.", status=400)
 
-        card = get_user_card(card_id, request.user)
         to_list = get_object_or_404(List, id=to_list_id, board_id=board_id)
-        
-        card.list = to_list
-        card.version += 1
-        card.save(update_fields=['list', 'version'])
-        
+
+        self.card.list = to_list
+        self.card.version += 1
+        self.card.save(update_fields=['list', 'version'])
+
         # Reorder cards
-        other_cards = to_list.cards.exclude(id=card.id).order_by('order')
+        other_cards = to_list.cards.exclude(id=self.card.id).order_by('order')
         card_list_for_reorder = list(other_cards)
-        card_list_for_reorder.insert(new_index, card)
-        
+        card_list_for_reorder.insert(new_index, self.card)
+
         for index, c in enumerate(card_list_for_reorder):
             c.order = index
             c.save(update_fields=['order'])
