@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'MiniTrello.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.production') # Default to production for servers
 
 application = get_asgi_application()
