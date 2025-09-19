@@ -5,14 +5,36 @@ from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from django.conf import settings
 from .models import User
+from django.shortcuts import redirect
+from django.urls import reverse
 import random
+from allauth.account import app_settings
 
 # from premailer import transform  # pip install premailer (if you want to inline CSS)
 
 class CustomAccountAdapter(DefaultAccountAdapter):
     """
-    To override default allauth behavior
+    Custom adapter to override default allauth behavior
     """
+    def pre_authenticate(self, request, **credentials):
+        # Override to remove rate limiting temporarily if needed
+        pass
+
+    def is_open_for_signup(self, request):
+        """
+        Check if the email exists and redirect to login if it does
+        """
+        if request.method == "POST":
+            email = request.POST.get("email")
+            if email and User.objects.filter(email=email).exists():
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'redirect': reverse('account_login'),
+                        'message': 'This email is already registered. Please login.'
+                    })
+                return redirect('account_login')
+        return True
+
     def respond_user_inactive(self, request, user):
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
@@ -54,15 +76,38 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         return url
     
     def save_user(self, request, user, form, commit=True):
-        user = super().save_user(request, user, form, commit=False)
-        email = user.email
-        username = email.split('@')[0]
-        if '@' in email:
+        data = form.cleaned_data
+        email = data.get('email')
+        username = data.get('username')
+        password = data.get('password1')
+
+        if not email and username:
+            # If registering with username only
             user.username = username
-            if User.objects.filter(username=username):
+            if User.objects.filter(username=username).exists():
                 user.username = f"{username}{random.randint(1, 100000)}"
+        elif email and not username:
+            # If registering with email
+            username = email.split('@')[0]
+            user.username = username
+            if User.objects.filter(username=username).exists():
+                user.username = f"{username}{random.randint(1, 100000)}"
+            user.email = email
+
+        if password:
+            user.set_password(password)
+        else:
+            user.set_unusable_password()
+
         user.is_staff = False
         user.is_superuser = False
+
         if commit:
             user.save()
         return user
+
+    def authenticate(self, request, **credentials):
+        # Allow authentication with username/password without email
+        if 'username' in credentials and 'password' in credentials:
+            return super().authenticate(request, **credentials)
+        return super().authenticate(request, **credentials)

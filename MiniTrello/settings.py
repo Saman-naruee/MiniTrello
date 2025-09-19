@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -214,6 +215,15 @@ LOGIN_REDIRECT_URL = "/"
 # ACCOUNT_EMAIL_VERIFICATION = 'mandatory' # or 'optional'
 
 
+# Allauth settings
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'  # Allows both username and email auth
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = False  # Make email optional initially
+ACCOUNT_EMAIL_VERIFICATION = 'optional'  # Users can login but need to verify email later
+ACCOUNT_LOGIN_ATTEMPTS_LIMIT = None  # Disable login attempts limiting if you want
+ACCOUNT_USERNAME_MIN_LENGTH = 4  # Set minimum username length
+
+
 # CORS SETTINGS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000", # React
@@ -275,3 +285,19 @@ LANGUAGES = [
 LOCALE_PATHS = [
     BASE_DIR / 'locale',
 ]
+
+ACCOUNT_FORMS = {
+    'signup': 'apps.accounts.forms.CustomSignupForm'
+}
+
+# Make sure these settings are also present
+ACCOUNT_USERNAME_REQUIRED = True
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+
+
+if 'test' in sys.argv:
+    EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+    PASSWORD_HASHERS = [
+        'django.contrib.auth.hashers.MD5PasswordHasher',
+    ]

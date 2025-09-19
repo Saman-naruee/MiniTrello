@@ -1,5 +1,5 @@
-{% load i18n %}
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block title %}MiniTrello - Home{% endblock %}
 
@@ -15,11 +15,7 @@
 <div class="card-body">
 <p class="card-text">{% trans "Manage your projects and tasks with our simple and intuitive interface." %}</p>
                 {% if user.is_authenticated %}
-<<<<<<< HEAD
-                    <a class="btn btn-primary" href="{% url 'boards:boards_list' %}">{% trans "View My Boards" %}</a>
-=======
                     <a href="{% url 'boards:boards_list' %}" class="btn btn-primary">View My Boards</a>
->>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d
                 {% else %}
                     <a class="btn btn-success" href="{% url 'account_signup' %}">{% trans "Get Started" %}</a>
                 {% endif %}
