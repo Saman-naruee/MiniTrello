@@ -3,13 +3,13 @@ from django.test import TestCase
 from django.contrib.auth.models import AnonymousUser
 from django.http import Http404
 from django.core.exceptions import PermissionDenied, ValidationError
-from .base_test import BoardTestCase
+from apps.boards.tests.base_test import BaseBoardTestCase
 from apps.boards.models import Membership, Card, List, Board
 from apps.accounts.models import User
 from apps.boards.permissions import BoardObjectPermissionMixin, BoardMemberRequiredMixin, BoardAdminRequiredMixin
 from unittest.mock import Mock, patch
 
-class TestRolePermissions(BoardTestCase):
+class TestRolePermissions(BaseBoardTestCase):
     """
     Comprehensive tests for role-based permissions (Owner, Admin, Member, Viewer).
     This follows the TDD approach for features that are not yet fully implemented.
@@ -356,7 +356,7 @@ class TestBoardObjectPermissionMixin(TestCase):
                     self.assertEqual(call_args[0], Board)
 
 
-class TestBoardMemberRequiredMixin(BoardTestCase):
+class TestBoardMemberRequiredMixin(BaseBoardTestCase):
     """
     Tests for the BoardMemberRequiredMixin.
     """
@@ -402,7 +402,7 @@ class TestBoardMemberRequiredMixin(BoardTestCase):
         self.assertEqual(response.status_code, 404)
 
 
-class TestBoardAdminRequiredMixin(BoardTestCase):
+class TestBoardAdminRequiredMixin(BaseBoardTestCase):
     """
     Tests for the BoardAdminRequiredMixin.
     """
@@ -455,7 +455,7 @@ class TestBoardAdminRequiredMixin(BoardTestCase):
         self.assertEqual(response.status_code, 404)
 
 
-class TestFutureFeatures(BoardTestCase):
+class TestFutureFeatures(BaseBoardTestCase):
     """
     Tests for upcoming features that are not yet implemented.
     These tests will fail initially but serve as TDD specifications.
