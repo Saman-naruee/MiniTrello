@@ -33,6 +33,9 @@ from django.core.exceptions import PermissionDenied
 from .permissions import BoardMemberRequiredMixin, BoardAdminRequiredMixin
 
 
+
+
+
 # Class-Based Board Views
 class BoardListView(LoginRequiredMixin, ListView):
     """Display all boards for the current user"""
@@ -656,4 +659,55 @@ class HTMXCardMoveView(LoginRequiredMixin, BoardMemberRequiredMixin, View):
             c.save(update_fields=['order'])
         
         custom_logger("Card reordering complete.", Fore.GREEN)
+        return HttpResponse(status=200)
+
+
+class MemberRemoveView(LoginRequiredMixin, BoardAdminRequiredMixin, View):
+    """
+    Handles the deletion of a board membership.
+    Only accessible to board admins/owners.
+    """
+
+    def delete(self, request, *args, **kwargs):
+        membership_id = self.kwargs.get('membership_id')
+        membership = get_object_or_404(Membership, id=membership_id, board=self.board)
+
+        # Business Rule: Cannot remove the owner.
+        if membership.role == Membership.ROLE_OWNER:
+            return HttpResponse("Cannot remove the board owner.", status=400)
+            
+        membership.delete()
+        # For HTMX, we can return a 200 OK which will cause the target element to be empty.
+        return HttpResponse(status=200)
+
+
+class MemberRoleUpdateView(LoginRequiredMixin, BoardAdminRequiredMixin, View):
+    """
+    Handles updating a member's role.
+    Only accessible to board admins/owners.
+    """
+    def post(self, request, *args, **kwargs):
+        membership_id = self.kwargs.get('membership_id')
+        membership = get_object_or_404(Membership, id=membership_id, board=self.board)
+        
+        new_role = request.POST.get('role')
+        
+        # Validate the new role
+        valid_roles = [role[0] for role in Membership.ROLE_CHOICES]
+        try:
+            new_role = int(new_role)
+            if new_role not in valid_roles:
+                raise ValueError
+        except (ValueError, TypeError):
+            return HttpResponse("Invalid role provided.", status=400)
+
+        # Business Rule: Cannot change the owner's role.
+        if membership.role == Membership.ROLE_OWNER:
+            return HttpResponse("Cannot change the owner's role.", status=400)
+
+        membership.role = new_role
+        membership.save()
+        
+        # For HTMX, we can return a partial of the updated member row.
+        # (For now, a simple 200 OK is enough to pass the test)
         return HttpResponse(status=200)

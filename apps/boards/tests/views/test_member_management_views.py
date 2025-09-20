@@ -23,7 +23,7 @@ class TestMemberManagementView(BaseBoardTestCase):
         """TDD: An owner should be able to see the list of members for their board."""
         self.client.login(username='board_owner', password='p')
         # This URL does not exist yet -> will fail with NoReverseMatch
-        url = reverse('boards:member_list', kwargs={'board_id': self.board.id})
+        url = reverse('boards:board_members', kwargs={'board_id': self.board.id})
         response = self.client.get(url, HTTP_HX_REQUEST='true')
 
         self.assertEqual(response.status_code, 200)
@@ -33,14 +33,14 @@ class TestMemberManagementView(BaseBoardTestCase):
     def test_member_can_view_members_list(self):
         """TDD: A regular member should also be able to see who else is on the board."""
         self.client.login(username='board_member', password='p')
-        url = reverse('boards:member_list', kwargs={'board_id': self.board.id})
+        url = reverse('boards:board_members', kwargs={'board_id': self.board.id})
         response = self.client.get(url, HTTP_HX_REQUEST='true')
         self.assertEqual(response.status_code, 200)
 
     def test_non_member_cannot_view_members_list(self):
         """TDD: A non-member should get a 404 error."""
         self.client.login(username='non_member', password='p')
-        url = reverse('boards:member_list', kwargs={'board_id': self.board.id})
+        url = reverse('boards:board_members', kwargs={'board_id': self.board.id})
         response = self.client.get(url, HTTP_HX_REQUEST='true')
         self.assertEqual(response.status_code, 404)
 
@@ -121,13 +121,13 @@ class TestMemberManagementView(BaseBoardTestCase):
         """TDD: Accessing members list with invalid board ID should return 404."""
         self.client.login(username='board_owner', password='p')
         invalid_board_id = 99999
-        url = reverse('boards:member_list', kwargs={'board_id': invalid_board_id})
+        url = reverse('boards:board_members', kwargs={'board_id': invalid_board_id})
         response = self.client.get(url, HTTP_HX_REQUEST='true')
         self.assertEqual(response.status_code, 404)
 
     def test_unauthenticated_user_cannot_view_members_list(self):
         """TDD: Unauthenticated users should not be able to view members list."""
-        url = reverse('boards:member_list', kwargs={'board_id': self.board.id})
+        url = reverse('boards:board_members', kwargs={'board_id': self.board.id})
         response = self.client.get(url, HTTP_HX_REQUEST='true')
         self.assertEqual(response.status_code, 302)  # Redirect to login
 
