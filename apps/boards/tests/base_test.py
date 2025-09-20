@@ -48,6 +48,8 @@ class BaseBoardTestCase(BaseTestCase):
         cls.non_member = User.objects.create_user(username='non_member', email='nonmember@test.com', password='p')
         # This user will own the secondary board and can be used for invitation/membership limit tests
         cls.another_user = User.objects.create_user(username='another_user', email='another@test.com', password='p')
+        cls.board_admin = User.objects.create_user(username='board_admin', email='board_admin@test.com', password='p')
+        cls.board_viewer = User.objects.create_user(username='board_viewer', email='board_viewer@test.com', password='p')
 
     @classmethod
     def _create_boards(cls):
@@ -84,6 +86,8 @@ class BaseBoardTestCase(BaseTestCase):
         Membership.objects.create(user=cls.owner, board=cls.board, role=Membership.ROLE_OWNER)
         # Add 'member' user to the primary board with the 'Member' role.
         Membership.objects.create(user=cls.member, board=cls.board, role=Membership.ROLE_MEMBER)
+        Membership.objects.create(user=cls.board_admin, board=cls.board, role=Membership.ROLE_ADMIN)
+        Membership.objects.create(user=cls.board_viewer, board=cls.board, role=Membership.ROLE_VIEWER)
 
     @classmethod
     def _create_lists_and_cards(cls):

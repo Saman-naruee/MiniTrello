@@ -30,7 +30,7 @@ from django.http import HttpResponseForbidden as HttpResponse403
 from django.core.exceptions import PermissionDenied
 
 # Fetch Helper functions to avoid repetition
-from .permissions import BoardMemberRequiredMixin, BoardAdminRequiredMixin
+from .permissions import BoardMemberRequiredMixin, BoardAdminRequiredMixin, BoardReadWritePermissionMixin
 
 
 
@@ -606,7 +606,7 @@ def custom_404(request, exception):
     return render(request, '404.html', status=404)
 
 
-class HTMXCardMoveView(LoginRequiredMixin, BoardMemberRequiredMixin, View):
+class HTMXCardMoveView(LoginRequiredMixin, BoardMemberRequiredMixin, BoardReadWritePermissionMixin, View):
     """Move a card to another list via HTMX PUT request."""
     
     @transaction.atomic

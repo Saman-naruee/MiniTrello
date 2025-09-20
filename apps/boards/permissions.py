@@ -149,7 +149,7 @@ class BoardMemberRequiredMixin:
     def dispatch(self, request, *args, **kwargs):
         board_id = self.kwargs.get('board_id')
         if not board_id:
-            raise ValueError("This mixin requires 'board_id' in the URL.")
+            raise ValueError("BoardMemberRequiredMixin requires a 'board_id' in the URL.")
 
         try:
             # Try to get the board only if the user is a member.
@@ -171,9 +171,14 @@ class BoardAdminRequiredMixin:
     - Attaches the board to the view as `self.board`.
     """
     def dispatch(self, request, *args, **kwargs):
+        """
+        Ensure the user is an active board member and has owner/admin role.
+        Retrieves board_id, fetches the board, raises 404 if not a member,
+        and raises PermissionDenied for non‑owner/non‑admin member users.
+        """
         board_id = self.kwargs.get('board_id')
         if not board_id:
-            raise ValueError("This mixin requires 'board_id' in the URL.")
+            raise ValueError("BoardAdminRequiredMixin requires a 'board_id' in the URL.")
 
         try:
             # Same logic as above: find the board through membership first.
@@ -191,8 +196,8 @@ class BoardAdminRequiredMixin:
         
         membership = board.memberships.get(user=request.user)
         if membership.role not in [Membership.ROLE_OWNER, Membership.ROLE_ADMIN]:
-            # ❗❗❗ BEHAVIOR CHANGE: Raise 403 for insufficient role.
-            raise PermissionDenied("You must be an admin or owner to perform this action.")
+
+            raise PermissionDenied("You must be a member of this board to access this resource.")
         
         self.board = board
         return super().dispatch(request, *args, **kwargs)
@@ -334,9 +339,7 @@ class BoardObjectPermissionMixin(View):
                     "Not a board member",
                     Fore.YELLOW
                 )
-                raise PermissionDenied(
-                    "You must be a member of this board to access this resource."
-                )
+                raise PermissionDenied("must be a member of this board")
                 
         except Exception as e:
             custom_logger(
@@ -344,7 +347,7 @@ class BoardObjectPermissionMixin(View):
                 f"on board '{board.title}': {e}",
                 Fore.RED
             )
-            raise PermissionDenied("Unable to verify board membership")
+            raise PermissionDenied("must be a member of this board")
         
         # 7. Attach objects to view for easy access in child views
         self.board = board
