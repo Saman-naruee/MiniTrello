@@ -25,7 +25,12 @@ POSTGRES = {
     }
 }
 
-DATABASES = POSTGRES
+try:
+    PREFERRED_DB = config('PREFERRED_DB', cast=str)
+    DATABASES = POSTGRES if PREFERRED_DB == 'postgres' else SQLITE3
+except Exception as e:
+    print(f"Error occurred while setting up databases: {e}")
+    DATABASES = SQLITE3
 
 # Use console backend for emails during development
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
