@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 import random
-from .base_test import BaseBoardTestCase
+from apps.boards.tests.base_test import BaseBoardTestCase
 from django.conf import settings
 
 from apps.accounts.models import User

@@ -2,7 +2,7 @@
 
 import json
 from django.urls import reverse
-from base_test import BaseBoardTestCase
+from apps.boards.tests.base_test import BaseBoardTestCase
 from apps.boards.models import Card, List
 
 class TestCardListView(BaseBoardTestCase):

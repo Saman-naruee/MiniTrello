@@ -1,9 +1,10 @@
 import json
 from django.urls import reverse
-from base_test import BaseBoardTestCase # Import our rich base test case
+from apps.boards.models import List, Card
+from apps.boards.tests.base_test import BaseBoardTestCase
+
 from custom_tools.logger import custom_logger
 
-from apps.boards.models import List, Card
 
 class TestListCreateView(BaseBoardTestCase):
     """
