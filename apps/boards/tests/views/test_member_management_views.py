@@ -1,10 +1,10 @@
 from django.urls import reverse
-from apps.boards.tests.base_test import BoardTestCase
+from apps.boards.tests.base_test import BaseBoardTestCase
 from apps.boards.models import Membership
 
 
 
-class TestMemberManagementView(BoardTestCase):
+class TestMemberManagementView(BaseBoardTestCase):
     """
     Tests for the Member Management features.
     This follows a TDD approach: writing failing tests before implementation.
