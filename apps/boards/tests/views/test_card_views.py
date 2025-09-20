@@ -30,7 +30,7 @@ class TestCardDetailView(BaseBoardTestCase):
     def test_member_can_view_card_details(self):
         """Tests if an authorized member can view a card's detail page."""
         self.client.login(username='board_member', password='p')
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, HTTP_HX_REQUEST='true')
         
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.card1.title)

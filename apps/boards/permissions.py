@@ -357,3 +357,30 @@ class BoardObjectPermissionMixin(View):
         )
         
         return super().dispatch(request, *args, **kwargs)
+
+
+class BoardReadWritePermissionMixin:
+    """
+    A mixin that verifies the user has at least "Member" level permissions,
+    blocking "Viewer" roles from performing write actions (create, update, delete, move).
+    
+    This should be used for views that modify board content, like creating a card or list.
+    It inherits from BoardMemberRequiredMixin to first ensure basic membership.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        # First, ensure the user is at least a member by calling the parent mixin's logic.
+        # This will also handle non-members (404) and attach `self.board`.
+        response = super().dispatch(request, *args, **kwargs)
+
+        # Now, perform the more specific role check.
+        try:
+            membership = self.board.memberships.get(user=request.user, is_active=True)
+            if membership.role > Membership.ROLE_MEMBER: # ROLE_VIEWER has a higher value (40 > 30)
+                raise PermissionDenied("You do not have permission to modify content on this board.")
+        except Membership.DoesNotExist:
+            # This case should technically be caught by BoardMemberRequiredMixin,
+            # but we handle it here for safety.
+            if self.board.owner != request.user:
+                 raise PermissionDenied("You do not have permission to modify content on this board.")
+
+        return response

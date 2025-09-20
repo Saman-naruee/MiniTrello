@@ -499,7 +499,7 @@ class HTMXCardDetailView(LoginRequiredMixin, BoardMemberRequiredMixin, DetailVie
     """View a card's details via HTMX"""
 
     model = Card
-    template_name = "boards/partials/card_detail.html"
+    template_name = "boards/card_detail.html"
     context_object_name = "card"
 
     def get(self, request, *args, **kwargs):
