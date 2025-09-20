@@ -233,22 +233,6 @@ class HTMXBoardUpdateView(LoginRequiredMixin, BoardAdminRequiredMixin, UpdateVie
         return render(self.request, self.template_name, {"form": form, "board": self.get_object()})
 
 
-class BoardMembersView(LoginRequiredMixin, BoardMemberRequiredMixin, DetailView):
-    """View and manage board members"""
-    model = Board
-    template_name = "boards/partials/board_members.html"
-    context_object_name = "board"
-    pk_url_kwarg = 'board_id'
-
-    def get_context_data(self, **kwargs):
-        """Add memberships and members to context."""
-        context = super().get_context_data(**kwargs)
-        board = self.object
-        memberships = board.memberships.select_related('user').all()
-        members = [membership.user for membership in memberships]
-        context['memberships'] = memberships
-        context['members'] = members
-        return context
 
 
 
@@ -661,7 +645,7 @@ class HTMXCardMoveView(LoginRequiredMixin, BoardMemberRequiredMixin, View):
         custom_logger("Card reordering complete.", Fore.GREEN)
         return HttpResponse(status=200)
 
-
+# Member views
 class MemberRemoveView(LoginRequiredMixin, BoardAdminRequiredMixin, View):
     """
     Handles the deletion of a board membership.
@@ -693,13 +677,20 @@ class MemberRoleUpdateView(LoginRequiredMixin, BoardAdminRequiredMixin, View):
         new_role = request.POST.get('role')
         
         # Validate the new role
-        valid_roles = [role[0] for role in Membership.ROLE_CHOICES]
         try:
             new_role = int(new_role)
-            if new_role not in valid_roles:
-                raise ValueError
         except (ValueError, TypeError):
             return HttpResponse("Invalid role provided.", status=400)
+
+        # ❗❗❗ CORE SECURITY FIX: Explicitly block changing role TO Owner.
+        if new_role == Membership.ROLE_OWNER:
+            return HttpResponse("Cannot assign the Owner role.", status=400)
+            
+        # Validate the new role against the available choices
+        valid_roles = [role[0] for role in Membership.ROLE_CHOICES]
+        if new_role not in valid_roles:
+            return HttpResponse("Invalid role provided.", status=400)
+        # --- End of Validation Block ---
 
         # Business Rule: Cannot change the owner's role.
         if membership.role == Membership.ROLE_OWNER:
@@ -711,3 +702,25 @@ class MemberRoleUpdateView(LoginRequiredMixin, BoardAdminRequiredMixin, View):
         # For HTMX, we can return a partial of the updated member row.
         # (For now, a simple 200 OK is enough to pass the test)
         return HttpResponse(status=200)
+
+
+class BoardMembersView(LoginRequiredMixin, BoardMemberRequiredMixin, DetailView):
+    """View and manage board members"""
+    model = Board
+    template_name = "boards/partials/board_members.html"
+    context_object_name = "board"
+    pk_url_kwarg = 'board_id'
+
+    def get_context_data(self, **kwargs):
+        """Add memberships and members to context."""
+        context = super().get_context_data(**kwargs)
+        board = self.object
+        memberships = board.memberships.select_related('user').all()
+        members = [membership.user for membership in memberships]
+        assignable_roles = [role for role in Membership.ROLE_CHOICES if role[0] != Membership.ROLE_OWNER]
+        
+        context['assignable_roles'] = assignable_roles
+        context['memberships'] = memberships
+        context['members'] = members
+        
+        return context

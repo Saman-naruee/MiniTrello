@@ -71,6 +71,14 @@
                 <a href="{% url 'boards:add_member' board_id=board.id %}" class="btn btn-sm btn-success">+ Add Member</a>
                 <button class="btn btn-sm btn-warning" hx-get="{% url 'boards:update_board' board.id %}" hx-target="#generic-modal-content" data-bs-toggle="modal" data-bs-target="#genericModal">Update</button>
                 <button class="btn btn-sm btn-danger" hx-get="{% url 'boards:delete_board' board.id %}" hx-target="#generic-modal-content" data-bs-toggle="modal" data-bs-target="#genericModal">Delete</button>
+                {# ❗❗❗ CORE FIX: Add the "View Members" button here ❗❗❗ #}
+                <button class="btn btn-sm btn-info"
+                        hx-get="{% url 'boards:board_members' board_id=board.id %}"
+                        hx-target="#generic-modal-content"
+                        data-bs-toggle="modal"
+                        data-bs-target="#genericModal">
+                    View Members
+                </button>
             </div>
         </div>
     </div>

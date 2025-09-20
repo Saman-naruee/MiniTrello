@@ -1,56 +1,49 @@
-{# This is the partial that will be loaded into the modal #}
 <div class="modal-header">
     <h5 class="modal-title">Members of "{{ board.title }}"</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 </div>
 <div class="modal-body">
     <p class="text-muted small">Manage roles and remove members from this board.</p>
-    <ul class="list-group">
-        {# We loop through the 'memberships' list provided by the BoardMembersView context #}
+    <ul class="list-group list-group-flush">
         {% for membership in memberships %}
             <li class="list-group-item d-flex justify-content-between align-items-center" id="membership-{{ membership.id }}">
                 
-                {# Member info and Role editor #}
-                <div>
+                {# Column 1: User Info #}
+                <div class="d-flex flex-column">
                     <strong>{{ membership.user.username }}</strong>
-                    {% if membership.user.email %}<span class="text-muted ms-2">{{ membership.user.email }}</span>{% endif %}
-                    
-                    {# Role changing form, visible only to admins/owners #}
-                    {# We assume the user seeing this has admin rights if they see these controls #}
-                    <form class="d-inline-flex align-items-center ms-3"
-                          hx-post="{% url 'boards:update_member_role' board_id=board.id membership_id=membership.id %}"
-                          hx-target="#membership-{{ membership.id }}"
-                          hx-swap="outerHTML">
-                        {% csrf_token %}
-                        <select name="role" class="form-select form-select-sm w-auto" 
-                                {% if membership.role == membership.ROLE_OWNER %}disabled{% endif %}
-                                onchange="this.form.requestSubmit()">
-                            {% for role_val, role_name in membership.ROLE_CHOICES %}
-                                <option value="{{ role_val }}" {% if membership.role == role_val %}selected{% endif %}>
-                                    {{ role_name }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </form>
+                    {% if membership.user.email %}<small class="text-muted">{{ membership.user.email }}</small>{% endif %}
                 </div>
                 
-                {# Remove button, not available for the owner #}
-                <div>
+                {# Column 2: Role & Actions #}
+                <div class="d-flex align-items-center gap-2">
                     {% if membership.role != membership.ROLE_OWNER %}
+                        {# Role Changer Form for non-owners #}
+                        <form hx-post="{% url 'boards:update_member_role' board_id=board.id membership_id=membership.id %}" hx-target="#membership-{{ membership.id }}" class="mb-0">
+                            {% csrf_token %}
+                            <select name="role" class="form-select form-select-sm" 
+                                    onchange="this.form.requestSubmit()">
+                                {% for role_val, role_name in assignable_roles %}
+                                    <option value="{{ role_val }}" {% if membership.role == role_val %}selected{% endif %}>
+                                        {{ role_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                        
+                        {# Remove Button for non-owners #}
                         <button class="btn btn-sm btn-outline-danger"
                                 hx-delete="{% url 'boards:remove_member' board_id=board.id membership_id=membership.id %}"
                                 hx-target="#membership-{{ membership.id }}"
                                 hx-swap="outerHTML"
-                                hx-confirm="Are you sure you want to remove {{ membership.user.username }}?">
+                                hx-confirm="Are you sure?">
                             Remove
                         </button>
                     {% else %}
+                        {# Static "Owner" badge for the owner #}
                         <span class="badge bg-primary">Owner</span>
                     {% endif %}
                 </div>
             </li>
-        {% empty %}
-            <li class="list-group-item">This board has no members yet.</li>
         {% endfor %}
     </ul>
 </div>
