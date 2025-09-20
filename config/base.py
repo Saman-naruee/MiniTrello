@@ -98,6 +98,10 @@ SITE_ID = 1
 
 # --- APPLICATION-SPECIFIC SETTINGS ---
 
+# Profile settings
+IS_USE_API_FOR_PROFILE = config('IS_USE_API_FOR_PROFILE', default=False, cast=bool)
+PREFFERED_IMPLEMENTATION_FOR_PROJECT_API_OR_WEBPAGES = config('PREFFERED_IMPLEMENTATION_FOR_PROJECT_API_OR_WEBPAGES', default='WEB', cast=str)
+
 # Board Limitations
 MAX_BOARDS_PER_USER = config('MAX_BOARDS_PER_USER', default=10, cast=int)
 MAX_MEMBERS_PER_BOARD = config('MAX_MEMBERS_PER_BOARD', default=20, cast=int)
@@ -121,8 +125,8 @@ SIMPLE_JWT = {
 # django-allauth
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+ACCOUNT_LOGIN_METHODS = {'email'}  # Updated from deprecated ACCOUNT_AUTHENTICATION_METHOD
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']  # Updated from deprecated ACCOUNT_EMAIL_REQUIRED
 LOGIN_REDIRECT_URL = "/"
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_ADAPTER = 'apps.accounts.adapters.CustomAccountAdapter'
