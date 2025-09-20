@@ -293,8 +293,11 @@ class HTMXListUpdateView(LoginRequiredMixin, BoardMemberRequiredMixin, UpdateVie
     form_class = ListForm
 
     def get(self, request, *args, **kwargs):
-        if not request.headers.get('HX-Request'):
-            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
+        # For HTMX requests, return partial template
+        if request.headers.get('HX-Request'):
+            return super().get(request, *args, **kwargs)
+
+        # For regular requests, return full template response
         return super().get(request, *args, **kwargs)
 
     def get_object(self, queryset=None):
@@ -335,8 +338,11 @@ class HTMXListDetailView(LoginRequiredMixin, BoardMemberRequiredMixin, DetailVie
     context_object_name = 'list'
 
     def get(self, request, *args, **kwargs):
-        if not request.headers.get('HX-Request'):
-            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
+        # For HTMX requests, return partial template
+        if request.headers.get('HX-Request'):
+            return super().get(request, *args, **kwargs)
+
+        # For regular requests, return full template response
         return super().get(request, *args, **kwargs)
 
     def get_object(self):
@@ -347,6 +353,8 @@ class HTMXListDetailView(LoginRequiredMixin, BoardMemberRequiredMixin, DetailVie
         list_obj = self.object
         context['cards'] = list_obj.cards.all().order_by('order')
         context['board'] = self.board
+        context['list'] = list_obj # self.board.lists.all().order_by('order')
+        custom_logger(f"context: {context}")
         return context
 
 class HTMXListDeleteView(LoginRequiredMixin, BoardMemberRequiredMixin, View):
@@ -431,10 +439,6 @@ class HTMXCardUpdateView(LoginRequiredMixin, BoardMemberRequiredMixin, View):
     """Update a card via HTMX"""
 
     def get(self, request, board_id, list_id, card_id):
-        # Check if this is an HTMX request
-        if not request.headers.get('HX-Request'):
-            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
-
         card = get_object_or_404(Card, id=card_id, list__board=self.board)
         form = CardForm(instance=card, board=self.board)
         context = {
@@ -443,13 +447,15 @@ class HTMXCardUpdateView(LoginRequiredMixin, BoardMemberRequiredMixin, View):
             "board": self.board,
             "list_id": list_id
         }
-        return render(request, "boards/partials/card_update.html", context)
+
+        # For HTMX requests, return partial template
+        if request.headers.get('HX-Request'):
+            return render(request, "boards/partials/card_update.html", context)
+
+        # For regular requests, return full template response
+        return render(request, "boards/card_update.html", context)
 
     def post(self, request, board_id, list_id, card_id):
-        # Check if this is an HTMX request
-        if not request.headers.get('HX-Request'):
-            return HttpResponseBadRequest("This endpoint is for HTMX requests only")
-
         card = get_object_or_404(Card, id=card_id, list__board=self.board)
         form = CardForm(request.POST, instance=card)
         if form.is_valid():
@@ -480,7 +486,13 @@ class HTMXCardUpdateView(LoginRequiredMixin, BoardMemberRequiredMixin, View):
             "board": self.board,
             "list_id": list_id
         }
-        return render(request, "boards/partials/card_update.html", context, status=400)
+
+        # For HTMX requests, return partial template
+        if request.headers.get('HX-Request'):
+            return render(request, "boards/partials/card_update.html", context, status=400)
+
+        # For regular requests, return full template response
+        return render(request, "boards/card_update.html", context, status=400)
 
 
 class HTMXCardDetailView(LoginRequiredMixin, BoardMemberRequiredMixin, DetailView):

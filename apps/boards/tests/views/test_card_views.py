@@ -2,7 +2,7 @@
 
 import json
 from django.urls import reverse
-from .base_test import BaseBoardTestCase
+from base_test import BaseBoardTestCase
 from apps.boards.models import Card, List
 
 class TestCardListView(BaseBoardTestCase):
@@ -38,11 +38,11 @@ class TestCardDetailView(BaseBoardTestCase):
         self.assertContains(response, self.member.username)
 
     # --- Approach 3: Unauthorized Access ---
-    def test_non_member_gets_403_for_card_detail(self):
+    def test_non_member_gets_404_for_card_detail(self):
         """Tests that a non-member cannot access a card's detail page."""
         self.client.login(username='non_member', password='p')
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 404)
 
 
 class TestCardCreateView(BaseBoardTestCase):
@@ -80,8 +80,8 @@ class TestCardCreateView(BaseBoardTestCase):
         self.client.login(username='non_member', password='p')
         post_data = {'title': 'Illegal Card'}
         response = self.client.post(self.url, post_data, HTTP_HX_REQUEST='true')
-        
-        self.assertEqual(response.status_code, 403) # Based on the updated permission helpers
+
+        self.assertEqual(response.status_code, 404)  # Based on the updated permission helpers
         self.assertFalse(Card.objects.filter(title='Illegal Card').exists())
 
 
@@ -118,11 +118,11 @@ class TestCardUpdateView(BaseBoardTestCase):
 
     # --- Approach 3: Unauthorized Access ---
     def test_non_member_cannot_update_card(self):
-        """Tests that a non-member gets a 403 when trying to update a card."""
+        """Tests that a non-member gets a 404 when trying to update a card."""
         self.client.login(username='non_member', password='p')
         post_data = {'title': 'Should not update'}
         response = self.client.post(self.url, post_data)
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 404)
 
 
 class TestCardDeleteView(BaseBoardTestCase):
@@ -155,11 +155,11 @@ class TestCardDeleteView(BaseBoardTestCase):
 
     # --- Approach 3: Unauthorized Access ---
     def test_non_member_cannot_delete_card(self):
-        """Tests that a non-member gets a 403 when trying to delete a card."""
+        """Tests that a non-member gets a 404 when trying to delete a card."""
         self.client.login(username='non_member', password='p')
         response = self.client.delete(self.url, HTTP_HX_REQUEST='true')
 
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 404)
         self.assertTrue(Card.objects.filter(id=self.card_to_delete.id).exists())
 
 

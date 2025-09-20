@@ -1,6 +1,7 @@
 import json
 from django.urls import reverse
-from .base_test import BaseBoardTestCase # Import our rich base test case
+from base_test import BaseBoardTestCase # Import our rich base test case
+from custom_tools.logger import custom_logger
 
 from apps.boards.models import List, Card
 
@@ -215,6 +216,7 @@ class TestListDetailView(BaseBoardTestCase):
         # 1. The 'list' object in the context is the correct one.
         #    (Note: The context variable name depends on your DetailView's 'context_object_name')
         #    Assuming it defaults to 'list'.
+        custom_logger(f"response context: {response.context}")
         self.assertTrue('list' in response.context)
         self.assertEqual(response.context['list'], self.list1)
 
