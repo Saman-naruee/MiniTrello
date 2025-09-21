@@ -11,27 +11,109 @@ from django.conf import settings
 from django.urls import reverse_lazy
 from allauth.account.authentication import get_authentication_records
 from custom_tools.logger import custom_logger
+from allauth.account.views import SignupView
+from django.contrib.auth import login
+from django.views.generic.edit import UpdateView
+
+from .forms import ProfileUpdateForm
+from .models import User
 
 
 
 
 
-User = get_user_model()
+# User = get_user_model()
 
-class ProfileView(APIView):
-    """API view for user profile data"""
-    permission_classes = [IsAuthenticated]
+# class ProfileView(APIView):
+#     """API view for user profile data"""
+#     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        user = request.user
-        return Response({
-            'email': user.email,
-            'date_joined': user.date_joined,
-            'social_accounts': [
-                {'provider': account.provider} 
-                for account in getattr(user, 'socialaccount_set', {}).all()
-            ]
-        })
+#     def get(self, request):
+#         user = request.user
+#         return Response({
+#             'email': user.email,
+#             'date_joined': user.date_joined,
+#             'social_accounts': [
+#                 {'provider': account.provider} 
+#                 for account in getattr(user, 'socialaccount_set', {}).all()
+#             ]
+#         })
+
+
+
+
+# @login_required
+# def profile_router(request):
+#     """Routes to either API or Web view based on settings"""
+#     if settings.IS_USE_API_FOR_PROFILE:
+#         # For API clients, redirect to API endpoint
+#         if request.headers.get('Accept') == 'application/json':
+#             return redirect('api-profile')
+#         # For web clients requesting API data
+#         elif settings.PREFFERED_IMPLEMENTATION_FOR_PROJECT_API_OR_WEBPAGES == 'API':
+#             return redirect('api-profile')
+    
+#     # Default to web view
+#     return redirect('web-profile')
+
+# class LogoutSuccessView(TemplateView):
+#     """View shown after successful logout"""
+#     template_name = 'account/logout_success.html'
+
+# class LoginView(TemplateView):
+#     """Custom login view that handles both normal and social auth"""
+#     template_name = 'account/login.html'
+
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         # Add any additional context needed for the login page
+#         return context
+
+# class RegisterView(TemplateView):
+#     """Custom registration view"""
+#     template_name = 'account/register.html'
+    
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         # Add any additional context needed for the registration page
+#         return context
+
+
+
+# class CustomSignupView(SignupView):
+#     def form_valid(self, form):
+#         response = super().form_valid(form)
+#         login(self.request, self.user)
+#         return response
+
+
+class ProfileUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    A view for users to update their own profile information.
+    """
+    model = User
+    form_class = ProfileUpdateForm
+    template_name = 'account/profile_update.html' # A new template we need to create
+    success_url = reverse_lazy('accounts:profile') # Redirect to the profile page on success
+
+    def get_object(self, queryset=None):
+        """
+        This method ensures that the user can only edit their own profile.
+        """
+        return self.request.user
+
+    def form_valid(self, form):
+        """
+        Adds a success message after a successful update.
+        """
+        messages.success(self.request, 'Your profile has been updated successfully!')
+        custom_logger(f"User {self.request.user.email} updated their profile.\n\n{self.request.user.first_name} {self.request.user.last_name}")
+        
+        if form.is_valid():
+            form.save()
+            messages.success(self.request, 'Your profile has been updated successfully!')
+            custom_logger(f"User {self.request.user.email} updated their profile.\n\n{self.request.user.first_name} {self.request.user.last_name}")
+            return redirect(self.success_url)
 
 class ProfileWebView(LoginRequiredMixin, TemplateView):
     """Web view for user profile page"""
@@ -41,49 +123,3 @@ class ProfileWebView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['user'] = self.request.user
         return context
-
-@login_required
-def profile_router(request):
-    """Routes to either API or Web view based on settings"""
-    if settings.IS_USE_API_FOR_PROFILE:
-        # For API clients, redirect to API endpoint
-        if request.headers.get('Accept') == 'application/json':
-            return redirect('api-profile')
-        # For web clients requesting API data
-        elif settings.PREFFERED_IMPLEMENTATION_FOR_PROJECT_API_OR_WEBPAGES == 'API':
-            return redirect('api-profile')
-    
-    # Default to web view
-    return redirect('web-profile')
-
-class LogoutSuccessView(TemplateView):
-    """View shown after successful logout"""
-    template_name = 'account/logout_success.html'
-
-class LoginView(TemplateView):
-    """Custom login view that handles both normal and social auth"""
-    template_name = 'account/login.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Add any additional context needed for the login page
-        return context
-
-class RegisterView(TemplateView):
-    """Custom registration view"""
-    template_name = 'account/register.html'
-    
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Add any additional context needed for the registration page
-        return context
-
-
-from allauth.account.views import SignupView
-from django.contrib.auth import login
-
-class CustomSignupView(SignupView):
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        login(self.request, self.user)
-        return response

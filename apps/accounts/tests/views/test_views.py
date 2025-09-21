@@ -52,7 +52,7 @@ class ProfileUpdateViewTest(TestCase):
         
         # On a successful update, we expect a redirect to the main profile page
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('web-profile')) # Assuming 'web-profile' is the destination
+        self.assertRedirects(response, reverse('accounts:profile')) # Assuming 'web-profile' is the destination
         
         # Refresh the user object from the database to check if the data was saved
         self.user.refresh_from_db()
