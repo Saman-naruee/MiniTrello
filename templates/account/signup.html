@@ -11,6 +11,7 @@
             </div>
             <div class="card-body">
                 <div x-data="{
+                    username: '',
                     email: '',
                     password1: '',
                     password2: '',
@@ -22,6 +23,7 @@
                         this.errors = {};
                         
                         const formData = new FormData();
+                        formData.append('username', this.username);
                         formData.append('email', this.email);
                         formData.append('password1', this.password1);
                         formData.append('password2', this.password2);
@@ -57,6 +59,12 @@
                     <!-- Registration Form with Alpine.js -->
                     <form @submit.prevent="submitForm">
                         {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username:</label>
+                            <input type="text" x-model="username" id="id_username" class="form-control" required>
+                            <div x-show="errors.username" class="text-danger mt-1" x-text="errors.username"></div>
+                        </div>
                         
                         <div class="mb-3">
                             <label for="id_email" class="form-label">Email:</label>

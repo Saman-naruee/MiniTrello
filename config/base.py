@@ -127,11 +127,12 @@ SIMPLE_JWT = {
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_LOGIN_METHODS = {'email', 'username'}
-ACCOUNT_SIGNUP_FIELDS = ['username*', 'email*', 'password1*', 'password2*']
+ACCOUNT_SIGNUP_FIELDS = ['username*', 'password1*', 'password2*'] # 'email*'
 LOGIN_REDIRECT_URL = "/"
 ACCOUNT_EMAIL_VERIFICATION = 'optional' # Can be 'mandatory'
 ACCOUNT_ADAPTER = 'apps.accounts.adapters.CustomAccountAdapter'
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
+ACCOUNT_EMAIL_REQUIRED = False
 
 
 # Google Provider

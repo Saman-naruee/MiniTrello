@@ -11,7 +11,7 @@
             </div>
             <div class="card-body">
                 <div x-data="{
-                    email: '',
+                    login: '',
                     password: '',
                     remember: false,
                     errors: {},
@@ -22,7 +22,7 @@
                         this.errors = {};
                         
                         const formData = new FormData();
-                        formData.append('login', this.email);
+                        formData.append('login', this.login);
                         formData.append('password', this.password);
                         if (this.remember) formData.append('remember', 'on');
                         formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
@@ -59,8 +59,8 @@
                         {% csrf_token %}
                         
                         <div class="mb-3">
-                            <label for="id_login" class="form-label">Email:</label>
-                            <input type="email" x-model="email" id="id_login" class="form-control" required>
+                            <label for="id_login" class="form-label">Username or Email:</label>
+                            <input type="text" x-model="login" id="id_login" class="form-control" required>
                             <div x-show="errors.login" class="text-danger mt-1" x-text="errors.login"></div>
                         </div>
                         
