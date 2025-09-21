@@ -155,3 +155,21 @@ class CustomAccountAdapter(DefaultAccountAdapter):
             
             user.username = username
         return super().populate_username(request, user)
+
+
+    def get_signup_redirect_url(self, request):
+        """
+        Return signup redirect URL
+        """
+        return super().get_signup_redirect_url(request)
+
+    def respond_user_registered(self, request, user, form):
+        """
+        Handle response after user is registered
+        """
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'success': True,
+                'redirect': self.get_login_redirect_url(request)
+            })
+        return super().respond_user_registered(request, user, form)

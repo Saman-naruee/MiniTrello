@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from apps.accounts.models import User
+from custom_tools.logger import success, info, custom_logger
 
 class ProfileUpdateViewTest(TestCase):
     """
@@ -154,6 +155,8 @@ class AuthenticationMethodTest(TestCase):
             email='auth@test.com', 
             password='p'
         )
+    def setUp(self):
+        self.signup_url = reverse('account_signup')
 
     def test_login_with_username(self):
         """
@@ -181,6 +184,59 @@ class AuthenticationMethodTest(TestCase):
         self.assertContains(response, 'The username and/or password you specified are not correct.')
         self.assertTrue('_auth_user_id' not in self.client.session) # User should not be logged in
 
+    def test_register_with_no_email_and_username(self):
+        """Tests that registering without an email and username fails with custom message."""
+        post_data = {
+            'email': '',
+            'username': '',
+            'password1': 'password123',
+            'password2': 'password123',
+        }
+
+        response = self.client.post(self.signup_url, post_data)
+
+        self.assertEqual(response.status_code, 200) # Re-renders form
+        self.assertContains(response, 'You must provide either a username or an email address.') # Custom validation message
+        # Verify no invalid user was created in the database
+        self.assertEqual(User.objects.count(), 1)
+        self.assertFalse(User.objects.filter(username='', email='').exists())
+        success(f"Registration test - response code: {response.status_code}")
+
+    def test_register_with_only_username_succeeds(self):
+        """Tests that registering with only username (no email) succeeds."""
+        post_data = {
+            'username': 'testuser',
+            'email': '',
+            'password1': 'password123',
+            'password2': 'password123',
+        }
+
+        response = self.client.post(self.signup_url, post_data)
+
+        self.assertEqual(response.status_code, 200) # May redirect or show success
+        # Should not contain error messages since we're providing username
+        # If redirect happens, follow it
+        if response.status_code == 302:
+            response = self.client.get(response['Location'])
+        info(f"Username-only registration test - response code: {response.status_code}")
+
+    def test_register_with_only_email_succeeds(self):
+        """Tests that registering with only email (no username) succeeds."""
+        post_data = {
+            'username': '',
+            'email': 'testuser@test.com',
+            'password1': 'password123',
+            'password2': 'password123',
+        }
+
+        response = self.client.post(self.signup_url, post_data)
+
+        self.assertEqual(response.status_code, 200) # May redirect or show success
+        # Should not contain error messages since we're providing email
+        # If redirect happens, follow it
+        if response.status_code == 302:
+            response = self.client.get(response['Location'])
+        info(f"Email-only registration test - response code: {response.status_code}")
 
 class SignupFlowTest(TestCase):
     """

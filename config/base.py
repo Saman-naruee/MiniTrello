@@ -128,25 +128,30 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
-# django-allauth:
-# Authentication behavior
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
+# django-allauth settings (updated to use modern field configuration)
+ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+
+# Custom signup fields - both username and email are optional but at least one is required
+ACCOUNT_SIGNUP_FIELDS = [
+    'username',  # Optional field
+    'email',     # Optional field
+    'password1*',  # Required field
+    'password2*',  # Required field
+]
+
 ACCOUNT_FORMS = {
     'login': 'apps.accounts.forms.CustomLoginForm',
     'signup': 'apps.accounts.forms.CustomSignupForm',
 }
+
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_LOGIN_METHODS = {'email', 'username'}
-ACCOUNT_SIGNUP_FIELDS = ['username', 'email', 'password1*', 'password2*']
 LOGIN_REDIRECT_URL = "/"
 ACCOUNT_EMAIL_VERIFICATION = 'optional' # Can be 'mandatory'
 ACCOUNT_ADAPTER = 'apps.accounts.adapters.CustomAccountAdapter'
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
-# Email and Username both are optional 
-ACCOUNT_EMAIL_REQUIRED = False
-ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_UNIQUE_EMAIL = True # Both email and username must be unique when provided
+
 
 
 
