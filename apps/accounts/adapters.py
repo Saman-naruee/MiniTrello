@@ -49,10 +49,16 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         email_msg.attach_alternative(message, "text/html")
         email_msg.send(fail_silently=False)
 
+
     def ajax_response(self, request, response, redirect_url=None, redirect_to=None, form=None, data=None, **kwargs):
+        """
+        Properly handle AJAX responses including redirects
+        """
         if redirect_to:
             final_redirect = redirect_to
-        final_redirect = redirect_url
+        else:
+            final_redirect = redirect_url
+            
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             if isinstance(response, str):
                 return JsonResponse({'redirect_location': response})
@@ -64,10 +70,13 @@ class CustomAccountAdapter(DefaultAccountAdapter):
                 return JsonResponse(data)
             return JsonResponse({'success': True})
         return response
+
+    
+
     def get_login_redirect_url(self, request):
         url = super().get_login_redirect_url(request)
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return JsonResponse({'redirect_location': url})
+        # if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        #     return JsonResponse({'redirect_location': url})
         return url
     
     def save_user(self, request, user, form, commit=True):
