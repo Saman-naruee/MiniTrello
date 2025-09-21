@@ -14,19 +14,21 @@ SQLITE3 = {
     }
 }
 
-POSTGRES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', cast=str),
-        'USER': config('DB_USER', cast=str),
-        'PASSWORD': config('DB_PASSWORD', cast=str),
-        'HOST': config('DB_HOST', cast=str),
-        'PORT': config('DB_PORT', cast=str),
-    }
-}
-
+# Define POSTGRES only if preferred (avoids config reads on import if using SQLite)
+POSTGRES = None
 try:
-    PREFERRED_DB = config('PREFERRED_DB', cast=str)
+    PREFERRED_DB = config('PREFERRED_DB', default='sqlite', cast=str)
+    if PREFERRED_DB == 'postgres':
+        POSTGRES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': config('DB_NAME', cast=str),
+                'USER': config('DB_USER', cast=str),
+                'PASSWORD': config('DB_PASSWORD', cast=str),
+                'HOST': config('DB_HOST', cast=str),
+                'PORT': config('DB_PORT', cast=str),
+            }
+        }
     DATABASES = POSTGRES if PREFERRED_DB == 'postgres' else SQLITE3
 except Exception as e:
     print(f"Error occurred while setting up databases: {e}")

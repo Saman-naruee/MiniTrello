@@ -37,6 +37,13 @@ jobs:
       # Settings for the database (we will use SQLite in CI)
       PREFERRED_DB: 'sqlite'
       
+      # Dummy PostgreSQL settings (prevents config errors during import, even if not used)
+      DB_NAME: 'dummy_db'
+      DB_USER: 'dummy_user'
+      DB_PASSWORD: 'dummy_pass'
+      DB_HOST: 'localhost'
+      DB_PORT: '5432'
+      
       # Dummy Google Credentials
       GOOGLE_CLIENT_ID: 'dummy-google-client-id'
       GOOGLE_CLIENT_SECRET: 'dummy-google-client-secret'
