@@ -123,14 +123,15 @@ SIMPLE_JWT = {
 }
 
 # django-allauth
-# django-allauth
-ACCOUNT_EMAIL_REQUIRED = True
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_LOGIN_METHODS = {'email', 'username'}  # Updated from deprecated ACCOUNT_AUTHENTICATION_METHOD
-ACCOUNT_SIGNUP_FIELDS = ['username*', 'email*', 'password1*', 'password2*']  # Updated from deprecated ACCOUNT_EMAIL_REQUIRED
+ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+ACCOUNT_SIGNUP_FIELDS = ['username*', 'email*', 'password1*', 'password2*']
 LOGIN_REDIRECT_URL = "/"
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'optional' # Can be 'mandatory'
 ACCOUNT_ADAPTER = 'apps.accounts.adapters.CustomAccountAdapter'
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
 
 
 # Google Provider

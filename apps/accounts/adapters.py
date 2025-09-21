@@ -6,13 +6,16 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from .models import User
 import random
+from django.utils.html import strip_tags
 
 # from premailer import transform  # pip install premailer (if you want to inline CSS)
 
 class CustomAccountAdapter(DefaultAccountAdapter):
     """
-    To override default allauth behavior
+    Custom adapter for account-related functionality, such as email confirmation.
+    Extends DefaultAccountAdapter to customize email sending if needed.
     """
+    
     def respond_user_inactive(self, request, user):
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({
@@ -22,15 +25,27 @@ class CustomAccountAdapter(DefaultAccountAdapter):
 
 
     def send_mail(self, template_prefix, email, context):
-        if template_prefix == "account/email/email_confirmation_signup":
-            template_prefix = "email_confirmation_signup"
-        template_name = f"account/email/{template_prefix}.html"
-        subject = render_to_string(f"account/email/{template_prefix}_subject.txt", context)
-        subject = subject.strip()
-        body = render_to_string(template_name, context)
-        message = EmailMessage(subject, body, settings.DEFAULT_FROM_EMAIL, [email])
-        message.content_subtype = "html"
-        message.send()
+        """
+        Send an email using the provided template prefix.
+        Matches allauth's default behavior: uses template_prefix directly (e.g., 'account/email/email_confirmation').
+        """
+        # Render subject (strip tags/HTML for plain text subject)
+        subject = render_to_string(template_prefix + "_subject.txt", context, request=self.request).strip()
+        subject = strip_tags(subject) if subject else ""
+        
+        # Render message (assume HTML; adjust if plain-text only)
+        message = render_to_string(template_prefix + "_message.txt", context, request=self.request)
+        
+        # Use Django's mail send (or your custom logic, e.g., Anymail)
+        from django.core.mail import EmailMultiAlternatives
+        email_msg = EmailMultiAlternatives(
+            subject,
+            strip_tags(message),  # Plain text fallback
+            self.get_from_email(),  # Or settings.DEFAULT_FROM_EMAIL
+            [email],
+        )
+        email_msg.attach_alternative(message, "text/html")
+        email_msg.send(fail_silently=False)
 
     def ajax_response(self, request, response, redirect_url=None, redirect_to=None, form=None, data=None, **kwargs):
         if redirect_to:
@@ -54,6 +69,9 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         return url
     
     def save_user(self, request, user, form, commit=True):
+        """
+        Customize user saving during signup (e.g., auto-set profile fields).
+        """
         user = super().save_user(request, user, form, commit=False)
         email = user.email
         username = email.split('@')[0]
