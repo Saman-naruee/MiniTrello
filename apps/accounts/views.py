@@ -93,8 +93,8 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     """
     model = User
     form_class = ProfileUpdateForm
-    template_name = 'account/profile_update.html' # A new template we need to create
-    success_url = reverse_lazy('accounts:profile') # Redirect to the profile page on success
+    template_name = 'account/profile_update.html'
+    success_url = reverse_lazy('accounts:profile')  # Redirect to the profile page on success
 
     def get_object(self, queryset=None):
         """
@@ -107,13 +107,10 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         Adds a success message after a successful update.
         """
         messages.success(self.request, 'Your profile has been updated successfully!')
-        custom_logger(f"User {self.request.user.email} updated their profile.\n\n{self.request.user.first_name} {self.request.user.last_name}")
+        custom_logger(f"User {self.request.user.email} updated their profile: {self.request.user.first_name} {self.request.user.last_name}")
         
-        if form.is_valid():
-            form.save()
-            messages.success(self.request, 'Your profile has been updated successfully!')
-            custom_logger(f"User {self.request.user.email} updated their profile.\n\n{self.request.user.first_name} {self.request.user.last_name}")
-            return redirect(self.success_url)
+        # Let UpdateView handle saving and redirecting (avoids double-save)
+        return super().form_valid(form)
 
 class ProfileWebView(LoginRequiredMixin, TemplateView):
     """Web view for user profile page"""

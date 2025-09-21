@@ -124,9 +124,14 @@ SIMPLE_JWT = {
 
 # django-allauth
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_LOGIN_METHODS = {'email'}  # Updated from deprecated ACCOUNT_AUTHENTICATION_METHOD
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']  # Updated from deprecated ACCOUNT_EMAIL_REQUIRED
+ACCOUNT_LOGIN_METHODS = {'email', 'username'}  # Updated from deprecated ACCOUNT_AUTHENTICATION_METHOD
+# ['email*', 'password1*', 'password2*']  # Updated from deprecated ACCOUNT_EMAIL_REQUIRED
+ACCOUNT_SIGNUP_FIELDS = {
+    'username': {'required': True, 'max_length': 150},
+    'email': {'required': True, 'max_length': 254},
+}
 LOGIN_REDIRECT_URL = "/"
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_ADAPTER = 'apps.accounts.adapters.CustomAccountAdapter'

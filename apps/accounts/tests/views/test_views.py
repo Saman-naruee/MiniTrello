@@ -37,7 +37,7 @@ class ProfileUpdateViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         # We can test for behavior: does the form contain the user's current info?
         self.assertContains(response, self.user.first_name)
-        self.assertContains(response, 'Update Profile')
+        self.assertContains(response, 'Update Your Profile')  # Fixed: Match template <h2>
 
     def test_successful_profile_update(self):
         """
@@ -45,20 +45,22 @@ class ProfileUpdateViewTest(TestCase):
         """
         post_data = {
             'first_name': 'UpdatedFirst',
-            'last_name': 'UpdatedLast'
+            'last_name': 'UpdatedLast',
+            'username': self.user.username  # Fixed: Include required username (unchanged)
         }
         
         response = self.client.post(self.url, post_data)
         
         # On a successful update, we expect a redirect to the main profile page
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('accounts:profile')) # Assuming 'web-profile' is the destination
+        self.assertRedirects(response, reverse('accounts:profile'))
         
         # Refresh the user object from the database to check if the data was saved
         self.user.refresh_from_db()
         
         self.assertEqual(self.user.first_name, 'UpdatedFirst')
         self.assertEqual(self.user.last_name, 'UpdatedLast')
+        self.assertEqual(self.user.username, 'profileuser')  # Unchanged, but verify
 
     def test_profile_update_fails_with_invalid_data(self):
         """
