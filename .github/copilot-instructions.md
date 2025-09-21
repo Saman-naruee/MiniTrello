@@ -47,3 +47,5 @@ Differing from standard: Apps prefixed 'apps.' in INSTALLED_APPS/apps.py; no sep
 Reference key files: `README.md` (setup/features), `PROJECT_PROMPT.md` (philosophy/guidelines), `apps/boards/permissions.py` (access patterns), `config/base.py` (configs/limits).
 
 
+## Third-Party Docs
+django allauth: https://docs.allauth.org/en/latest/
