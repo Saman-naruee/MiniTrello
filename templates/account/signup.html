@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load socialaccount %}
-{% block title %}MiniTrello - Sign Up - Register{% endblock %}
+{% block title %}MiniTrello - Register{% endblock %}
 
 {% block content %}
 <div class="row">
@@ -17,6 +17,31 @@
                     password2: '',
                     errors: {},
                     loading: false,
+                    
+                    validateAndSubmit() {
+                        this.errors = {};
+                        
+                        // Frontend validation: require at least username or email
+                        if (!this.username.trim() && !this.email.trim()) {
+                            this.errors.__all__ = ['You must provide either a username or an email address.'];
+                            return;
+                        }
+                        
+                        // If username provided, validate it
+                        if (this.username.trim() && this.username.trim().length < 3) {
+                            this.errors.username = ['Username must be at least 3 characters long.'];
+                            return;
+                        }
+                        
+                        // If email provided, do basic email validation
+                        if (this.email.trim() && !this.email.trim().includes('@')) {
+                            this.errors.email = ['Please enter a valid email address.'];
+                            return;
+                        }
+                        
+                        // Submit form if validation passes
+                        this.submitForm();
+                    },
                     
                     submitForm() {
                         this.loading = true;
@@ -57,18 +82,20 @@
                     }
                 }">
                     <!-- Registration Form with Alpine.js -->
-                    <form @submit.prevent="submitForm">
+                    <form @submit.prevent="validateAndSubmit">
                         {% csrf_token %}
                         
                         <div class="mb-3">
                             <label for="id_username" class="form-label">Username:</label>
-                            <input type="text" x-model="username" id="id_username" class="form-control" required>
+                            <input type="text" x-model="username" id="id_username" class="form-control" 
+                                   :class="{ 'is-invalid': errors.username }">
                             <div x-show="errors.username" class="text-danger mt-1" x-text="errors.username"></div>
                         </div>
                         
                         <div class="mb-3">
                             <label for="id_email" class="form-label">Email:</label>
-                            <input type="email" x-model="email" id="id_email" class="form-control" required>
+                            <input type="email" x-model="email" id="id_email" class="form-control"
+                                   :class="{ 'is-invalid': errors.email }">
                             <div x-show="errors.email" class="text-danger mt-1" x-text="errors.email"></div>
                         </div>
                         

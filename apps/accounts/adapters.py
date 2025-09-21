@@ -1,4 +1,5 @@
 import json
+from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from allauth.account.adapter import DefaultAccountAdapter
 from django.template.loader import render_to_string
@@ -7,6 +8,7 @@ from django.conf import settings
 from .models import User
 import random
 from django.utils.html import strip_tags
+from allauth.utils import get_username_max_length
 
 # from premailer import transform  # pip install premailer (if you want to inline CSS)
 
@@ -84,3 +86,63 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         if commit:
             user.save()
         return user
+    
+    def authenticate_by_username_or_email(self, request, username_or_email, password):
+        """
+        Authenticate user with either username or email.
+        - User must provide either a username or email address.
+        """
+        try:
+            # Try to authenticate with email first
+            user = authenticate(
+                request=request,
+                username=username_or_email,
+                password=password
+            )
+            
+            # If not found by username, try to find user by email
+            if user is None:
+                try:
+                    from .models import User
+                    user_obj = User.objects.get(email=username_or_email)
+                    user = authenticate(
+                        request=request,
+                        username=user_obj.username,
+                        password=password
+                    )
+                except User.DoesNotExist:
+                    pass
+            
+            return user
+        except Exception:
+            return None
+    
+    def clean_username(self, username, shallow=False):
+        """
+        Clean the username, handling the case where it might be empty.
+        """
+        username_max_length = get_username_max_length()
+        username = super().clean_username(username, shallow=False)
+        
+        if not username:
+            return None
+            
+        return username
+    
+    def populate_username(self, request, user):
+        """
+        Auto-populate username if not provided.
+        """
+        if not user.username and user.email:
+            # Generate username from email if not provided
+            base_username = user.email.split('@')[0]
+            username = base_username
+            counter = 1
+            
+            # Handle unique username constraint
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}{counter}"
+                counter += 1
+            
+            user.username = username
+        return super().populate_username(request, user)

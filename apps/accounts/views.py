@@ -1,3 +1,6 @@
+from django.urls import reverse_lazy
+from allauth.account.views import LoginView, SignupView
+from .forms import CustomLoginForm, CustomSignupForm
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -8,7 +11,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.conf import settings
-from django.urls import reverse_lazy
 from allauth.account.authentication import get_authentication_records
 from custom_tools.logger import custom_logger
 from allauth.account.views import SignupView
@@ -53,3 +55,21 @@ class ProfileWebView(LoginRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context['user'] = self.request.user
         return context
+
+
+
+class CustomLoginView(LoginView):
+    form_class = CustomLoginForm
+    template_name = 'account/login.html'
+    
+    def form_valid(self, form):
+        # Custom login logic if needed
+        return super().form_valid(form)
+
+class CustomSignupView(SignupView):
+    form_class = CustomSignupForm
+    template_name = 'account/signup.html'
+    
+    def form_valid(self, form):
+        # Custom signup logic if needed
+        return super().form_valid(form)
