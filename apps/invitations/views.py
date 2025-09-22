@@ -7,12 +7,12 @@ from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.conf import settings
 from django.urls import reverse
-from django.http import Http404
-
+from django.http import Http404, HttpResponseForbidden
 
 from .models import Invitation
 from .forms import InvitationSendForm
 from apps.boards.permissions import BoardAdminRequiredMixin
+from config.rate_limits import check_sensitive_operation_rate_limit
 
 
 
@@ -31,6 +31,22 @@ class InvitationCreateView(LoginRequiredMixin, BoardAdminRequiredMixin, FormView
         return kwargs
 
     def form_valid(self, form):
+        # Rate limiting check for invitation sending
+        allowed, current_count = check_sensitive_operation_rate_limit(
+            user=self.request.user,
+            operation_name='send_invitation',
+            max_operations=10,  # Max 10 invitations per 10 minutes
+            window_minutes=10
+        )
+
+        if not allowed:
+            messages.error(
+                self.request,
+                f"Rate limit exceeded. You can only send {10} invitations per 10 minutes. "
+                f"Please try again later."
+            )
+            return redirect('boards:board_detail', board_id=self.board.id)
+
         # Create the invitation object
         invitation = Invitation.objects.create(
             email=form.cleaned_data['email'],
