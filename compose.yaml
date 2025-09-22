@@ -24,3 +24,24 @@ services:
     environment:
       - DJANGO_SETTINGS_MODULE=MiniTrello.settings
       - DEBUG=True
+
+
+  redis:
+    image: redis:7-alpine # Using the lightweight Alpine version
+    container_name: minitrello_redis_container
+    ports:
+      - "6379:6379"
+
+
+  celery_worker:
+    build: .
+    container_name: minitrello_celery_worker
+    command: celery -A MiniTrello worker -l info
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis # The worker also needs the DB and Redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.development
+      - DEBUG=True
