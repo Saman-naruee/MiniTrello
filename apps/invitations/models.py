@@ -16,7 +16,7 @@ class Invitation(models.Model):
         on_delete=models.CASCADE,
         related_name='invitations'
     )
-    invitor = models.ForeignKey(settings.AUTH_USER_MODEL,
+    inviter = models.ForeignKey(settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='sent_board_invitations'
     )
@@ -31,4 +31,4 @@ class Invitation(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"Invitation to {self.email} for {self.board.title} by {self.invitor.username}"
+        return f"Invitation to {self.email} for {self.board.title} by {self.inviter.username}"
