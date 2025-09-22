@@ -39,6 +39,7 @@ urlpatterns = [
     
     # Boards pages (template-based with htmx)
     path('boards/', include(("apps.boards.urls", "boards"), namespace="boards")),
+    path('invitations/', include(("apps.invitations.urls", "invitations"), namespace="invitations")),
     
     # i18n - Language selection
     path('i18n/setlang/', set_language, name='set_language'),
