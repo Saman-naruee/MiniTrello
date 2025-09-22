@@ -1,4 +1,4 @@
-from django.views.generic import CreateView, View
+from django.views.generic import FormView, View  # Change CreateView to FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.shortcuts import get_object_or_404, redirect
@@ -12,14 +12,13 @@ from .models import Invitation
 from .forms import InvitationSendForm
 from apps.boards.permissions import BoardAdminRequiredMixin
 
-class InvitationCreateView(LoginRequiredMixin, BoardAdminRequiredMixin, CreateView):
+class InvitationCreateView(LoginRequiredMixin, BoardAdminRequiredMixin, FormView):
     """
     Handles sending an invitation to a new member.
     Accessible only to board admins/owners.
     """
-    model = Invitation
     form_class = InvitationSendForm
-    template_name = 'invitations/send_invitation.html' # We will create this
+    template_name = 'invitations/send_invitation.html'
 
     def get_form_kwargs(self):
         """Pass the board object to the form for validation."""
@@ -63,7 +62,7 @@ class InvitationCreateView(LoginRequiredMixin, BoardAdminRequiredMixin, CreateVi
         )
         
         messages.success(self.request, f"Invitation sent to {invitation.email}.")
-        return redirect(reverse_lazy('boards:board_detail', kwargs={'board_id': self.board.id}))
+        return redirect('boards:board_detail', board_id=self.board.id)
     
 
 class InvitationAcceptView(LoginRequiredMixin, View):
