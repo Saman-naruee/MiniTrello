@@ -572,34 +572,34 @@ class HTMXCardAssignMembersView(LoginRequiredMixin, BoardMemberRequiredMixin, Vi
 
 
 
-@login_required
-def add_member_to_board(request, board_id):
-    # Check current user have right acccess
-    board = get_object_or_404(Board, id=board_id)
-    # Ensure the requester is a member or the owner
-    if not (board.owner == request.user or board.memberships.filter(user=request.user, is_active=True).exists()):
-        raise PermissionDenied("You are not authorized to add members to this board.")
+# @login_required
+# def add_member_to_board(request, board_id):
+#     # Check current user have right acccess
+#     board = get_object_or_404(Board, id=board_id)
+#     # Ensure the requester is a member or the owner
+#     if not (board.owner == request.user or board.memberships.filter(user=request.user, is_active=True).exists()):
+#         raise PermissionDenied("You are not authorized to add members to this board.")
 
-    # can check the owner
-    # if board.owner != request.user:
-    #     messages.error(request, "You don't have permission to add members.")
-    #     return redirect('boards:board_detail', board_id=board.id)
+#     # can check the owner
+#     # if board.owner != request.user:
+#     #     messages.error(request, "You don't have permission to add members.")
+#     #     return redirect('boards:board_detail', board_id=board.id)
 
-    if request.method == 'POST':
+#     if request.method == 'POST':
 
-        form = MembershipForm(request.POST, board=board)
-        if form.is_valid():
-            membership = form.save(commit=False)
-            membership.board = board
-            membership.invited_by = request.user
-            membership.save()
+#         form = MembershipForm(request.POST, board=board)
+#         if form.is_valid():
+#             membership = form.save(commit=False)
+#             membership.board = board
+#             membership.invited_by = request.user
+#             membership.save()
             
-            messages.success(request, f"{membership.user.username} was added to the board.")
-            return redirect('boards:board_detail', board_id=board.id)
-    else:
-        form = MembershipForm(board=board)
+#             messages.success(request, f"{membership.user.username} was added to the board.")
+#             return redirect('boards:board_detail', board_id=board.id)
+#     else:
+#         form = MembershipForm(board=board)
         
-    return render(request, 'boards/add_member.html', {'form': form, 'board': board})
+#     return render(request, 'boards/add_member.html', {'form': form, 'board': board})
 
 
 def custom_404(request, exception):
