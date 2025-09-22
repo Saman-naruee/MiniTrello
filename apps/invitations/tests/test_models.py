@@ -68,13 +68,18 @@ class InvitationModelTest(BaseModelTestCase):
         """
         TDD (Edge Case): Test that an expired invitation is not considered active.
         """
+        # Create invitation normally (auto_now_add will set created_at)
         invitation = Invitation.objects.create(
             email='expired@example.com',
             board=self.board,
-            inviter=self.inviter,
-            # Set the creation date to be in the past
-            created_at=timezone.now() - timedelta(days=Invitation.EXPIRATION_DAYS + 1)
+            inviter=self.inviter
         )
+
+        # Manually set created_at to be in the past to simulate an expired invitation
+        past_date = timezone.now() - timedelta(days=Invitation.EXPIRATION_DAYS + 1)
+        invitation.created_at = past_date
+        invitation.save()  # Save again to persist the manually set created_at
+
         self.assertFalse(invitation.is_active())
 
     def test_accept_method_changes_status_and_creates_membership(self):
