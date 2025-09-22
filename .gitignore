@@ -25,3 +25,4 @@ staticfiles/
 *_prompt.txt
 db.sqlite3
 custom_logger_package/
+refresh_token.txt

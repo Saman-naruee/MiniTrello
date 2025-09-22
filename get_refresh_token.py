@@ -13,12 +13,12 @@ def get_client_config():
     """
     return {
         "web": {
-            "client_id": config('GOOGLE_CLIENT_ID'),
+            "client_id": config('GOOGLE_OAUTH_CLIENT_ID'),
             "project_id": config('GOOGLE_PROJECT_ID'),
             "auth_uri": config('GOOGLE_AUTH_URI'),
             "token_uri": config('GOOGLE_TOKEN_URI'),
             "auth_provider_x509_cert_url": config('GOOGLE_AUTH_PROVIDER_X509_CERT_URL'),
-            "client_secret": config('GOOGLE_CLIENT_SECRET'),
+            "client_secret": config('GOOGLE_OAUTH_CLIENT_SECRET'),
             "redirect_uris": eval(config('GOOGLE_REDIRECT_URIS'))
         }
     }
@@ -40,6 +40,9 @@ def main():
     print("\n--- Your Refresh Token ---")
     print("Copy this value into your .env file as GOOGLE_REFRESH_TOKEN")
     printclr(credentials.refresh_token)
+    with open("refresh_token.txt", "w") as f:
+        f.write(credentials.refresh_token)
+    printclr("Refresh token also saved to refresh_token.txt")
     print("--------------------------\n")
 
 if __name__ == '__main__':
