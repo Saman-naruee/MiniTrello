@@ -35,7 +35,7 @@ except Exception as e:
     DATABASES = SQLITE3
 
 # Use console backend for emails during development
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' if DEBUG else 'config.email_backend.GoogleOauth2EmailBackend'
 
 # CORS settings for local frontend development (e.g., React on port 3000)
 CORS_ALLOWED_ORIGINS = [
