@@ -80,6 +80,12 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# Custom authentication backend for flexible login
+AUTHENTICATION_BACKENDS = [
+    'apps.accounts.auth_backend.FlexibleAuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 # --- INTERNATIONALIZATION ---
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -122,14 +128,32 @@ SIMPLE_JWT = {
     "BLACKLIST_AFTER_ROTATION": True,
 }
 
-# django-allauth
-ACCOUNT_EMAIL_REQUIRED = True
+# django-allauth settings (updated to use modern field configuration)
+ACCOUNT_LOGIN_METHODS = {'email', 'username'}
+
+# Custom signup fields - both username and email are optional but at least one is required
+ACCOUNT_SIGNUP_FIELDS = [
+    'username',  # Optional field
+    'email',     # Optional field
+    'password1*',  # Required field
+    'password2*',  # Required field
+]
+
+ACCOUNT_FORMS = {
+    'login': 'apps.accounts.forms.CustomLoginForm',
+    'signup': 'apps.accounts.forms.CustomSignupForm',
+}
+
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-ACCOUNT_LOGIN_METHODS = {'email'}  # Updated from deprecated ACCOUNT_AUTHENTICATION_METHOD
-ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']  # Updated from deprecated ACCOUNT_EMAIL_REQUIRED
 LOGIN_REDIRECT_URL = "/"
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'optional' # Can be 'mandatory'
 ACCOUNT_ADAPTER = 'apps.accounts.adapters.CustomAccountAdapter'
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
+ACCOUNT_UNIQUE_EMAIL = True # Both email and username must be unique when provided
+
+
+
 
 # Google Provider
 SOCIALACCOUNT_PROVIDERS = {

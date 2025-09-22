@@ -11,7 +11,7 @@
             </div>
             <div class="card-body">
                 <div x-data="{
-                    email: '',
+                    login: '',
                     password: '',
                     remember: false,
                     errors: {},
@@ -22,7 +22,7 @@
                         this.errors = {};
                         
                         const formData = new FormData();
-                        formData.append('login', this.email);
+                        formData.append('login', this.login);
                         formData.append('password', this.password);
                         if (this.remember) formData.append('remember', 'on');
                         formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
@@ -39,11 +39,35 @@
                                 window.location.href = response.url;
                                 return;
                             }
-                            return response.json();
+                            return response.json().catch(() => null); // Handle empty responses
                         })
                         .then(data => {
-                            if (data && data.form && data.form.errors) {
-                                this.errors = data.form.errors;
+                            if (data) {
+                                // Handle redirects
+                                if (data.redirect) {
+                                    window.location.href = data.redirect;
+                                    return;
+                                }
+
+                                // Handle success (login completed)
+                                if (data.success === true) {
+                                    window.location.href = '/';
+                                    return;
+                                }
+
+                                // Handle form validation errors
+                                if (data.form && data.form.errors) {
+                                    this.errors = data.form.errors;
+                                }
+
+                                // Handle general errors
+                                if (data.__all__ || data.non_field_errors) {
+                                    this.errors.__all__ = data.__all__ || data.non_field_errors;
+                                }
+                            } else {
+                                // Empty response - assume success and redirect
+                                window.location.href = '/';
+                                return;
                             }
                             this.loading = false;
                         })
@@ -59,8 +83,8 @@
                         {% csrf_token %}
                         
                         <div class="mb-3">
-                            <label for="id_login" class="form-label">Email:</label>
-                            <input type="email" x-model="email" id="id_login" class="form-control" required>
+                            <label for="id_login" class="form-label">Username or Email:</label>
+                            <input type="text" x-model="login" id="id_login" class="form-control" required>
                             <div x-show="errors.login" class="text-danger mt-1" x-text="errors.login"></div>
                         </div>
                         

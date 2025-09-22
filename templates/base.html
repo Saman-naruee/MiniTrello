@@ -35,7 +35,7 @@
                     </li>
                     {% if user.is_authenticated %}
                     <li class="nav-item">
-                        <a class="nav-link {% block nav_profile_active %}{% endblock %}" href="{% url 'profile' %}">{% trans "Profile" %}</a>
+                        <a class="nav-link {% block nav_profile_active %}{% endblock %}" href="{% url 'accounts:profile' %}">{% trans "Profile" %}</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% block nav_boards_active %}{% endblock %}" href="{% url 'boards:boards_list' %}">{% trans "Boards" %}</a>
