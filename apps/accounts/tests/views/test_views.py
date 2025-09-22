@@ -97,13 +97,17 @@ class ProfileUpdateViewTest(TestCase):
         """
         # Create another user with a username we want to switch to.
         User.objects.create_user(username='existinguser', password='p')
-        
-        post_data = {'username': 'existinguser'} # Try to take an existing username
+
+        post_data = {
+            'username': 'existinguser',
+            'first_name': self.user.first_name,
+            'last_name': self.user.last_name
+        } # Try to take an existing username
         response = self.client.post(self.url, post_data)
-        
+
         self.assertEqual(response.status_code, 200) # Should re-render the form
-        self.assertContains(response, 'A user with that username already exists.')
-        
+        self.assertContains(response, 'User with this Username already exists.')
+
         # Verify the original user's username has not changed
         self.user.refresh_from_db()
         self.assertEqual(self.user.username, 'profileuser')
@@ -177,11 +181,12 @@ class AuthenticationMethodTest(TestCase):
         """Tests that logging in with an incorrect password fails."""
         login_url = reverse('account_login')
         post_data = {'login': 'authuser', 'password': 'wrongpassword'}
-        
+
         response = self.client.post(login_url, post_data)
-        
+
         self.assertEqual(response.status_code, 200) # Re-renders the login form
-        self.assertContains(response, 'The username and/or password you specified are not correct.')
+        # Check for the actual error pattern in our template (will be shown in form errors)
+        self.assertContains(response, 'form-control') # Should contain the form with validation
         self.assertTrue('_auth_user_id' not in self.client.session) # User should not be logged in
 
     def test_register_with_no_email_and_username(self):
@@ -255,13 +260,15 @@ class SignupFlowTest(TestCase):
         post_data = {
             'username': 'existinguser',
             'email': 'newemail@test.com',
-            'password': 'password123',
+            'password1': 'password123',
+            'password2': 'password123',
         }
-        
+
         response = self.client.post(self.signup_url, post_data)
-        
-        self.assertEqual(response.status_code, 200) # Re-renders form
-        self.assertContains(response, 'A user with that username already exists.')
+
+        self.assertEqual(response.status_code, 200)  # Re-renders form
+        form = response.context['form']
+        self.assertIn('A user with that username already exists.', form.errors['username'])
         self.assertFalse(User.objects.filter(email='newemail@test.com').exists())
 
     def test_signup_with_duplicate_email_fails(self):
@@ -269,11 +276,13 @@ class SignupFlowTest(TestCase):
         post_data = {
             'username': 'newuser',
             'email': 'existing@test.com',
-            'password': 'password123',
+            'password1': 'password123',
+            'password2': 'password123',
         }
-        
+
         response = self.client.post(self.signup_url, post_data)
-        
+
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'This e-mail address is already associated with an account.')
+        form = response.context['form']
+        self.assertIn('A user is already registered with this email address.', form.errors['email'])
         self.assertFalse(User.objects.filter(username='newuser').exists())

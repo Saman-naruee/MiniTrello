@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load socialaccount %}
+
 {% block title %}MiniTrello - Register{% endblock %}
 
 {% block content %}
@@ -80,38 +81,86 @@
                             this.loading = false;
                         });
                     }
-                }">
-                    <!-- Registration Form with Alpine.js -->
-                    <form @submit.prevent="validateAndSubmit">
+                }" x-init="
+                    username = `{{ form.username.value|default:''|safe }}`;
+                    email = `{{ form.email.value|default:''|safe }}`;
+                    password1 = `{{ form.password1.value|default:''|safe }}`;
+                    password2 = `{{ form.password2.value|default:''|safe }}`;
+                ">
+                    <!-- Registration Form with Alpine.js and Django form integration -->
+                    <form method="post" @submit.prevent="validateAndSubmit">
                         {% csrf_token %}
                         
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors|join:", " }}
+                            </div>
+                        {% endif %}
+                        
                         <div class="mb-3">
-                            <label for="id_username" class="form-label">Username:</label>
-                            <input type="text" x-model="username" id="id_username" class="form-control" 
-                                   :class="{ 'is-invalid': errors.username }">
-                            <div x-show="errors.username" class="text-danger mt-1" x-text="errors.username"></div>
+                            <label for="{{ form.username.id_for_label }}" class="form-label">{{ form.username.label }}:</label>
+                            <input type="text" 
+                                   name="username" 
+                                   x-model="username" 
+                                   id="{{ form.username.id_for_label }}" 
+                                   class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.username.value|default:'' }}" 
+                                   :class="{ 'is-invalid': errors.username }"
+                                   maxlength="{{ form.username.field.max_length }}">
+                            <div class="invalid-feedback d-block">
+                                {% if form.username.errors %}{{ form.username.errors|join:", " }}{% endif %}
+                                <span x-show="errors.username" x-text="errors.username[0]"></span>
+                            </div>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="id_email" class="form-label">Email:</label>
-                            <input type="email" x-model="email" id="id_email" class="form-control"
+                            <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}:</label>
+                            <input type="email" 
+                                   name="email" 
+                                   x-model="email" 
+                                   id="{{ form.email.id_for_label }}" 
+                                   class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.email.value|default:'' }}" 
                                    :class="{ 'is-invalid': errors.email }">
-                            <div x-show="errors.email" class="text-danger mt-1" x-text="errors.email"></div>
+                            <div class="invalid-feedback d-block">
+                                {% if form.email.errors %}{{ form.email.errors|join:", " }}{% endif %}
+                                <span x-show="errors.email" x-text="errors.email[0]"></span>
+                            </div>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="id_password1" class="form-label">Password:</label>
-                            <input type="password" x-model="password1" id="id_password1" class="form-control" required>
-                            <div x-show="errors.password1" class="text-danger mt-1" x-text="errors.password1"></div>
+                            <label for="{{ form.password1.id_for_label }}" class="form-label">{{ form.password1.label }}:</label>
+                            <input type="password" 
+                                   name="password1" 
+                                   x-model="password1" 
+                                   id="{{ form.password1.id_for_label }}" 
+                                   class="form-control {% if form.password1.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.password1.value|default:'' }}" 
+                                   required 
+                                   :class="{ 'is-invalid': errors.password1 }">
+                            <div class="invalid-feedback d-block">
+                                {% if form.password1.errors %}{{ form.password1.errors|join:", " }}{% endif %}
+                                <span x-show="errors.password1" x-text="errors.password1[0]"></span>
+                            </div>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="id_password2" class="form-label">Confirm Password:</label>
-                            <input type="password" x-model="password2" id="id_password2" class="form-control" required>
-                            <div x-show="errors.password2" class="text-danger mt-1" x-text="errors.password2"></div>
+                            <label for="{{ form.password2.id_for_label }}" class="form-label">{{ form.password2.label }}:</label>
+                            <input type="password" 
+                                   name="password2" 
+                                   x-model="password2" 
+                                   id="{{ form.password2.id_for_label }}" 
+                                   class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
+                                   value="{{ form.password2.value|default:'' }}" 
+                                   required 
+                                   :class="{ 'is-invalid': errors.password2 }">
+                            <div class="invalid-feedback d-block">
+                                {% if form.password2.errors %}{{ form.password2.errors|join:", " }}{% endif %}
+                                <span x-show="errors.password2" x-text="errors.password2[0]"></span>
+                            </div>
                         </div>
                         
-                        <div x-show="errors.__all__" class="alert alert-danger" x-text="errors.__all__"></div>
+                        <div x-show="errors.__all__ && !form.non_field_errors" class="alert alert-danger" x-text="errors.__all__[0]"></div>
                         
                         <button type="submit" class="btn btn-primary" :disabled="loading">
                             <span x-show="loading" class="spinner-border spinner-border-sm me-1"></span>
