@@ -49,3 +49,9 @@ Reference key files: `README.md` (setup/features), `PROJECT_PROMPT.md` (philosop
 
 ## Third-Party Docs
 django allauth: https://docs.allauth.org/en/latest/
+
+
+## Important:!!!
+Always Provide existing Tools and Patterns and avoid reinventing the wheel.
+Always use the provided utilities and patterns for consistency and maintainability.
+Always In first line of each file in chat mention file full path in comment.
