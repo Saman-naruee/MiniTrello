@@ -74,3 +74,96 @@ class InvitationCreateViewTest(BaseBoardTestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse('account_login'), response.url)
+
+
+class InvitationAcceptViewTest(BaseBoardTestCase):
+    """
+    TDD: Tests for the view that handles accepting an invitation.
+    URL: /accept/<uuid:token>/
+    """
+
+    def setUp(self):
+        # Create a valid invitation for our tests
+        self.invitation = Invitation.objects.create(
+            email='new.user.to.accept@example.com',
+            board=self.board,
+            inviter=self.owner
+        )
+        self.accept_url = reverse('invitations:accept_invitation', kwargs={'token': self.invitation.token})
+
+    # --- Scenario 1: A brand new user accepts the invitation ---
+    def test_new_user_accepts_invitation_is_redirected_to_signup(self):
+        """
+        TDD: A new user (not registered) clicking the link should be redirected
+        to the signup page, with their email pre-filled.
+        """
+        response = self.client.get(self.accept_url)
+        
+        # We expect a redirect to the signup page
+        self.assertEqual(response.status_code, 302)
+        
+        # The signup URL should contain the invited email as a query parameter
+        signup_url = reverse('account_signup')
+        self.assertTrue(signup_url in response.url)
+        self.assertIn(f"email={self.invitation.email}", response.url)
+
+        # The invitation token should be stored in the session to be used after signup
+        self.assertEqual(self.client.session.get('invitation_token'), str(self.invitation.token))
+
+    # --- Scenario 2: An existing, logged-in user accepts the invitation ---
+    def test_existing_logged_in_user_accepts_and_becomes_member(self):
+        """
+        TDD: An existing user who is already logged in should be immediately added
+        to the board and redirected to it.
+        """
+        # Log in the user who is being invited
+        self.client.login(username='non_member', password='p')
+        
+        # Create an invitation specifically for this logged-in user
+        invitation = Invitation.objects.create(
+            email=self.non_member.email,
+            board=self.board,
+            inviter=self.owner
+        )
+        accept_url = reverse('invitations:accept_invitation', kwargs={'token': invitation.token})
+
+        # The user should not be a member before accepting
+        self.assertFalse(Membership.objects.filter(user=self.non_member, board=self.board).exists())
+
+        # Act: The logged-in user visits the accept URL
+        response = self.client.get(accept_url)
+
+        # Assert:
+        # 1. They are redirected to the board's detail page
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('boards:board_detail', kwargs={'board_id': self.board.id}))
+        
+        # 2. They are now a member of the board
+        self.assertTrue(Membership.objects.filter(user=self.non_member, board=self.board).exists())
+        
+        # 3. The invitation status is updated to 'accepted'
+        invitation.refresh_from_db()
+        self.assertEqual(invitation.status, Invitation.STATUS_ACCEPTED)
+
+    # --- Edge Cases ---
+    def test_accepting_with_invalid_token_returns_404(self):
+        """TDD (Edge Case): An invalid or non-existent token should result in a 404 error."""
+        import uuid
+        invalid_token_url = reverse('invitations:accept_invitation', kwargs={'token': uuid.uuid4()})
+        response = self.client.get(invalid_token_url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_cannot_accept_an_expired_invitation(self):
+        """TDD (Edge Case): A user cannot accept an invitation that has expired."""
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        # Manually set the creation date to be in the past to make it expired
+        self.invitation.created_at = timezone.now() - timedelta(days=Invitation.EXPIRATION_DAYS + 1)
+        self.invitation.save()
+        
+        response = self.client.get(self.accept_url)
+        
+        # Should show an error page, a redirect to an "invalid invitation" page is a good UX.
+        # For simplicity, we can expect a 404 or a specific error template.
+        self.assertEqual(response.status_code, 404) # Or a custom status/template
