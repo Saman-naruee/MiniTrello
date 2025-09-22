@@ -9,6 +9,8 @@ from .models import User
 import random
 from django.utils.html import strip_tags
 from allauth.utils import get_username_max_length
+from apps.invitations.models import Invitation
+from django.contrib import messages
 
 # from premailer import transform  # pip install premailer (if you want to inline CSS)
 
@@ -81,19 +83,31 @@ class CustomAccountAdapter(DefaultAccountAdapter):
     
     def save_user(self, request, user, form, commit=True):
         """
-        Customize user saving during signup (e.g., auto-set profile fields).
+        This is called when a new user signs up.
+        We override it to check for a pending invitation in the session.
         """
-        user = super().save_user(request, user, form, commit=False)
-        email = user.email
-        username = email.split('@')[0]
-        if '@' in email:
-            user.username = username
-            if User.objects.filter(username=username):
-                user.username = f"{username}{random.randint(1, 100000)}"
-        user.is_staff = False
-        user.is_superuser = False
-        if commit:
-            user.save()
+        # Call the parent method to save the user normally
+        user = super().save_user(request, user, form, commit)
+        # Override user creation for creating users superuser:
+        user.is_superuser, user.is_staff = False, False
+        invitation_token = request.session.pop('invitation_token', None)
+        
+        if invitation_token:
+            try:
+                # Find the pending invitation
+                invitation = Invitation.objects.get(token=invitation_token, status=Invitation.STATUS_SENT)
+                
+                # Check if the new user's email matches the invitation's email
+                if invitation.email.lower() == user.email.lower():
+                    # Accept the invitation for the newly created user
+                    invitation.accept(user)
+                    messages.success(request, f"Welcome! You've successfully signed up and joined the board '{invitation.board.title}'.")
+                else:
+                    messages.warning(request, "You signed up with a different email than the one invited. Please accept the invitation again after logging in.")
+            except Invitation.DoesNotExist:
+                # The token was invalid, do nothing.
+                pass
+        
         return user
     
     def authenticate_by_username_or_email(self, request, username_or_email, password):
