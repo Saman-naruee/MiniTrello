@@ -8,10 +8,8 @@ except ImportError:
     validate_email = None
 
 # Alternative: Use py3-validate-email
-try:
-    from py3dnsbl import validate_email_domain
-except ImportError:
-    validate_email_domain = None
+
+validate_email_domain = None
 
 from apps.boards.models import Membership
 
