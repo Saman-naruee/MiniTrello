@@ -64,23 +64,122 @@
     opacity: 1;
 }
 
-/* Custom scrollbar for list container */
+/* Enhanced scrollbars and scrolling functionality */
 .list-container::-webkit-scrollbar {
-    height: 8px;
+    height: 10px;
 }
 
 .list-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
+    background: #f8f9fa;
+    border-radius: 5px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
 }
 
 .list-container::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 4px;
+    background: linear-gradient(45deg, #007bff, #0056b3);
+    border-radius: 5px;
+    border: 2px solid #f8f9fa;
 }
 
 .list-container::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
+    background: linear-gradient(45deg, #0056b3, #003d82);
+    transform: scale(1.1);
+}
+
+/* Hide scrollbar when not needed */
+.list-container:not(:hover)::-webkit-scrollbar-thumb {
+    opacity: 0.7;
+}
+
+/* Scroll controls styling */
+.scroll-controls {
+    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 4px;
+}
+
+.scroll-controls .btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50% !important;
+    border: 2px solid rgba(0, 123, 255, 0.3);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.scroll-controls .btn:hover {
+    background-color: #007bff !important;
+    border-color: #007bff !important;
+    color: white !important;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+/* Hide scroll controls on mobile */
+@media (max-width: 768px) {
+    .scroll-controls {
+        display: none;
+    }
+
+    .list-container {
+        -webkit-overflow-scrolling: touch;
+        scroll-snap-type: x mandatory;
+    }
+
+    .list-column {
+        min-width: 260px;
+        max-width: 260px;
+        scroll-snap-align: start;
+    }
+}
+
+/* Improved mobile touch scrolling */
+@media (hover: none) {
+    .list-container {
+        scroll-behavior: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-left: 0.5rem;
+        padding-right: 2rem;
+    }
+
+    .list-column:last-child {
+        margin-right: 2rem;
+    }
+}
+
+/* Auto-hide scroll buttons when not needed */
+.scroll-controls {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.list-container:hover + .scroll-controls,
+.scroll-controls:hover {
+    opacity: 1;
+}
+
+/* Better visual feedback for long content */
+.list-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 30px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.9), transparent);
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.list-container.scrollable-left::before {
+    opacity: 1;
 }
 
 /* Board header gradient variations */

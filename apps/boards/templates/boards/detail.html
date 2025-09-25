@@ -6,26 +6,45 @@
 {% block extra_head %}
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'boards/css/boards.css' %}">
 <style>
-/* --- Your original, correct styles for a column layout --- */
-.board-header {
-    background: linear-gradient(135deg, {{ board.color }}20, {{ board.color }}40);
-    border-bottom: 3px solid {{ board.color }};
-}
+/* --- Custom scroll and layout styles --- */
 .toast-container {
     position: fixed;
     top: 1rem;
     right: 1rem;
     z-index: 1090;
 }
+
 .list-container {
     display: flex;
     gap: 1rem;
     padding: 1rem;
-    min-height: calc(100vh - 250px); /* Adjusted for header height */
+    min-height: calc(100vh - 250px);
     overflow-x: auto;
-    align-items: flex-start; /* Aligns lists to the top */
+    align-items: flex-start;
+    scroll-behavior: smooth;
+    position: relative;
+}
+
+/* Scroll fade indicators */
+.list-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 50px;
+    background: linear-gradient(to left, rgba(255, 255, 255, 0.9), transparent);
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.list-container.scrollable::after {
+    opacity: 1;
 }
 .list-column {
     min-width: 300px;
@@ -58,7 +77,7 @@
     </div>
     
     {# --- Your original, more detailed Board Header --- #}
-    <div class="board-header p-3 mb-3">
+    <div class="board-header p-3 mb-3" style="background: linear-gradient(135deg, {{ board.color }}20, {{ board.color }}40); border-bottom: 3px solid {{ board.color }};">
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <a href="{% url 'boards:boards_list' %}" class="btn btn-sm btn-outline-secondary mb-2">← Back to Boards</a>
@@ -99,6 +118,16 @@
         </div>
     </div>
 
+    {# --- Scroll control buttons --- #}
+    <div class="scroll-controls position-fixed top-50 end-0 translate-middle-y d-flex flex-column gap-2 z-index-100">
+        <button id="scroll-right" class="btn btn-light shadow" @click="scrollContainer('right')">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <button id="scroll-left" class="btn btn-light shadow" @click="scrollContainer('left')">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+    </div>
+
     {# --- The main container for all lists, now with correct classes --- #}
     <div class="list-container" id="lists-container" data-board-id="{{ board.id }}">
         {% for list in lists %}
@@ -121,8 +150,41 @@
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 <script>
 // AlpineJS function for client-side interactions
-function boardApp() { 
+function boardApp() {
     return {
+        container: null,
+
+        init() {
+            this.container = document.getElementById('lists-container');
+            this.updateScrollIndicators();
+            this.container.addEventListener('scroll', () => this.updateScrollIndicators());
+            window.addEventListener('resize', () => this.updateScrollIndicators());
+        },
+
+        updateScrollIndicators() {
+            if (!this.container) return;
+
+            const canScrollLeft = this.container.scrollLeft > 0;
+            const canScrollRight = this.container.scrollLeft < (this.container.scrollWidth - this.container.clientWidth);
+
+            this.container.classList.toggle('scrollable-left', canScrollLeft);
+            this.container.classList.toggle('scrollable', canScrollRight);
+        },
+
+        scrollContainer(direction, amount = 320) {
+            if (!this.container) return;
+
+            const currentScroll = this.container.scrollLeft;
+            const targetScroll = direction === 'left'
+                ? currentScroll - amount
+                : currentScroll + amount;
+
+            this.container.scrollTo({
+                left: targetScroll,
+                behavior: 'smooth'
+            });
+        },
+
         addCardToList(listId, boardId) {
             const addCardModal = new bootstrap.Modal(document.getElementById('addCardModal'));
             htmx.ajax('GET', `/boards/${boardId}/lists/${listId}/cards/create/`, {
@@ -132,7 +194,7 @@ function boardApp() {
                 addCardModal.show();
             });
         }
-    } 
+    }
 }
 
 // Drag & Drop script for moving cards
