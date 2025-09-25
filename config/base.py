@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY') # Load from .env file
 
-ALLOWED_HOSTS = [] # This will be overridden in production.py
+ALLOWED_HOSTS = ['*'] # This will be overridden in production.py
 
 INSTALLED_APPS = [
     'django.contrib.admin',

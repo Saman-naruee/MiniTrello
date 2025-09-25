@@ -4,7 +4,7 @@ from .base import * # Import all base settings
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
 
 # Use SQLite for simple local development
 SQLITE3 = {
@@ -17,7 +17,7 @@ SQLITE3 = {
 # Define POSTGRES only if preferred (avoids config reads on import if using SQLite)
 POSTGRES = None
 try:
-    PREFERRED_DB = config('PREFERRED_DB', default='sqlite', cast=str)
+    PREFERRED_DB = config('PREFERRED_DB', default='postgres', cast=str)
     if PREFERRED_DB == 'postgres':
         POSTGRES = {
             'default': {

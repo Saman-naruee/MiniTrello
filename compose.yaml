@@ -22,8 +22,14 @@ services:
     depends_on:
       - db
     environment:
-      - DJANGO_SETTINGS_MODULE=MiniTrello.settings
+      - DJANGO_SETTINGS_MODULE=config.development
       - DEBUG=True
+      - PREFERRED_DB=postgres
+      - DB_NAME=minitrello
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
 
 
   redis:
