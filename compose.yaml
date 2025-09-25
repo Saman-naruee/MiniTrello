@@ -40,6 +40,8 @@ services:
       - DJANGO_SUPERUSER_USERNAME=admin
       - DJANGO_SUPERUSER_EMAIL=admin@example.com
       - DJANGO_SUPERUSER_PASSWORD=admin123
+      - CELERY_BROKER_URL=redis://redis:6379/0  # Add if not in settings/.env
+    command: gunicorn MiniTrello.wsgi:application --bind 0.0.0.0:8000
     healthcheck:
       test: ["CMD", "python", "manage.py", "check", "--deploy"]
       interval: 30s
@@ -72,4 +74,7 @@ services:
       - DB_PASSWORD=postgres
       - DB_HOST=db
       - DB_PORT=5432
+      - CELERY_BROKER_URL=redis://redis:6379/0  # Add if not in settings/.env
+    entrypoint: /usr/local/bin/celery -A MiniTrello worker --loglevel=info
+    command: []
     restart: unless-stopped
