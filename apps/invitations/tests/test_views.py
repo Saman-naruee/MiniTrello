@@ -2,6 +2,7 @@ from django.urls import reverse
 from apps.boards.tests.base_test import BaseBoardTestCase
 from apps.invitations.models import Invitation
 from apps.boards.models import Membership
+from custom_tools.logger import custom_logger
 
 class InvitationCreateViewTest(BaseBoardTestCase):
     """
@@ -29,12 +30,22 @@ class InvitationCreateViewTest(BaseBoardTestCase):
         
         # We check the count of invitations before the action
         invitation_count_before = Invitation.objects.count()
+
+        invitations = Invitation.objects.filter()
+        custom_logger(f"Base Invitations found: {invitations.count()}")
+
         response = self.client.post(self.url, post_data)
-        
-        # On success, it should probably redirect back to the board
+        custom_logger(f"new invitations found: {Invitation.objects.filter(email=post_data['email'], board=self.board).count()}")
+
+        # TDD FIX: Expect redirect on success (not 200 re-render)
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, reverse('boards:board_detail', kwargs={'board_id': self.board.id}))
+        expected_redirect = reverse('boards:board_detail', kwargs={'board_id': self.board.id})
+        self.assertRedirects(response, expected_redirect)
         
+        # TDD FIX: Verify no form errors (confirms validation passed)
+        # Note: For redirects, context may not be available; but since creation happened, it's implicit.
+        # If needed, check via DB state below.
+    
         # An invitation object should have been created
         self.assertEqual(Invitation.objects.count(), invitation_count_before + 1)
         self.assertTrue(Invitation.objects.filter(email='new.invitee@example.com', board=self.board).exists())
@@ -68,6 +79,9 @@ class InvitationCreateViewTest(BaseBoardTestCase):
         # It should re-render the form with an error message
         self.assertEqual(response.status_code, 200) # Re-renders the form
         self.assertContains(response, 'This user is already a member of this board.')
+        
+        # No invitation created
+        self.assertFalse(Invitation.objects.filter(email=self.member.email, board=self.board).exists())
         
     def test_unauthenticated_user_is_redirected(self):
         """TDD: An anonymous user should be redirected to the login page."""

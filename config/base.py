@@ -152,15 +152,15 @@ ACCOUNT_ADAPTER = 'apps.accounts.adapters.CustomAccountAdapter'
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
 ACCOUNT_UNIQUE_EMAIL = True # Both email and username must be unique when provided
 
-
+ 
 
 
 # Google Provider
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': config('GOOGLE_CLIENT_ID', default=''),
-            'secret': config('GOOGLE_CLIENT_SECRET', default=''),
+            'client_id': config('GOOGLE_AUTH_CLIENT_ID', default=''),
+            'secret': config('GOOGLE_AUTH_CLIENT_SECRET', default=''),
             'key': '',
         },
         'SCOPE': ['profile', 'email'],

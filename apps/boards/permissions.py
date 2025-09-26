@@ -197,7 +197,7 @@ class BoardAdminRequiredMixin:
         membership = board.memberships.get(user=request.user)
         if membership.role not in [Membership.ROLE_OWNER, Membership.ROLE_ADMIN]:
 
-            raise PermissionDenied("You must be a member of this board to access this resource.")
+            raise PermissionDenied("You do not have permission to perform this action.")
         
         self.board = board
         return super().dispatch(request, *args, **kwargs)

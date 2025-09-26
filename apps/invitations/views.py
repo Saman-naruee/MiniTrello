@@ -9,6 +9,9 @@ from django.conf import settings
 from django.urls import reverse
 from django.http import Http404
 
+from apps.boards.views import custom_404
+from custom_tools.logger import custom_logger
+
 
 from .models import Invitation
 from .forms import InvitationSendForm
@@ -32,12 +35,13 @@ class InvitationCreateView(LoginRequiredMixin, BoardAdminRequiredMixin, FormView
         return kwargs
 
     def form_valid(self, form):
+        custom_logger(f"Form valid: {form.cleaned_data}")
         invitation = Invitation.objects.create(
             email=form.cleaned_data['email'],
             board=self.board,
             inviter=self.request.user
         )
-
+        custom_logger(f"Invitation created: {invitation.id}")
         send_invitation_email.delay(invitation.id)
         
         messages.success(self.request, f"Invitation sent to {invitation.email}.")

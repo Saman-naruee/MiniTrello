@@ -44,3 +44,21 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
 ]
 CORS_ALLOW_CREDENTIALS = True
+
+import os
+from decouple import config
+
+# Site base URL for absolute links (e.g., invitation emails)
+BASE_URL = config('BASE_URL', default='http://localhost:8000')
+
+# Celery configuration (ensure env overrides defaults)
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default=CELERY_BROKER_URL)
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+# For dev: Eager mode for tests/sync (disable for real async)
+CELERY_TASK_ALWAYS_EAGER = True  # Set False in production.py
+CELERY_TASK_EAGER_PROPAGATES = True

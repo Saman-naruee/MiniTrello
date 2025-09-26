@@ -74,7 +74,8 @@ services:
       - DB_PASSWORD=postgres
       - DB_HOST=db
       - DB_PORT=5432
-      - CELERY_BROKER_URL=redis://redis:6379/0  # Add if not in settings/.env
-    entrypoint: /usr/local/bin/celery -A MiniTrello worker --loglevel=info
-    command: []
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0  # Explicitly add for result storage
+      - BASE_URL=http://localhost:8000  # Add for task
+    command: celery -A MiniTrello worker --loglevel=info
     restart: unless-stopped
