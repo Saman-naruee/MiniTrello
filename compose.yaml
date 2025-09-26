@@ -28,6 +28,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:  # Add dep for broker readiness
+        condition: service_started
     environment:
       - DJANGO_SETTINGS_MODULE=config.development
       - DEBUG=True
@@ -40,8 +42,10 @@ services:
       - DJANGO_SUPERUSER_USERNAME=admin
       - DJANGO_SUPERUSER_EMAIL=admin@example.com
       - DJANGO_SUPERUSER_PASSWORD=admin123
-      - CELERY_BROKER_URL=redis://redis:6379/0  # Add if not in settings/.env
-    command: gunicorn MiniTrello.wsgi:application --bind 0.0.0.0:8000
+      - CELERY_BROKER_URL=redis://redis:6379/0  # Add: For task queuing in backend
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0  # Add: Consistent with worker
+      - BASE_URL=http://localhost:8000  # For absolute URLs in tasks
+    command: python manage.py runserver 0.0.0.0:8000  # Dev: Use runserver (avoids gunicorn timeouts in debug)
     healthcheck:
       test: ["CMD", "python", "manage.py", "check", "--deploy"]
       interval: 30s
@@ -55,6 +59,12 @@ services:
     container_name: minitrello_redis_container
     ports:
       - "6379:6379"
+    healthcheck:  # Add: Ensure broker healthy
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     restart: unless-stopped
 
   celery_worker:
@@ -75,7 +85,7 @@ services:
       - DB_HOST=db
       - DB_PORT=5432
       - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0  # Explicitly add for result storage
-      - BASE_URL=http://localhost:8000  # Add for task
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - BASE_URL=http://localhost:8000
     command: celery -A MiniTrello worker --loglevel=info
     restart: unless-stopped

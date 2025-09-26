@@ -34,8 +34,28 @@ except Exception as e:
     print(f"Error occurred while setting up databases: {e}")
     DATABASES = SQLITE3
 
-# Use console backend for emails during development
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' if DEBUG else 'config.email_backend.GoogleOauth2EmailBackend'
+import os
+
+# Celery Configuration (env-driven for Docker/local flexibility)
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', CELERY_BROKER_URL)  # Same as broker
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_TASK_SOFT_TIME_LIMIT = 60 * 5
+
+# Dev: Eager execution for sync testing (disable in prod)
+CELERY_TASK_ALWAYS_EAGER = True
+CELERY_TASK_EAGER_PROPAGATES = True
+
+# Site base URL for emails/links (env-driven)
+BASE_URL = os.environ.get('BASE_URL', 'http://localhost:8000')
+
+# Email for dev (console logging; override in .env for SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # CORS settings for local frontend development (e.g., React on port 3000)
 CORS_ALLOWED_ORIGINS = [
@@ -44,21 +64,3 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
 ]
 CORS_ALLOW_CREDENTIALS = True
-
-import os
-from decouple import config
-
-# Site base URL for absolute links (e.g., invitation emails)
-BASE_URL = config('BASE_URL', default='http://localhost:8000')
-
-# Celery configuration (ensure env overrides defaults)
-CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
-CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default=CELERY_BROKER_URL)
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
-
-# For dev: Eager mode for tests/sync (disable for real async)
-CELERY_TASK_ALWAYS_EAGER = True  # Set False in production.py
-CELERY_TASK_EAGER_PROPAGATES = True

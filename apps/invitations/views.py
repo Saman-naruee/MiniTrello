@@ -11,7 +11,7 @@ from django.http import Http404
 
 from apps.boards.views import custom_404
 from custom_tools.logger import custom_logger
-
+from celery.exceptions import OperationalError as CeleryOperationalError  # For specific catch
 
 from .models import Invitation
 from .forms import InvitationSendForm
@@ -31,7 +31,7 @@ class InvitationCreateView(LoginRequiredMixin, BoardAdminRequiredMixin, FormView
     def get_form_kwargs(self):
         """Pass the board object to the form for validation."""
         kwargs = super().get_form_kwargs()
-        kwargs['board'] = self.board # self.board is from the mixin
+        kwargs['board'] = self.board  # self.board is from the mixin
         return kwargs
 
     def form_valid(self, form):
@@ -42,8 +42,18 @@ class InvitationCreateView(LoginRequiredMixin, BoardAdminRequiredMixin, FormView
             inviter=self.request.user
         )
         custom_logger(f"Invitation created: {invitation.id}")
-        send_invitation_email.delay(invitation.id)
-        
+
+        # Queue email task asynchronously (non-blocking; log if fails)
+        try:
+            send_invitation_email.delay(invitation.id)
+            custom_logger(f"Email task queued for invitation {invitation.id}")
+        except CeleryOperationalError as e:
+            custom_logger(f"Failed to queue email task for {invitation.id}: {str(e)}")
+            # Don't raise; invitation still created/successful for user
+        except Exception as e:
+            custom_logger(f"Unexpected error queuing email for {invitation.id}: {str(e)}")
+            # Optional: Track in DB (e.g., invitation.email_sent = False)
+
         messages.success(self.request, f"Invitation sent to {invitation.email}.")
         return redirect(reverse_lazy('boards:board_detail', kwargs={'board_id': self.board.id}))
     
