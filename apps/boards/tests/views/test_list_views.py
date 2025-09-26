@@ -1,8 +1,10 @@
 import json
 from django.urls import reverse
-from .base_test import BaseBoardTestCase # Import our rich base test case
-
 from apps.boards.models import List, Card
+from apps.boards.tests.base_test import BaseBoardTestCase
+
+from custom_tools.logger import custom_logger
+
 
 class TestListCreateView(BaseBoardTestCase):
     """
@@ -60,9 +62,9 @@ class TestListCreateView(BaseBoardTestCase):
         self.assertFalse(List.objects.filter(title='', board=self.board).exists())
 
     # --- Approach 3: Unauthorized Access ---
-    def test_non_member_is_forbidden_to_create_list(self): # Test name updated for clarity
+    def test_non_member_is_not_found_to_create_list(self):
         """
-        Tests that a non-member of the board receives a 403 Forbidden error.
+        Tests that a non-member of the board receives a 404 Not Found for prevent to leack private data.
         This confirms our custom permission logic is working.
         """
         self.client.login(username='non_member', password='p')
@@ -74,9 +76,8 @@ class TestListCreateView(BaseBoardTestCase):
         response_get = self.client.get(url, HTTP_HX_REQUEST='true')
         response_post = self.client.post(url, post_data, HTTP_HX_REQUEST='true')
 
-        # Your new permission helpers will raise PermissionDenied, resulting in a 403.
-        self.assertEqual(response_get.status_code, 403)
-        self.assertEqual(response_post.status_code, 403)
+        self.assertEqual(response_get.status_code, 404)
+        self.assertEqual(response_post.status_code, 404)
         
         # Verify no list was created
         self.assertFalse(List.objects.filter(title='Should Not Be Created').exists())
@@ -88,7 +89,7 @@ class TestListCreateView(BaseBoardTestCase):
         response = self.client.post(self.url, post_data)
 
         # Behavior check: Redirect to login page.
-        self.assertEqual(response.status_code, 403)
+        self.assertEqual(response.status_code, 302)
 
 
 class TestListUpdateView(BaseBoardTestCase):
@@ -126,8 +127,8 @@ class TestListUpdateView(BaseBoardTestCase):
         
         response = self.client.post(self.url, post_data, HTTP_HX_REQUEST='true')
 
-        # Behavior check: Should be denied access with a 403.
-        self.assertEqual(response.status_code, 403)
+        # Behavior check: Should be denied access with a 404.
+        self.assertEqual(response.status_code, 404)
 
 
 class TestListDeleteView(BaseBoardTestCase):
@@ -164,12 +165,15 @@ class TestListDeleteView(BaseBoardTestCase):
 
     # --- Approach 3: Unauthorized Access ---
     def test_non_member_cannot_delete_list(self):
-        """Tests that a non-member cannot delete a list."""
+        """
+        Tests that a non-member cannot delete a list.
+        A non-member is a user that logged-in but does not have right access to delete object.
+        """
         self.client.login(username='non_member', password='p')
         response = self.client.delete(self.url, HTTP_HX_REQUEST='true')
         
-        # Behavior check: Denied with 403.
-        self.assertEqual(response.status_code, 403)
+        # Behavior check: Denied with 404.
+        self.assertEqual(response.status_code, 404)
         # Verify the list was NOT deleted.
         self.assertTrue(List.objects.filter(id=self.list_to_delete.id).exists())
 
@@ -213,6 +217,7 @@ class TestListDetailView(BaseBoardTestCase):
         # 1. The 'list' object in the context is the correct one.
         #    (Note: The context variable name depends on your DetailView's 'context_object_name')
         #    Assuming it defaults to 'list'.
+        custom_logger(f"response context: {response.context}")
         self.assertTrue('list' in response.context)
         self.assertEqual(response.context['list'], self.list1)
 
@@ -227,7 +232,7 @@ class TestListDetailView(BaseBoardTestCase):
 
     def test_non_member_gets_403(self):
         """
-        Tests that a logged-in user who is not a member of the board receives a 403 error.
+        Tests that a logged-in user who is not a member of the board receives a 404 not found error.
         """
         # Arrange: Log in as a non-member.
         self.client.login(username='non_member', password='p')
@@ -235,5 +240,5 @@ class TestListDetailView(BaseBoardTestCase):
         # Act: Attempt to access the list detail endpoint.
         response = self.client.get(self.url)
 
-        # Behavior check: Denied with 403 Forbidden.
-        self.assertEqual(response.status_code, 403)
+        # Behavior check: return with 404 not found to prevent data leak.
+        self.assertEqual(response.status_code, 404)

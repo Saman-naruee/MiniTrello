@@ -2,8 +2,15 @@
 {% load account %}
 {% load i18n %}
 
-{% block content %}{% autoescape off %}{% user_display user as user_display %}{% blocktranslate with site_name=current_site.name site_domain=current_site.domain %}You're receiving this email because user {{ user_display }} has given your email address to register an account on {{ site_domain }}.{% endblocktranslate %}
+{% block content %}{% autoescape off %}{% user_display %} {{ key }}{% endautoescape %}
+{% blocktrans with site_name=settings.SITE_NAME|default:_('MiniTrello') %}You're receiving this email because user {{ user_display }} wanted to enable email authentication for their account at {{ site_name }}.{% endblocktrans %}
 
-{% if code %}{% blocktranslate %}Your email verification code is listed below. Please enter it in your open browser window.{% endblocktranslate %}
+{% blocktrans with confirmation_url=confirm_url|safe %}Please go to the following page in your browser to enable email authentication for your account:
+{{ confirmation_url }}{% endblocktrans %}
 
-{{ code }}{% else %}{% blocktranslate %}To confirm this is correct, go to {{ activate_url }}{% endblocktranslate %}{% endif %}{% endautoescape %}{% endblock content %}
+{% blocktrans %}If confirming the email address doesn't work, please contact us ({{ contact_email }}).{% endblocktrans %}
+
+{% blocktrans with site_name=settings.SITE_NAME|default:_('MiniTrello') %}Sincerely,
+The {{ site_name }} Team{% endblocktrans %}
+
+{% trans "If you didn't request this, ignore this email." %}{% endblock content %}

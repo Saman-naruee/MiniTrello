@@ -72,8 +72,6 @@ class CardForm(forms.ModelForm):
 
 
 class MembershipForm(forms.ModelForm):
-
-
     class Meta:
         model = Membership
         fields = ['user', 'role']
@@ -81,10 +79,18 @@ class MembershipForm(forms.ModelForm):
             'user': forms.Select(attrs={'class': 'form-control'}),
             'role': forms.Select(attrs={'class': 'form-control'}),
         }
-
+    
     def __init__(self, *args, **kwargs):
         self.board = kwargs.pop('board', None)
         super().__init__(*args, **kwargs)
+
+        # Filter the choices for the 'role' field
+        # We get all choices, but filter out the OWNER role.
+        role_choices = [
+            (role_val, role_name) for role_val, role_name in Membership.ROLE_CHOICES 
+            if role_val != Membership.ROLE_OWNER
+        ]
+        self.fields['role'].choices = role_choices
 
     def clean_user(self):
         user = self.cleaned_data['user']

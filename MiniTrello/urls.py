@@ -42,7 +42,11 @@ urlpatterns = [
     path('boards/', include('apps.boards.urls', 'boards')),
 =======
     path('boards/', include(("apps.boards.urls", "boards"), namespace="boards")),
+<<<<<<< HEAD
 >>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d
+=======
+    path('invitations/', include(("apps.invitations.urls", "invitations"), namespace="invitations")),
+>>>>>>> 335f79bbb568cf71f2197d7e4eae0a5477f39bd5
     
     # i18n - Language selection
     path('i18n/setlang/', set_language, name='set_language'),

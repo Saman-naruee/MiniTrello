@@ -10,17 +10,82 @@ services:
       - "5432:5432"
     volumes:
       - ./db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
 
   backend:
     build: .
     container_name: minitrello_backend_container
-    command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
     volumes:
       - .:/app
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      redis:  # Add dep for broker readiness
+        condition: service_started
     environment:
-      - DJANGO_SETTINGS_MODULE=MiniTrello.settings
+      - DJANGO_SETTINGS_MODULE=config.development
       - DEBUG=True
+      - PREFERRED_DB=postgres
+      - DB_NAME=minitrello
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_EMAIL=admin@example.com
+      - DJANGO_SUPERUSER_PASSWORD=admin123
+      - CELERY_BROKER_URL=redis://redis:6379/0  # Add: For task queuing in backend
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0  # Add: Consistent with worker
+      - BASE_URL=http://localhost:8000  # For absolute URLs in tasks
+    command: python manage.py runserver 0.0.0.0:8000  # Dev: Use runserver (avoids gunicorn timeouts in debug)
+    healthcheck:
+      test: ["CMD", "python", "manage.py", "check", "--deploy"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: minitrello_redis_container
+    ports:
+      - "6379:6379"
+    healthcheck:  # Add: Ensure broker healthy
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  celery_worker:
+    build: .
+    container_name: minitrello_celery_worker
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.development
+      - DEBUG=True
+      - PREFERRED_DB=postgres
+      - DB_NAME=minitrello
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=db
+      - DB_PORT=5432
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+      - BASE_URL=http://localhost:8000
+    command: celery -A MiniTrello worker --loglevel=info
+    restart: unless-stopped

@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 import random
-from .base_test import BaseBoardTestCase
+from apps.boards.tests.base_test import BaseBoardTestCase
 from django.conf import settings
 
 from apps.accounts.models import User
@@ -276,9 +276,9 @@ class TestBoardDetailView(BaseBoardTestCase):
         self.assertEqual(response.status_code, 302)
         self.assertIn(reverse('account_login'), response.url)
     
-    def test_non_member_gets_403_forbidden(self):
+    def test_non_member_gets_404_not_found(self):
         """
-        Tests that a logged-in user who is NOT a member of the board receives a 403 Forbidden error,
+        Tests that a logged-in user who is NOT a member of the board receives a 404 Not found error,
         as if the board does not exist for them. This is crucial for privacy.
         """
         # Arrange: Log in as a user who is not a member of self.board.
@@ -287,8 +287,8 @@ class TestBoardDetailView(BaseBoardTestCase):
         # Act: Request the detail page of a board they don't have access to.
         response = self.client.get(self.url)
 
-        # Assert: The server should respond with a 403 Forbidden.
-        self.assertEqual(response.status_code, 403)
+        # Assert: The server should respond with a 404 Not found.
+        self.assertEqual(response.status_code, 404)
 
 
 #### test board create view for each user and test it for each settings and permissions.
@@ -527,10 +527,10 @@ class TestBoardUpdateView(BaseBoardTestCase):
         response = self.client.post(self.url, post_data, HTTP_HX_REQUEST='true')
 
         # Assert:
-        # 1. The server should forbid the action. We expect a 404 because the get_user_board
+        # 1. The server should forbid the action. We expect a 403 because the get_user_board
         # helper function will likely fail if we add an ownership check.
         # If you were to implement a custom mixin, you might return a 403 Forbidden instead.
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 403)
         
         # 2. The board's title should NOT have changed in the database.
         self.board.refresh_from_db()
@@ -650,13 +650,13 @@ class TestBoardDeleteView(BaseBoardTestCase):
         Membership.objects.create(user=self.member, board=self.board_to_delete, role=Membership.ROLE_MEMBER)
         # 2. Log in as that member.
         self.client.login(username='board_member', password='p')
-        
+
         # Act & Assert for both GET and POST attempts
-        response_get = self.client.get(self.url)
-        self.assertEqual(response_get.status_code, 404)
-        
-        response_post = self.client.post(self.url)
-        self.assertEqual(response_post.status_code, 404)
-        
+        response_get = self.client.get(self.url, HTTP_HX_REQUEST='true')
+        self.assertEqual(response_get.status_code, 403) # Only admin/owner can access delete page
+
+        response_post = self.client.post(self.url, HTTP_HX_REQUEST='true')
+        self.assertEqual(response_post.status_code, 403) # Only admin/owner can delete board
+
         # Assert: Crucially, verify the board still exists.
         self.assertTrue(Board.objects.filter(id=self.board_to_delete.id).exists())

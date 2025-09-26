@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'base.html' %}
 {% load i18n %}
 {% load socialaccount %}
@@ -179,6 +180,58 @@ this.loading = false;
 <div class="modal-header">
 <h5 class="modal-title">{% trans "Change Password" %}</h5>
 <button @click="open = false" class="btn-close" type="button"></button>
+=======
+{% extends "base.html" %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    
+    {# Display success messages #}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2>User Profile</h2>
+            <!-- <a href="{% url 'accounts:profile_update' %}" class="btn btn-primary">Edit Profile</a> -->
+            <a href="{% url 'accounts:profile_update' %}" class="btn btn-sm btn-outline-secondary">Edit Profile</a>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Account Information</h5>
+            
+            {# ❗❗❗ CORE FIX: Display the first_name and last_name fields #}
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>First Name:</strong> {{ user.first_name|default:"Not set" }}</p>
+            <p><strong>Last Name:</strong> {{ user.last_name|default:"Not set" }}</p>
+            <p><strong>Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+
+            <hr>
+            
+            <h5 class="card-title">Connected Accounts</h5>
+            {# This is an example of how to show social accounts from allauth #}
+            {% load socialaccount %}
+            {% get_social_accounts user as accounts %}
+            {% if accounts %}
+                <ul class="list-group">
+                {% for account in accounts.google %}
+                    <li class="list-group-item">Google (Connected)</li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p>No social accounts connected.</p>
+            {% endif %}
+
+        </div>
+    </div>
+>>>>>>> 335f79bbb568cf71f2197d7e4eae0a5477f39bd5
 </div>
 <div class="modal-body">
 <form @submit.prevent="submitForm">

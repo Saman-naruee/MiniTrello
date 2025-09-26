@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>You're Invited!</title>
+    <style>
+        body { font-family: sans-serif; }
+        .button { padding: 10px 15px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <p>Hi there,</p>
+    <p><strong>{{ inviter_name }}</strong> has invited you to collaborate on the board <strong>"{{ board_name }}"</strong> on MiniTrello.</p>
+    <p>Click the link below to accept the invitation and join the board:</p>
+    <p><a href="{{ accept_url }}" class="button">Accept Invitation</a></p>
+    <p>If you did not expect this invitation, you can safely ignore this email.</p>
+    <p>Thanks,<br>The MiniTrello Team</p>
+</body>
+</html>

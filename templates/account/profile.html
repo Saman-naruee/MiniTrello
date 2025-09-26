@@ -5,6 +5,7 @@
 {% block nav_profile_active %}active{% endblock %}
 {% block content %}
 <div class="row">
+<<<<<<< HEAD
 <div class="col-md-8 offset-md-2">
 <div class="card">
 <div class="card-header d-flex justify-content-between align-items-center">
@@ -43,6 +44,58 @@
 </div>
 </div>
 </div>
+=======
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h2>User Profile</h2>
+                <a href="{% url 'accounts:profile_update' %}" class="btn btn-sm btn-outline-secondary">Edit Profile</a>
+                </button>
+            </div>
+            <div class="card-body" id="profile-info">
+                <div class="mb-3">
+                    <h4>Account Information</h4>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Joined:</strong> {{ user.date_joined|date:"F d, Y" }}</p>
+                </div>
+                
+                {% if user.socialaccount_set.all %}
+                    <div class="mb-3">
+                        <h4>Connected Accounts</h4>
+                        <ul class="list-group">
+                        {% for account in user.socialaccount_set.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    {{ account.provider|title }}
+                                    <small class="text-muted">(Connected on {{ account.date_added|date:"M d, Y" }})</small>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger"
+                                        hx-delete="{% url 'socialaccount_connections' %}?account={{ account.id }}"
+                                        hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                                        hx-confirm="Are you sure you want to disconnect this account?"
+                                        hx-target="#profile-info"
+                                        hx-swap="outerHTML">
+                                    <i class="fas fa-unlink"></i> Disconnect
+                                </button>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                
+                <div class="mt-4">
+                    <a href="{% url 'Home' %}" class="btn btn-primary">Back to Home</a>
+                    <a href="{% url 'socialaccount_connections' %}" class="btn btn-outline-secondary">Manage Social Accounts</a>
+                    <button class="btn btn-outline-warning" 
+                            x-data="{}" 
+                            @click="$dispatch('open-modal', {id: 'change-password-modal'})">
+                        Change Password
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+>>>>>>> 335f79bbb568cf71f2197d7e4eae0a5477f39bd5
 </div>
 <!-- Edit Profile Modal -->
 <div class="fixed inset-0 z-50 overflow-y-auto" style="display: none;" x-data="{

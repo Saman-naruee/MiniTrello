@@ -1,3 +1,4 @@
+from django.views import View
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.db.models import Max, Prefetch
@@ -137,3 +138,252 @@ def render_partial_response(template_name, context):
     html = render_to_string(template_name, context)
     return JsonResponse({"html": html})
 
+
+
+class BoardMemberRequiredMixin:
+    """
+    Verifies the logged-in user is an active member of the board.
+    - If not a member, raises Http404 to hide the board's existence.
+    - Attaches the board to the view as `self.board`.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        board_id = self.kwargs.get('board_id')
+        if not board_id:
+            raise ValueError("BoardMemberRequiredMixin requires a 'board_id' in the URL.")
+
+        try:
+            # Try to get the board only if the user is a member.
+            self.board = Board.objects.filter(
+                memberships__user=request.user, 
+                memberships__is_active=True
+            ).distinct().get(pk=board_id)
+        except Board.DoesNotExist:
+            # ❗❗❗ BEHAVIOR CHANGE: Raise Http404 for non-members.
+            raise Http404("Board not found or you are not a member.")
+            
+        return super().dispatch(request, *args, **kwargs)
+
+class BoardAdminRequiredMixin:
+    """
+    Verifies the logged-in user has admin privileges (owner or admin).
+    - If not a member, raises Http404.
+    - If a member but with an insufficient role, raises PermissionDenied (403).
+    - Attaches the board to the view as `self.board`.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Ensure the user is an active board member and has owner/admin role.
+        Retrieves board_id, fetches the board, raises 404 if not a member,
+        and raises PermissionDenied for non‑owner/non‑admin member users.
+        """
+        board_id = self.kwargs.get('board_id')
+        if not board_id:
+            raise ValueError("BoardAdminRequiredMixin requires a 'board_id' in the URL.")
+
+        try:
+            # Same logic as above: find the board through membership first.
+            board = Board.objects.filter(
+                memberships__user=request.user,
+                memberships__is_active=True
+            ).select_related('owner').distinct().get(pk=board_id)
+        except Board.DoesNotExist:
+            raise Http404("Board not found or you are not a member.")
+        
+        # Now that we know the user is a member, check their role.
+        if board.owner == request.user:
+            self.board = board
+            return super().dispatch(request, *args, **kwargs)
+        
+        membership = board.memberships.get(user=request.user)
+        if membership.role not in [Membership.ROLE_OWNER, Membership.ROLE_ADMIN]:
+
+            raise PermissionDenied("You do not have permission to perform this action.")
+        
+        self.board = board
+        return super().dispatch(request, *args, **kwargs)
+
+
+
+
+class BoardObjectPermissionMixin(View):
+    """
+    A flexible mixin that verifies the logged-in user has permission to access
+    a specific board object (Card, List, Board) based on board membership.
+    
+    This mixin handles authentication, object retrieval, board relationship resolution,
+    and permission checking in a generic way that works with different model types.
+    
+    Attributes:
+        model_to_check: The model class to retrieve (e.g., Card, List, Board)
+        id_kwarg_name: The URL kwarg name for the object ID (e.g., 'card_id', 'list_id')
+        board_relationship_path: Optional path to board from object (e.g., 'list.board' for Card)
+    """
+    model_to_check = None  # e.g., Card, List, Board
+    id_kwarg_name = None   # e.g., 'card_id', 'list_id' 
+    board_relationship_path = None  # e.g., 'list.board' for Card
+    
+    def get_board_from_object(self, obj):
+        """
+        Dynamically resolve the board from the object based on model type.
+        
+        Args:
+            obj: The model instance (Card, List, or Board)
+            
+        Returns:
+            Board instance
+            
+        Raises:
+            ValueError: If board cannot be determined from object
+        """
+        if isinstance(obj, Board):
+            return obj
+        elif isinstance(obj, List):
+            return obj.board
+        elif isinstance(obj, Card):
+            return obj.list.board
+        else:
+            raise ValueError(f"Cannot determine board from {obj.__class__.__name__}")
+    
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Handle authentication, object retrieval, and permission checking.
+        
+        This method:
+        1. Validates user authentication
+        2. Validates required attributes are set
+        3. Retrieves the target object with optimized queries
+        4. Resolves the associated board
+        5. Checks board membership permissions
+        6. Attaches objects to view for easy access
+        """
+        # 1. Authentication check with proper error handling
+        if not request.user.is_authenticated:
+            custom_logger(
+                f"Unauthenticated access attempt to {self.__class__.__name__}",
+                Fore.RED
+            )
+            from django.contrib.auth.views import redirect_to_login
+            return redirect_to_login(request.get_full_path())
+        
+        # 2. Validate required attributes
+        if not self.model_to_check:
+            raise ValueError(
+                f"{self.__class__.__name__} requires 'model_to_check' to be set"
+            )
+        if not self.id_kwarg_name:
+            raise ValueError(
+                f"{self.__class__.__name__} requires 'id_kwarg_name' to be set"
+            )
+        
+        # 3. Get object ID from URL kwargs
+        obj_id = self.kwargs.get(self.id_kwarg_name)
+        if not obj_id:
+            raise ValueError(
+                f"Missing required kwarg '{self.id_kwarg_name}' in URL"
+            )
+        
+        # 4. Retrieve object with optimized queries
+        try:
+            # Use select_related for foreign key relationships to avoid N+1 queries
+            if self.model_to_check == Card:
+                obj = get_object_or_404(
+                    self.model_to_check.objects.select_related(
+                        'list__board__owner'
+                    ).prefetch_related('assignees'),
+                    pk=obj_id
+                )
+            elif self.model_to_check == List:
+                obj = get_object_or_404(
+                    self.model_to_check.objects.select_related(
+                        'board__owner'
+                    ),
+                    pk=obj_id
+                )
+            elif self.model_to_check == Board:
+                obj = get_object_or_404(
+                    self.model_to_check.objects.select_related('owner'),
+                    pk=obj_id
+                )
+            else:
+                # Fallback for other models
+                obj = get_object_or_404(self.model_to_check, pk=obj_id)
+                
+        except (ValueError, TypeError) as e:
+            custom_logger(
+                f"Invalid object ID '{obj_id}' for model {self.model_to_check.__name__}: {e}",
+                Fore.YELLOW
+            )
+            raise Http404("Invalid object ID")
+        
+        # 5. Resolve the board from the object
+        try:
+            board = self.get_board_from_object(obj)
+        except ValueError as e:
+            custom_logger(
+                f"Failed to get board from {obj.__class__.__name__}({obj_id}): {e}",
+                Fore.RED
+            )
+            raise Http404("Board not found")
+        
+        # 6. Check board membership with optimized query
+        try:
+            is_member = board.memberships.filter(
+                user=request.user, 
+                is_active=True
+            ).exists()
+            
+            if not is_member:
+                custom_logger(
+                    f"User {request.user.email} denied access to "
+                    f"{obj.__class__.__name__}({obj_id}) on board '{board.title}': "
+                    "Not a board member",
+                    Fore.YELLOW
+                )
+                raise PermissionDenied("must be a member of this board")
+                
+        except Exception as e:
+            custom_logger(
+                f"Error checking membership for user {request.user.email} "
+                f"on board '{board.title}': {e}",
+                Fore.RED
+            )
+            raise PermissionDenied("must be a member of this board")
+        
+        # 7. Attach objects to view for easy access in child views
+        self.board = board
+        self.object = obj
+        
+        custom_logger(
+            f"User {request.user.email} granted access to "
+            f"{obj.__class__.__name__}({obj_id}) on board '{board.title}'",
+            Fore.GREEN
+        )
+        
+        return super().dispatch(request, *args, **kwargs)
+
+
+class BoardReadWritePermissionMixin:
+    """
+    A mixin that verifies the user has at least "Member" level permissions,
+    blocking "Viewer" roles from performing write actions (create, update, delete, move).
+    
+    This should be used for views that modify board content, like creating a card or list.
+    It inherits from BoardMemberRequiredMixin to first ensure basic membership.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        # First, ensure the user is at least a member by calling the parent mixin's logic.
+        # This will also handle non-members (404) and attach `self.board`.
+        response = super().dispatch(request, *args, **kwargs)
+
+        # Now, perform the more specific role check.
+        try:
+            membership = self.board.memberships.get(user=request.user, is_active=True)
+            if membership.role > Membership.ROLE_MEMBER: # ROLE_VIEWER has a higher value (40 > 30)
+                raise PermissionDenied("You do not have permission to modify content on this board.")
+        except Membership.DoesNotExist:
+            # This case should technically be caught by BoardMemberRequiredMixin,
+            # but we handle it here for safety.
+            if self.board.owner != request.user:
+                 raise PermissionDenied("You do not have permission to modify content on this board.")
+
+        return response

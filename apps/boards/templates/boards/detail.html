@@ -12,48 +12,46 @@
 =======
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link rel="stylesheet" href="{% static 'boards/css/boards.css' %}">
 >>>>>>> 53c2dc37e323beaf708f89a27f016bebfd89f00d
 <style>
-/* --- Your original, correct styles for a column layout --- */
-.board-header {
-background: linear-gradient(135deg, {{ board.color }}20, {{ board.color }}40);
-border-bottom: 3px solid {{ board.color }};
-}
-<<<<<<< HEAD
-.list-container {
-min-height: calc(100vh - 200px);
-overflow-x: auto;
-}
-.list-column {
-min-width: 300px;
-max-width: 300px;
-}
-.card-item {
-cursor: pointer;
-transition: all 0.2s ease;
-}
-.card-item:hover {
-transform: translateY(-2px);
-box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-.priority-badge {
-font-size: 0.7rem;
-padding: 0.2rem 0.4rem;
-=======
+/* --- Custom scroll and layout styles --- */
 .toast-container {
     position: fixed;
     top: 1rem;
     right: 1rem;
     z-index: 1090;
 }
+
 .list-container {
     display: flex;
     gap: 1rem;
     padding: 1rem;
-    min-height: calc(100vh - 250px); /* Adjusted for header height */
+    min-height: calc(100vh - 250px);
     overflow-x: auto;
-    align-items: flex-start; /* Aligns lists to the top */
+    align-items: flex-start;
+    scroll-behavior: smooth;
+    position: relative;
+}
+
+/* Scroll fade indicators */
+.list-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 50px;
+    background: linear-gradient(to left, rgba(255, 255, 255, 0.9), transparent);
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.list-container.scrollable::after {
+    opacity: 1;
 }
 .list-column {
     min-width: 300px;
@@ -334,7 +332,7 @@ addCardModal.hide();
     </div>
     
     {# --- Your original, more detailed Board Header --- #}
-    <div class="board-header p-3 mb-3">
+    <div class="board-header p-3 mb-3" style="background: linear-gradient(135deg, {{ board.color }}20, {{ board.color }}40); border-bottom: 3px solid {{ board.color }};">
         <div class="d-flex justify-content-between align-items-center">
             <div>
                 <a href="{% url 'boards:boards_list' %}" class="btn btn-sm btn-outline-secondary mb-2">← Back to Boards</a>
@@ -344,9 +342,17 @@ addCardModal.hide();
             </div>
             <div class="d-flex gap-2">
                 <button class="btn btn-sm btn-light" hx-get="{% url 'boards:create_list' board_id=board.id %}" hx-target="#generic-modal-content" data-bs-toggle="modal" data-bs-target="#genericModal">+ Add List</button>
-                <a href="{% url 'boards:add_member' board_id=board.id %}" class="btn btn-sm btn-success">+ Add Member</a>
+                <a href="{% url 'invitations:send_invitation' board_id=board.id %}" class="btn btn-sm btn-success">+ Add Member</a>
                 <button class="btn btn-sm btn-warning" hx-get="{% url 'boards:update_board' board.id %}" hx-target="#generic-modal-content" data-bs-toggle="modal" data-bs-target="#genericModal">Update</button>
                 <button class="btn btn-sm btn-danger" hx-get="{% url 'boards:delete_board' board.id %}" hx-target="#generic-modal-content" data-bs-toggle="modal" data-bs-target="#genericModal">Delete</button>
+                {# ❗❗❗ CORE FIX: Add the "View Members" button here ❗❗❗ #}
+                <button class="btn btn-sm btn-info"
+                        hx-get="{% url 'boards:board_members' board_id=board.id %}"
+                        hx-target="#generic-modal-content"
+                        data-bs-toggle="modal"
+                        data-bs-target="#genericModal">
+                    View Members
+                </button>
             </div>
         </div>
     </div>
@@ -365,6 +371,16 @@ addCardModal.hide();
                 {# Content (form for creating cards) is loaded here by HTMX #}
             </div>
         </div>
+    </div>
+
+    {# --- Scroll control buttons --- #}
+    <div class="scroll-controls position-fixed top-50 end-0 translate-middle-y d-flex flex-column gap-2 z-index-100">
+        <button id="scroll-right" class="btn btn-light shadow" @click="scrollContainer('right')">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        <button id="scroll-left" class="btn btn-light shadow" @click="scrollContainer('left')">
+            <i class="fas fa-chevron-left"></i>
+        </button>
     </div>
 
     {# --- The main container for all lists, now with correct classes --- #}
@@ -389,8 +405,41 @@ addCardModal.hide();
 <script src="https://unpkg.com/htmx.org@1.9.10"></script>
 <script>
 // AlpineJS function for client-side interactions
-function boardApp() { 
+function boardApp() {
     return {
+        container: null,
+
+        init() {
+            this.container = document.getElementById('lists-container');
+            this.updateScrollIndicators();
+            this.container.addEventListener('scroll', () => this.updateScrollIndicators());
+            window.addEventListener('resize', () => this.updateScrollIndicators());
+        },
+
+        updateScrollIndicators() {
+            if (!this.container) return;
+
+            const canScrollLeft = this.container.scrollLeft > 0;
+            const canScrollRight = this.container.scrollLeft < (this.container.scrollWidth - this.container.clientWidth);
+
+            this.container.classList.toggle('scrollable-left', canScrollLeft);
+            this.container.classList.toggle('scrollable', canScrollRight);
+        },
+
+        scrollContainer(direction, amount = 320) {
+            if (!this.container) return;
+
+            const currentScroll = this.container.scrollLeft;
+            const targetScroll = direction === 'left'
+                ? currentScroll - amount
+                : currentScroll + amount;
+
+            this.container.scrollTo({
+                left: targetScroll,
+                behavior: 'smooth'
+            });
+        },
+
         addCardToList(listId, boardId) {
             const addCardModal = new bootstrap.Modal(document.getElementById('addCardModal'));
             htmx.ajax('GET', `/boards/${boardId}/lists/${listId}/cards/create/`, {
@@ -400,7 +449,7 @@ function boardApp() {
                 addCardModal.show();
             });
         }
-    } 
+    }
 }
 
 // Drag & Drop script for moving cards

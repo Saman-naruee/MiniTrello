@@ -2,9 +2,10 @@ from django.shortcuts import render
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from apps.accounts.models import User
+from .permissions import SuperuserRequiredMixin
 
 
-class TestPageView(LoginRequiredMixin, ListView):
+class TestPageView(LoginRequiredMixin, SuperuserRequiredMixin, ListView):
     template_name = 'test.html'
     queryset = User.objects.all()
     permission_denied_message = "You must be logged in to view this page."

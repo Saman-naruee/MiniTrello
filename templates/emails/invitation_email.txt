@@ -1,0 +1,12 @@
+{# Path: templates/emails/invitation_email.txt #}
+Hi there,
+
+{{ inviter_name }} has invited you to collaborate on the board "{{ board_name }}" on MiniTrello.
+
+Please copy and paste the following URL into your browser to accept the invitation:
+{{ accept_url }}
+
+If you did not expect this invitation, you can safely ignore this email.
+
+Thanks,
+The MiniTrello Team

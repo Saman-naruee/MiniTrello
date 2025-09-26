@@ -3,6 +3,15 @@ from django.conf import settings
 
 
 class Board(models.Model):
+    """
+    A Trello-like board owned by a user.
+
+    Important fields:
+    - owner: The user who created and owns the board (ForeignKey to User).
+    - color: Visual color theme for the board (choices: blue, green, etc.).
+    - title: Short name for the board (max 255 chars).
+    - description: Optional detailed description of the board's purpose.
+    """
     COLOR_CHOICES = [
         ('blue', 'Blue'),
         ('green', 'Green'),
@@ -25,6 +34,14 @@ class Board(models.Model):
 
 
 class List(models.Model):
+    """
+    A column or list within a board, used to organize cards.
+
+    Important fields:
+    - title: Name of the list, e.g., 'To Do', 'In Progress' (max 255 chars).
+    - board: The parent board this list belongs to (ForeignKey).
+    - order: Integer position to sort lists horizontally on the board.
+    """
     title = models.CharField(max_length=255)
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name="lists")
     order = models.IntegerField()
@@ -36,6 +53,18 @@ class List(models.Model):
 
 
 class Card(models.Model):
+    """
+    A task or card within a list, representing work items.
+
+    Important fields:
+    - title: Brief summary of the task (max 255 chars).
+    - description: Detailed notes or instructions for the task.
+    - assignees: Users responsible for completing the task (ManyToMany).
+    - list: The list this card belongs to (ForeignKey).
+    - priority: Urgency level (choices: Low to Top, default Medium).
+    - due_date: Optional deadline for completion.
+    - is_done: Boolean flag for task completion status.
+    """
     PRIORITY_TOP = 10
     PRIORITY_IMPORTANT_AND_URGENT = 20
     PRIORITY_IMPORTANT = 30
@@ -88,8 +117,15 @@ class Membership(models.Model):
     """
     Represents a user's membership on a Board.
 
+    Important fields:
+    - user: The member user (ForeignKey to User).
+    - board: The board they are a member of (ForeignKey).
+    - role: Permission level (Owner=10, Admin=20, Member=30, Viewer=40; lower = more privileges).
+    - invited_by: User who sent the invitation (optional).
+    - is_active: Flag to soft-deactivate membership without deletion.
+    - can_edit, can_comment, can_invite: Specific permission overrides.
+
     - Each user can have at most one Membership per Board (unique constraint).
-    - Roles are defined as integer constants so ordering and checks are easy.
     - `is_active` can be used to soft-remove a member without deleting history.
     - `invited_by` and `invited_at` support invitation flows.
     - Add other flags (can_edit, can_comment, ...) or compute from role.
