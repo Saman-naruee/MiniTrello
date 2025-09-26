@@ -6,7 +6,7 @@ A Trello-inspired project management and collaboration tool built with Django an
 [![Test Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)](https://github.com/Saman-naruee/MiniTrello)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-<!-- Add a compelling screenshot of the main board view here -->
+![Screenshot of MiniTrello main board view](media/board_main_detail_page.png.png)
 
 ## Key Features
 
