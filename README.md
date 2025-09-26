@@ -2,11 +2,11 @@
 
 A Trello-inspired project management and collaboration tool built with Django and HTMX. It features real-time updates (soon), role-based permissions, and a modern, responsive interface.
 
-[![CI](https://github.com/Saman-naruee/MiniTrello/workflows/ci.yml/badge.svg)](https://github.com/Saman-naruee/MiniTrello/actions)
+[![CI/CD](https://github.com/Saman-naruee/MiniTrello/workflows/ci.yml/badge.svg)](https://github.com/Saman-naruee/MiniTrello/actions)
 [![Test Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)](https://github.com/Saman-naruee/MiniTrello)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-(media/board_main_detail_page.png.png)
+![MiniTrello Board View](./documents/board_main_detail_page.png)
 
 ## Key Features
 
