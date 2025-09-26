@@ -158,6 +158,56 @@ The `.env` file contains configuration variables. Copy `.env.example` to `.env` 
 | `GOOGLE_CLIENT_ID`    | Google OAuth client ID for social authentication.                           | `your-google-client-id.apps.googleusercontent.com` |
 | `GOOGLE_CLIENT_SECRET`| Google OAuth client secret. **DO NOT commit real values.**                  | `your-google-client-secret`      |
 
+## Setting up Google OAuth
+
+To enable Google social authentication using django-allauth, follow these steps:
+
+### Prerequisites
+- A Google account.
+- Access to the [Google Cloud Console](https://console.cloud.google.com/).
+
+### Steps
+1. **Create a Google Cloud Project**:
+   - Go to the [Google Cloud Console](https://console.cloud.google.com/).
+   - Click on the project dropdown at the top and select "New Project" or choose an existing one.
+
+2. **Enable the Google+ API** (if not already enabled):
+   - Navigate to "APIs & Services" > "Library".
+   - Search for "Google+ API" and enable it. (Note: For modern OAuth, you might use Google Identity services, but Google+ API is still used for profile/email scopes in allauth.)
+
+3. **Create OAuth 2.0 Credentials**:
+   - Go to "APIs & Services" > "Credentials".
+   - Click "Create Credentials" > "OAuth client ID".
+   - Select "Web application" as the application type.
+   - Add the following under "Authorized JavaScript origins":
+     - `http://localhost:8000` (for development)
+     - Your production domain (e.g., `https://yourdomain.com`)
+   - Add the following under "Authorized redirect URIs":
+     - `http://localhost:8000/accounts/google/login/callback/` (for development)
+     - Your production callback URL (e.g., `https://yourdomain.com/accounts/google/login/callback/`)
+   - Click "Create".
+
+4. **Obtain Client ID and Secret**:
+   - Copy the "Client ID" and "Client secret" from the created credentials.
+   - Also you can download the informations manually in json formatted file.
+   - Add them to your `.env` file:
+     ```
+     GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+     GOOGLE_CLIENT_SECRET=your-client-secret
+     ```
+
+5. **Configure django-allauth** (if needed):
+   - The project already includes the necessary allauth configuration in `config/base.py`.
+   - Ensure `SOCIALACCOUNT_PROVIDERS` is set for Google scopes (profile and email).
+
+6. **Test the Setup**:
+   - Restart your development server.
+   - Navigate to the login page (`http://localhost:8000/accounts/login/`).
+   - You should see a "Sign in with Google" option.
+   - Test the flow to ensure it redirects back correctly.
+
+**Note:** For production, update the origins and URIs to match your deployed domain. Also, verify the app in Google Console if required for sensitive scopes.
+
 ## Running Tests
 
 To run the test suite:
