@@ -22,13 +22,13 @@ msgstr ""
 #: templates/account/email/email_confirmation_signup.html:5
 #: templates/account/email/email_confirmation_signup.html:8
 msgid "Please Confirm Your E-mail Address"
-msgstr ""
+msgstr "لطفاً آدرس ایمیل خود را تأیید کنید"
 
 #: apps/accounts/templates/account/email/email_confirmation_signup.html:10
 #: templates/account/email/email_confirmation_signup.html:10
 #, python-format
 msgid "Hello %(user_display)s!"
-msgstr ""
+msgstr "سلام %(user_display)s!"
 
 #: apps/accounts/templates/account/email/email_confirmation_signup.html:12
 #: templates/account/email/email_confirmation_signup.html:12
@@ -36,6 +36,7 @@ msgid ""
 "You're receiving this e-mail because you have registered an account on our "
 "site."
 msgstr ""
+"شما این ایمیل را دریافت می‌کنید زیرا حسابی در سایت ما ثبت کرده‌اید."
 
 #: apps/accounts/templates/account/email/email_confirmation_signup.html:14
 #: templates/account/email/email_confirmation_signup.html:14
@@ -43,11 +44,12 @@ msgid ""
 "Please go to the following page to confirm your e-mail address and activate "
 "your account:"
 msgstr ""
+"لطفاً به صفحه زیر بروید تا آدرس ایمیل خود را تأیید کرده و حساب خود را فعال کنید:"
 
 #: apps/accounts/templates/account/email/email_confirmation_signup.html:18
 #: templates/account/email/email_confirmation_signup.html:18
 msgid "Thanks for using our site!"
-msgstr ""
+msgstr "از استفاده از سایت ما سپاسگزاریم!"
 
 #: apps/accounts/templates/account/logout.html:4
 #: apps/accounts/templates/account/logout.html:10
@@ -55,228 +57,229 @@ msgstr ""
 #: templates/account/logout.html:4 templates/account/logout.html:12
 #: templates/account/logout.html:19
 msgid "Sign Out"
-msgstr ""
+msgstr "خروج"
 
 #: apps/accounts/templates/account/logout.html:11
 #: templates/account/logout.html:13
 msgid "Are you sure you want to sign out Dear User"
-msgstr ""
+msgstr "آیا مطمئن هستید که می‌خواهید خارج شوید کاربر عزیز"
 
 #: apps/invitations/forms.py:15
 msgid "Invitee Email"
-msgstr ""
+msgstr "ایمیل دعوت‌شونده"
 
 #: apps/invitations/forms.py:17
 msgid "Enter the email address of the person to invite."
-msgstr ""
+msgstr "آدرس ایمیل شخص دعوت‌شونده را وارد کنید."
 
 #: apps/invitations/forms.py:35
 msgid "Board context is required for validation."
-msgstr ""
+msgstr "زمینه برد برای اعتبارسنجی الزامی است."
 
 #: apps/invitations/forms.py:45
 msgid "This user is already a member of this board."
-msgstr ""
+msgstr "این کاربر قبلاً عضو این برد است."
 
 #: env2/Lib/site-packages/click/_termui_impl.py:600
 #, python-brace-format
 msgid "{editor}: Editing failed"
-msgstr ""
+msgstr "{editor}: ویرایش ناموفق بود"
 
 #: env2/Lib/site-packages/click/_termui_impl.py:604
 #, python-brace-format
 msgid "{editor}: Editing failed: {e}"
-msgstr ""
+msgstr "{editor}: ویرایش ناموفق بود: {e}"
 
 #: env2/Lib/site-packages/click/core.py:1084
 #: env2/Lib/site-packages/click/core.py:1121
 #, python-brace-format
 msgid "{text} {deprecated_message}"
-msgstr ""
+msgstr "{text} {deprecated_message}"
 
 #: env2/Lib/site-packages/click/core.py:1140
 msgid "Options"
-msgstr ""
+msgstr "گزینه‌ها"
 
 #: env2/Lib/site-packages/click/core.py:1202
 #, python-brace-format
 msgid "Got unexpected extra argument ({args})"
 msgid_plural "Got unexpected extra arguments ({args})"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "دریافت آرگومان اضافی غیرمنتظره ({args})"
+msgstr[1] "دریافت آرگومان‌های اضافی غیرمنتظره ({args})"
 
 #: env2/Lib/site-packages/click/core.py:1221
 msgid "DeprecationWarning: The command {name!r} is deprecated.{extra_message}"
-msgstr ""
+msgstr "هشدار منسوخ: دستور {name!r} منسوخ شده است.{extra_message}"
 
 #: env2/Lib/site-packages/click/core.py:1405
 msgid "Aborted!"
-msgstr ""
+msgstr "لغو شد!"
 
 #: env2/Lib/site-packages/click/core.py:1779
 msgid "Commands"
-msgstr ""
+msgstr "دستورها"
 
 #: env2/Lib/site-packages/click/core.py:1810
 msgid "Missing command."
-msgstr ""
+msgstr "دستور گم‌شده."
 
 #: env2/Lib/site-packages/click/core.py:1888
 msgid "No such command {name!r}."
-msgstr ""
+msgstr "چنین دستوری وجود ندارد {name!r}."
 
 #: env2/Lib/site-packages/click/core.py:2303
 msgid "Value must be an iterable."
-msgstr ""
+msgstr "مقدار باید قابل تکرار باشد."
 
 #: env2/Lib/site-packages/click/core.py:2324
 #, python-brace-format
 msgid "Takes {nargs} values but 1 was given."
 msgid_plural "Takes {nargs} values but {len} were given."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{nargs} مقدار می‌گیرد اما 1 مقدار داده شده است."
+msgstr[1] "{nargs} مقدار می‌گیرد اما {len} مقدار داده شده است."
 
 #: env2/Lib/site-packages/click/core.py:2404
 msgid ""
 "DeprecationWarning: The {param_type} {name!r} is deprecated.{extra_message}"
 msgstr ""
+"هشدار منسوخ: {param_type} {name!r} منسوخ شده است.{extra_message}"
 
 #: env2/Lib/site-packages/click/core.py:2807
 #, python-brace-format
 msgid "env var: {var}"
-msgstr ""
+msgstr "متغیر محیطی: {var}"
 
 #: env2/Lib/site-packages/click/core.py:2810
 #, python-brace-format
 msgid "default: {default}"
-msgstr ""
+msgstr "پیش‌فرض: {default}"
 
 #: env2/Lib/site-packages/click/core.py:2870
 msgid "(dynamic)"
-msgstr ""
+msgstr "(پویا)"
 
 #: env2/Lib/site-packages/click/decorators.py:465
 #, python-format
 msgid "%(prog)s, version %(version)s"
-msgstr ""
+msgstr "%(prog)s، نسخه %(version)s"
 
 #: env2/Lib/site-packages/click/decorators.py:522
 msgid "Show the version and exit."
-msgstr ""
+msgstr "نسخه را نمایش دهید و خارج شوید."
 
 #: env2/Lib/site-packages/click/decorators.py:548
 msgid "Show this message and exit."
-msgstr ""
+msgstr "این پیام را نمایش دهید و خارج شوید."
 
 #: env2/Lib/site-packages/click/exceptions.py:50
 #: env2/Lib/site-packages/click/exceptions.py:89
 #, python-brace-format
 msgid "Error: {message}"
-msgstr ""
+msgstr "خطا: {message}"
 
 #: env2/Lib/site-packages/click/exceptions.py:81
 #, python-brace-format
 msgid "Try '{command} {option}' for help."
-msgstr ""
+msgstr "برای کمک '{command} {option}' را امتحان کنید."
 
 #: env2/Lib/site-packages/click/exceptions.py:130
 #, python-brace-format
 msgid "Invalid value: {message}"
-msgstr ""
+msgstr "مقدار نامعتبر: {message}"
 
 #: env2/Lib/site-packages/click/exceptions.py:132
 #, python-brace-format
 msgid "Invalid value for {param_hint}: {message}"
-msgstr ""
+msgstr "مقدار نامعتبر برای {param_hint}: {message}"
 
 #: env2/Lib/site-packages/click/exceptions.py:190
 msgid "Missing argument"
-msgstr ""
+msgstr "آرگومان گم‌شده"
 
 #: env2/Lib/site-packages/click/exceptions.py:192
 msgid "Missing option"
-msgstr ""
+msgstr "گزینه گم‌شده"
 
 #: env2/Lib/site-packages/click/exceptions.py:194
 msgid "Missing parameter"
-msgstr ""
+msgstr "پارامتر گم‌شده"
 
 #: env2/Lib/site-packages/click/exceptions.py:196
 #, python-brace-format
 msgid "Missing {param_type}"
-msgstr ""
+msgstr "{param_type} گم‌شده"
 
 #: env2/Lib/site-packages/click/exceptions.py:203
 #, python-brace-format
 msgid "Missing parameter: {param_name}"
-msgstr ""
+msgstr "پارامتر گم‌شده: {param_name}"
 
 #: env2/Lib/site-packages/click/exceptions.py:223
 #, python-brace-format
 msgid "No such option: {name}"
-msgstr ""
+msgstr "چنین گزینه‌ای وجود ندارد: {name}"
 
 #: env2/Lib/site-packages/click/exceptions.py:235
 #, python-brace-format
 msgid "Did you mean {possibility}?"
 msgid_plural "(Possible options: {possibilities})"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "آیا منظورتان {possibility} بود؟"
+msgstr[1] "(گزینه‌های ممکن: {possibilities})"
 
 #: env2/Lib/site-packages/click/exceptions.py:282
 msgid "unknown error"
-msgstr ""
+msgstr "خطای ناشناخته"
 
 #: env2/Lib/site-packages/click/exceptions.py:289
 msgid "Could not open file {filename!r}: {message}"
-msgstr ""
+msgstr "نمی‌توان فایل {filename!r} را باز کرد: {message}"
 
 #: env2/Lib/site-packages/click/parser.py:200
 msgid "Argument {name!r} takes {nargs} values."
-msgstr ""
+msgstr "آرگومان {name!r} {nargs} مقدار می‌گیرد."
 
 #: env2/Lib/site-packages/click/parser.py:383
 msgid "Option {name!r} does not take a value."
-msgstr ""
+msgstr "گزینه {name!r} مقداری نمی‌گیرد."
 
 #: env2/Lib/site-packages/click/parser.py:444
 msgid "Option {name!r} requires an argument."
 msgid_plural "Option {name!r} requires {nargs} arguments."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "گزینه {name!r} به آرگومان نیاز دارد."
+msgstr[1] "گزینه {name!r} به {nargs} آرگومان نیاز دارد."
 
 #: env2/Lib/site-packages/click/shell_completion.py:326
 msgid "Shell completion is not supported for Bash versions older than 4.4."
-msgstr ""
+msgstr "تکمیل شل برای نسخه‌های Bash قدیمی‌تر از 4.4 پشتیبانی نمی‌شود."
 
 #: env2/Lib/site-packages/click/shell_completion.py:333
 msgid "Couldn't detect Bash version, shell completion is not supported."
-msgstr ""
+msgstr "نمی‌توان نسخه Bash را تشخیص داد، تکمیل شل پشتیبانی نمی‌شود."
 
 #: env2/Lib/site-packages/click/termui.py:162
 msgid "Repeat for confirmation"
-msgstr ""
+msgstr "برای تأیید تکرار کنید"
 
 #: env2/Lib/site-packages/click/termui.py:178
 msgid "Error: The value you entered was invalid."
-msgstr ""
+msgstr "خطا: مقداری که وارد کردید نامعتبر است."
 
 #: env2/Lib/site-packages/click/termui.py:180
 #, python-brace-format
 msgid "Error: {e.message}"
-msgstr ""
+msgstr "خطا: {e.message}"
 
 #: env2/Lib/site-packages/click/termui.py:191
 msgid "Error: The two entered values do not match."
-msgstr ""
+msgstr "خطا: دو مقدار واردشده مطابقت ندارند."
 
 #: env2/Lib/site-packages/click/termui.py:247
 msgid "Error: invalid input"
-msgstr ""
+msgstr "خطا: ورودی نامعتبر"
 
 #: env2/Lib/site-packages/click/termui.py:866
 msgid "Press any key to continue..."
-msgstr ""
+msgstr "هر کلیدی را برای ادامه فشار دهید..."
 
 #: env2/Lib/site-packages/click/types.py:332
 #, python-brace-format
@@ -284,145 +287,149 @@ msgid ""
 "Choose from:\n"
 "\t{choices}"
 msgstr ""
+"از میان انتخاب کنید:\n"
+"\t{choices}"
 
 #: env2/Lib/site-packages/click/types.py:369
 msgid "{value!r} is not {choice}."
 msgid_plural "{value!r} is not one of {choices}."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{value!r} {choice} نیست."
+msgstr[1] "{value!r} یکی از {choices} نیست."
 
 #: env2/Lib/site-packages/click/types.py:460
 msgid "{value!r} does not match the format {format}."
 msgid_plural "{value!r} does not match the formats {formats}."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{value!r} با فرمت {format} مطابقت ندارد."
+msgstr[1] "{value!r} با فرمت‌های {formats} مطابقت ندارد."
 
 #: env2/Lib/site-packages/click/types.py:482
 msgid "{value!r} is not a valid {number_type}."
-msgstr ""
+msgstr "{value!r} یک {number_type} معتبر نیست."
 
 #: env2/Lib/site-packages/click/types.py:538
 #, python-brace-format
 msgid "{value} is not in the range {range}."
-msgstr ""
+msgstr "{value} در محدوده {range} نیست."
 
 #: env2/Lib/site-packages/click/types.py:679
 msgid "{value!r} is not a valid boolean."
-msgstr ""
+msgstr "{value!r} یک بولین معتبر نیست."
 
 #: env2/Lib/site-packages/click/types.py:703
 msgid "{value!r} is not a valid UUID."
-msgstr ""
+msgstr "{value!r} یک UUID معتبر نیست."
 
 #: env2/Lib/site-packages/click/types.py:893
 msgid "file"
-msgstr ""
+msgstr "فایل"
 
 #: env2/Lib/site-packages/click/types.py:895
 msgid "directory"
-msgstr ""
+msgstr "پوشه"
 
 #: env2/Lib/site-packages/click/types.py:897
 msgid "path"
-msgstr ""
+msgstr "مسیر"
 
 #: env2/Lib/site-packages/click/types.py:944
 msgid "{name} {filename!r} does not exist."
-msgstr ""
+msgstr "{name} {filename!r} وجود ندارد."
 
 #: env2/Lib/site-packages/click/types.py:953
 msgid "{name} {filename!r} is a file."
-msgstr ""
+msgstr "{name} {filename!r} یک فایل است."
 
 #: env2/Lib/site-packages/click/types.py:961
 msgid "{name} {filename!r} is a directory."
-msgstr ""
+msgstr "{name} {filename!r} یک پوشه است."
 
 #: env2/Lib/site-packages/click/types.py:970
 msgid "{name} {filename!r} is not readable."
-msgstr ""
+msgstr "{name} {filename!r} قابل خواندن نیست."
 
 #: env2/Lib/site-packages/click/types.py:979
 msgid "{name} {filename!r} is not writable."
-msgstr ""
+msgstr "{name} {filename!r} قابل نوشتن نیست."
 
 #: env2/Lib/site-packages/click/types.py:988
 msgid "{name} {filename!r} is not executable."
-msgstr ""
+msgstr "{name} {filename!r} قابل اجرا نیست."
 
 #: env2/Lib/site-packages/click/types.py:1055
 #, python-brace-format
 msgid "{len_type} values are required, but {len_value} was given."
 msgid_plural "{len_type} values are required, but {len_value} were given."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "{len_type} مقدار الزامی است، اما {len_value} مقدار داده شده است."
+msgstr[1] "{len_type} مقدار الزامی است، اما {len_value} مقدار داده شده است."
 
 #: env2/Lib/site-packages/django/contrib/messages/apps.py:16
 msgid "Messages"
-msgstr ""
+msgstr "پیام‌ها"
 
 #: env2/Lib/site-packages/django/contrib/sitemaps/apps.py:8
 msgid "Site Maps"
-msgstr ""
+msgstr "نقشه‌های سایت"
 
 #: env2/Lib/site-packages/django/contrib/staticfiles/apps.py:9
 msgid "Static Files"
-msgstr ""
+msgstr "فایل‌های استاتیک"
 
 #: env2/Lib/site-packages/django/contrib/syndication/apps.py:7
 msgid "Syndication"
-msgstr ""
+msgstr "سندیکاسیون"
 
 #. Translators: String used to replace omitted page numbers in elided page
 #. range generated by paginators, e.g. [1, 2, '…', 5, 6, 7, '…', 9, 10].
 #: env2/Lib/site-packages/django/core/paginator.py:30
 msgid "…"
-msgstr ""
+msgstr "…"
 
 #: env2/Lib/site-packages/django/core/paginator.py:32
 msgid "That page number is not an integer"
-msgstr ""
+msgstr "شماره صفحه عدد صحیح نیست"
 
 #: env2/Lib/site-packages/django/core/paginator.py:33
 msgid "That page number is less than 1"
-msgstr ""
+msgstr "شماره صفحه کمتر از 1 است"
 
 #: env2/Lib/site-packages/django/core/paginator.py:34
 msgid "That page contains no results"
-msgstr ""
+msgstr "این صفحه هیچ نتیجه‌ای ندارد"
 
 #: env2/Lib/site-packages/django/core/validators.py:22
 msgid "Enter a valid value."
-msgstr ""
+msgstr "یک مقدار معتبر وارد کنید."
 
 #: env2/Lib/site-packages/django/core/validators.py:70
 msgid "Enter a valid domain name."
-msgstr ""
+msgstr "یک نام دامنه معتبر وارد کنید."
 
 #: env2/Lib/site-packages/django/core/validators.py:153
 #: env2/Lib/site-packages/django/forms/fields.py:775
 msgid "Enter a valid URL."
-msgstr ""
+msgstr "یک URL معتبر وارد کنید."
 
 #: env2/Lib/site-packages/django/core/validators.py:200
 msgid "Enter a valid integer."
-msgstr ""
+msgstr "یک عدد صحیح معتبر وارد کنید."
 
 #: env2/Lib/site-packages/django/core/validators.py:211
 msgid "Enter a valid email address."
-msgstr ""
+msgstr "یک آدرس ایمیل معتبر وارد کنید."
 
 #. Translators: "letters" means latin letters: a-z and A-Z.
 #: env2/Lib/site-packages/django/core/validators.py:289
 msgid ""
 "Enter a valid “slug” consisting of letters, numbers, underscores or hyphens."
 msgstr ""
+"یک “slug” معتبر وارد کنید که شامل حروف، اعداد، زیرخط یا خط تیره باشد."
 
 #: env2/Lib/site-packages/django/core/validators.py:297
 msgid ""
 "Enter a valid “slug” consisting of Unicode letters, numbers, underscores, or "
 "hyphens."
 msgstr ""
+"یک “slug” معتبر وارد کنید که شامل حروف یونیکد، اعداد، زیرخط یا خط تیره باشد."
 
 #: env2/Lib/site-packages/django/core/validators.py:309
 #: env2/Lib/site-packages/django/core/validators.py:318
@@ -430,44 +437,44 @@ msgstr ""
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2220
 #, python-format
 msgid "Enter a valid %(protocol)s address."
-msgstr ""
+msgstr "یک آدرس %(protocol)s معتبر وارد کنید."
 
 #: env2/Lib/site-packages/django/core/validators.py:311
 msgid "IPv4"
-msgstr ""
+msgstr "IPv4"
 
 #: env2/Lib/site-packages/django/core/validators.py:320
 #: env2/Lib/site-packages/django/utils/ipv6.py:43
 msgid "IPv6"
-msgstr ""
+msgstr "IPv6"
 
 #: env2/Lib/site-packages/django/core/validators.py:334
 msgid "IPv4 or IPv6"
-msgstr ""
+msgstr "IPv4 یا IPv6"
 
 #: env2/Lib/site-packages/django/core/validators.py:375
 msgid "Enter only digits separated by commas."
-msgstr ""
+msgstr "فقط ارقام را با کاما جدا کنید وارد کنید."
 
 #: env2/Lib/site-packages/django/core/validators.py:381
 #, python-format
 msgid "Ensure this value is %(limit_value)s (it is %(show_value)s)."
-msgstr ""
+msgstr "اطمینان حاصل کنید که این مقدار %(limit_value)s است (آن %(show_value)s است)."
 
 #: env2/Lib/site-packages/django/core/validators.py:416
 #, python-format
 msgid "Ensure this value is less than or equal to %(limit_value)s."
-msgstr ""
+msgstr "اطمینان حاصل کنید که این مقدار کمتر یا مساوی %(limit_value)s است."
 
 #: env2/Lib/site-packages/django/core/validators.py:425
 #, python-format
 msgid "Ensure this value is greater than or equal to %(limit_value)s."
-msgstr ""
+msgstr "اطمینان حاصل کنید که این مقدار بیشتر یا مساوی %(limit_value)s است."
 
 #: env2/Lib/site-packages/django/core/validators.py:434
 #, python-format
 msgid "Ensure this value is a multiple of step size %(limit_value)s."
-msgstr ""
+msgstr "اطمینان حاصل کنید که این مقدار مضرب اندازه گام %(limit_value)s است."
 
 #: env2/Lib/site-packages/django/core/validators.py:441
 #, python-format
@@ -475,6 +482,8 @@ msgid ""
 "Ensure this value is a multiple of step size %(limit_value)s, starting from "
 "%(offset)s, e.g. %(offset)s, %(valid_value1)s, %(valid_value2)s, and so on."
 msgstr ""
+"اطمینان حاصل کنید که این مقدار مضرب اندازه گام %(limit_value)s است، شروع از "
+"%(offset)s، مثلاً %(offset)s، %(valid_value1)s، %(valid_value2)s و غیره."
 
 #: env2/Lib/site-packages/django/core/validators.py:473
 #, python-format
@@ -485,7 +494,9 @@ msgid_plural ""
 "Ensure this value has at least %(limit_value)d characters (it has "
 "%(show_value)d)."
 msgstr[0] ""
+"اطمینان حاصل کنید که این مقدار حداقل %(limit_value)d کاراکتر دارد (آن %(show_value)d دارد)."
 msgstr[1] ""
+"اطمینان حاصل کنید که این مقدار حداقل %(limit_value)d کاراکتر دارد (آن %(show_value)d دارد)."
 
 #: env2/Lib/site-packages/django/core/validators.py:491
 #, python-format
@@ -496,27 +507,29 @@ msgid_plural ""
 "Ensure this value has at most %(limit_value)d characters (it has "
 "%(show_value)d)."
 msgstr[0] ""
+"اطمینان حاصل کنید که این مقدار حداکثر %(limit_value)d کاراکتر دارد (آن %(show_value)d دارد)."
 msgstr[1] ""
+"اطمینان حاصل کنید که این مقدار حداکثر %(limit_value)d کاراکتر دارد (آن %(show_value)d دارد)."
 
 #: env2/Lib/site-packages/django/core/validators.py:514
 #: env2/Lib/site-packages/django/forms/fields.py:366
 #: env2/Lib/site-packages/django/forms/fields.py:405
 msgid "Enter a number."
-msgstr ""
+msgstr "یک عدد وارد کنید."
 
 #: env2/Lib/site-packages/django/core/validators.py:516
 #, python-format
 msgid "Ensure that there are no more than %(max)s digit in total."
 msgid_plural "Ensure that there are no more than %(max)s digits in total."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "اطمینان حاصل کنید که بیش از %(max)s رقم در کل وجود ندارد."
+msgstr[1] "اطمینان حاصل کنید که بیش از %(max)s رقم در کل وجود ندارد."
 
 #: env2/Lib/site-packages/django/core/validators.py:521
 #, python-format
 msgid "Ensure that there are no more than %(max)s decimal place."
 msgid_plural "Ensure that there are no more than %(max)s decimal places."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "اطمینان حاصل کنید که بیش از %(max)s رقم اعشاری وجود ندارد."
+msgstr[1] "اطمینان حاصل کنید که بیش از %(max)s رقم اعشاری وجود ندارد."
 
 #: env2/Lib/site-packages/django/core/validators.py:526
 #, python-format
@@ -524,8 +537,8 @@ msgid ""
 "Ensure that there are no more than %(max)s digit before the decimal point."
 msgid_plural ""
 "Ensure that there are no more than %(max)s digits before the decimal point."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "اطمینان حاصل کنید که بیش از %(max)s رقم قبل از نقطه اعشار وجود ندارد."
+msgstr[1] "اطمینان حاصل کنید که بیش از %(max)s رقم قبل از نقطه اعشار وجود ندارد."
 
 #: env2/Lib/site-packages/django/core/validators.py:597
 #, python-format
@@ -533,43 +546,45 @@ msgid ""
 "File extension “%(extension)s” is not allowed. Allowed extensions are: "
 "%(allowed_extensions)s."
 msgstr ""
+"پسوند فایل “%(extension)s” مجاز نیست. پسوندهای مجاز عبارتند از: "
+"%(allowed_extensions)s."
 
 #: env2/Lib/site-packages/django/core/validators.py:659
 msgid "Null characters are not allowed."
-msgstr ""
+msgstr "کاراکترهای خالی مجاز نیستند."
 
 #: env2/Lib/site-packages/django/db/models/base.py:1600
 #: env2/Lib/site-packages/django/forms/models.py:908
 msgid "and"
-msgstr ""
+msgstr "و"
 
 #: env2/Lib/site-packages/django/db/models/base.py:1602
 #, python-format
 msgid "%(model_name)s with this %(field_labels)s already exists."
-msgstr ""
+msgstr "%(model_name)s با این %(field_labels)s قبلاً وجود دارد."
 
 #: env2/Lib/site-packages/django/db/models/constraints.py:22
 #, python-format
 msgid "Constraint “%(name)s” is violated."
-msgstr ""
+msgstr "محدودیت “%(name)s” نقض شده است."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:134
 #, python-format
 msgid "Value %(value)r is not a valid choice."
-msgstr ""
+msgstr "مقدار %(value)r انتخاب معتبر نیست."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:135
 msgid "This field cannot be null."
-msgstr ""
+msgstr "این فیلد نمی‌تواند خالی باشد."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:136
 msgid "This field cannot be blank."
-msgstr ""
+msgstr "این فیلد نمی‌تواند خالی باشد."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:137
 #, python-format
 msgid "%(model_name)s with this %(field_label)s already exists."
-msgstr ""
+msgstr "%(model_name)s با این %(field_label)s قبلاً وجود دارد."
 
 #. Translators: The 'lookup_type' is one of 'date', 'year' or
 #. 'month'. Eg: "Title must be unique for pub_date year"
@@ -578,38 +593,39 @@ msgstr ""
 msgid ""
 "%(field_label)s must be unique for %(date_field_label)s %(lookup_type)s."
 msgstr ""
+"%(field_label)s باید برای %(date_field_label)s %(lookup_type)s منحصر به فرد باشد."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:180
 #, python-format
 msgid "Field of type: %(field_type)s"
-msgstr ""
+msgstr "فیلد از نوع: %(field_type)s"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1162
 #, python-format
 msgid "“%(value)s” value must be either True or False."
-msgstr ""
+msgstr "مقدار “%(value)s” باید True یا False باشد."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1163
 #, python-format
 msgid "“%(value)s” value must be either True, False, or None."
-msgstr ""
+msgstr "مقدار “%(value)s” باید True، False یا None باشد."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1165
 msgid "Boolean (Either True or False)"
-msgstr ""
+msgstr "بولین (یا True یا False)"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1215
 #, python-format
 msgid "String (up to %(max_length)s)"
-msgstr ""
+msgstr "رشته (تا %(max_length)s)"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1217
 msgid "String (unlimited)"
-msgstr ""
+msgstr "رشته (نامحدود)"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1326
 msgid "Comma-separated integers"
-msgstr ""
+msgstr "اعداد صحیح جدا شده با کاما"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1427
 #, python-format
@@ -617,6 +633,7 @@ msgid ""
 "“%(value)s” value has an invalid date format. It must be in YYYY-MM-DD "
 "format."
 msgstr ""
+"مقدار “%(value)s” فرمت تاریخ نامعتبر دارد. باید در فرمت YYYY-MM-DD باشد."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1431
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1566
@@ -625,10 +642,11 @@ msgid ""
 "“%(value)s” value has the correct format (YYYY-MM-DD) but it is an invalid "
 "date."
 msgstr ""
+"مقدار “%(value)s” فرمت صحیح (YYYY-MM-DD) دارد اما تاریخ نامعتبر است."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1435
 msgid "Date (without time)"
-msgstr ""
+msgstr "تاریخ (بدون زمان)"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1562
 #, python-format
@@ -636,6 +654,7 @@ msgid ""
 "“%(value)s” value has an invalid format. It must be in YYYY-MM-DD HH:MM[:ss[."
 "uuuuuu]][TZ] format."
 msgstr ""
+"مقدار “%(value)s” فرمت نامعتبر دارد. باید در فرمت YYYY-MM-DD HH:MM[:ss[.uuuuuu]][TZ] باشد."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1570
 #, python-format
@@ -643,19 +662,20 @@ msgid ""
 "“%(value)s” value has the correct format (YYYY-MM-DD HH:MM[:ss[.uuuuuu]]"
 "[TZ]) but it is an invalid date/time."
 msgstr ""
+"مقدار “%(value)s” فرمت صحیح (YYYY-MM-DD HH:MM[:ss[.uuuuuu]][TZ]) دارد اما تاریخ/زمان نامعتبر است."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1575
 msgid "Date (with time)"
-msgstr ""
+msgstr "تاریخ (با زمان)"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1702
 #, python-format
 msgid "“%(value)s” value must be a decimal number."
-msgstr ""
+msgstr "مقدار “%(value)s” باید عدد اعشاری باشد."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1704
 msgid "Decimal number"
-msgstr ""
+msgstr "عدد اعشاری"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1864
 #, python-format
@@ -663,85 +683,86 @@ msgid ""
 "“%(value)s” value has an invalid format. It must be in [DD] [[HH:]MM:]ss[."
 "uuuuuu] format."
 msgstr ""
+"مقدار “%(value)s” فرمت نامعتبر دارد. باید در فرمت [DD] [[HH:]MM:]ss[.uuuuuu] باشد."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1868
 msgid "Duration"
-msgstr ""
+msgstr "مدت زمان"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1920
 #: templates/account/password_reset_key_subject.html:23
 #: templates/account/password_reset_key_subject.html:24
 msgid "Email address"
-msgstr ""
+msgstr "آدرس ایمیل"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:1945
 msgid "File path"
-msgstr ""
+msgstr "مسیر فایل"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2023
 #, python-format
 msgid "“%(value)s” value must be a float."
-msgstr ""
+msgstr "مقدار “%(value)s” باید عدد اعشاری شناور باشد."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2025
 msgid "Floating point number"
-msgstr ""
+msgstr "عدد اعشاری شناور"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2065
 #, python-format
 msgid "“%(value)s” value must be an integer."
-msgstr ""
+msgstr "مقدار “%(value)s” باید عدد صحیح باشد."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2067
 msgid "Integer"
-msgstr ""
+msgstr "عدد صحیح"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2163
 msgid "Big (8 byte) integer"
-msgstr ""
+msgstr "عدد صحیح بزرگ (8 بایت)"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2180
 msgid "Small integer"
-msgstr ""
+msgstr "عدد صحیح کوچک"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2188
 msgid "IPv4 address"
-msgstr ""
+msgstr "آدرس IPv4"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2219
 msgid "IP address"
-msgstr ""
+msgstr "آدرس IP"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2310
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2311
 #, python-format
 msgid "“%(value)s” value must be either None, True or False."
-msgstr ""
+msgstr "مقدار “%(value)s” باید None، True یا False باشد."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2313
 msgid "Boolean (Either True, False or None)"
-msgstr ""
+msgstr "بولین (True، False یا None)"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2364
 msgid "Positive big integer"
-msgstr ""
+msgstr "عدد صحیح بزرگ مثبت"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2379
 msgid "Positive integer"
-msgstr ""
+msgstr "عدد صحیح مثبت"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2394
 msgid "Positive small integer"
-msgstr ""
+msgstr "عدد صحیح کوچک مثبت"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2410
 #, python-format
 msgid "Slug (up to %(max_length)s)"
-msgstr ""
+msgstr "Slug (تا %(max_length)s)"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2446
 msgid "Text"
-msgstr ""
+msgstr "متن"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2526
 #, python-format
@@ -749,6 +770,7 @@ msgid ""
 "“%(value)s” value has an invalid format. It must be in HH:MM[:ss[.uuuuuu]] "
 "format."
 msgstr ""
+"مقدار “%(value)s” فرمت نامعتبر دارد. باید در فرمت HH:MM[:ss[.uuuuuu]] باشد."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2530
 #, python-format
@@ -756,172 +778,174 @@ msgid ""
 "“%(value)s” value has the correct format (HH:MM[:ss[.uuuuuu]]) but it is an "
 "invalid time."
 msgstr ""
+"مقدار “%(value)s” فرمت صحیح (HH:MM[:ss[.uuuuuu]]) دارد اما زمان نامعتبر است."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2534
 msgid "Time"
-msgstr ""
+msgstr "زمان"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2642
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2666
 msgid "Raw binary data"
-msgstr ""
+msgstr "داده باینری خام"
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2731
 #, python-format
 msgid "“%(value)s” is not a valid UUID."
-msgstr ""
+msgstr "“%(value)s” UUID معتبر نیست."
 
 #: env2/Lib/site-packages/django/db/models/fields/__init__.py:2733
 msgid "Universally unique identifier"
-msgstr ""
+msgstr "شناسه منحصر به فرد جهانی"
 
 #: env2/Lib/site-packages/django/db/models/fields/files.py:244
 msgid "File"
-msgstr ""
+msgstr "فایل"
 
 #: env2/Lib/site-packages/django/db/models/fields/files.py:420
 msgid "Image"
-msgstr ""
+msgstr "تصویر"
 
 #: env2/Lib/site-packages/django/db/models/fields/json.py:24
 msgid "A JSON object"
-msgstr ""
+msgstr "یک شیء JSON"
 
 #: env2/Lib/site-packages/django/db/models/fields/json.py:26
 msgid "Value must be valid JSON."
-msgstr ""
+msgstr "مقدار باید JSON معتبر باشد."
 
 #: env2/Lib/site-packages/django/db/models/fields/related.py:979
 #, python-format
 msgid "%(model)s instance with %(field)s %(value)r is not a valid choice."
-msgstr ""
+msgstr "نمونه %(model)s با %(field)s %(value)r انتخاب معتبر نیست."
 
 #: env2/Lib/site-packages/django/db/models/fields/related.py:982
 msgid "Foreign Key (type determined by related field)"
-msgstr ""
+msgstr "کلید خارجی (نوع توسط فیلد مرتبط تعیین می‌شود)"
 
 #: env2/Lib/site-packages/django/db/models/fields/related.py:1276
 msgid "One-to-one relationship"
-msgstr ""
+msgstr "رابطه یک به یک"
 
 #: env2/Lib/site-packages/django/db/models/fields/related.py:1333
 #, python-format
 msgid "%(from)s-%(to)s relationship"
-msgstr ""
+msgstr "رابطه %(from)s-%(to)s"
 
 #: env2/Lib/site-packages/django/db/models/fields/related.py:1335
 #, python-format
 msgid "%(from)s-%(to)s relationships"
-msgstr ""
+msgstr "روابط %(from)s-%(to)s"
 
 #: env2/Lib/site-packages/django/db/models/fields/related.py:1383
 msgid "Many-to-many relationship"
-msgstr ""
+msgstr "رابطه چند به چند"
 
 #. Translators: If found as last label character, these punctuation
 #. characters will prevent the default label_suffix to be appended to the label
 #: env2/Lib/site-packages/django/forms/boundfield.py:185
 msgid ":?.!"
-msgstr ""
+msgstr ":؟.!"
 
 #: env2/Lib/site-packages/django/forms/fields.py:95
 msgid "This field is required."
-msgstr ""
+msgstr "این فیلد الزامی است."
 
 #: env2/Lib/site-packages/django/forms/fields.py:315
 msgid "Enter a whole number."
-msgstr ""
+msgstr "یک عدد کامل وارد کنید."
 
 #: env2/Lib/site-packages/django/forms/fields.py:486
 #: env2/Lib/site-packages/django/forms/fields.py:1267
 msgid "Enter a valid date."
-msgstr ""
+msgstr "یک تاریخ معتبر وارد کنید."
 
 #: env2/Lib/site-packages/django/forms/fields.py:509
 #: env2/Lib/site-packages/django/forms/fields.py:1268
 msgid "Enter a valid time."
-msgstr ""
+msgstr "یک زمان معتبر وارد کنید."
 
 #: env2/Lib/site-packages/django/forms/fields.py:536
 msgid "Enter a valid date/time."
-msgstr ""
+msgstr "یک تاریخ/زمان معتبر وارد کنید."
 
 #: env2/Lib/site-packages/django/forms/fields.py:570
 msgid "Enter a valid duration."
-msgstr ""
+msgstr "یک مدت زمان معتبر وارد کنید."
 
 #: env2/Lib/site-packages/django/forms/fields.py:571
 #, python-brace-format
 msgid "The number of days must be between {min_days} and {max_days}."
-msgstr ""
+msgstr "تعداد روزها باید بین {min_days} و {max_days} باشد."
 
 #: env2/Lib/site-packages/django/forms/fields.py:640
 msgid "No file was submitted. Check the encoding type on the form."
-msgstr ""
+msgstr "هیچ فایلی ارسال نشده است. نوع کدگذاری فرم را بررسی کنید."
 
 #: env2/Lib/site-packages/django/forms/fields.py:641
 msgid "No file was submitted."
-msgstr ""
+msgstr "هیچ فایلی ارسال نشده است."
 
 #: env2/Lib/site-packages/django/forms/fields.py:642
 msgid "The submitted file is empty."
-msgstr ""
+msgstr "فایل ارسال‌شده خالی است."
 
 #: env2/Lib/site-packages/django/forms/fields.py:644
 #, python-format
 msgid "Ensure this filename has at most %(max)d character (it has %(length)d)."
 msgid_plural ""
 "Ensure this filename has at most %(max)d characters (it has %(length)d)."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "اطمینان حاصل کنید که نام فایل حداکثر %(max)d کاراکتر دارد (آن %(length)d دارد)."
+msgstr[1] "اطمینان حاصل کنید که نام فایل حداکثر %(max)d کاراکتر دارد (آن %(length)d دارد)."
 
 #: env2/Lib/site-packages/django/forms/fields.py:649
 msgid "Please either submit a file or check the clear checkbox, not both."
-msgstr ""
+msgstr "لطفاً یا فایلی ارسال کنید یا چک‌باکس پاک کردن را انتخاب کنید، نه هر دو."
 
 #: env2/Lib/site-packages/django/forms/fields.py:717
 msgid ""
 "Upload a valid image. The file you uploaded was either not an image or a "
 "corrupted image."
 msgstr ""
+"یک تصویر معتبر آپلود کنید. فایل آپلودشده یا تصویر نیست یا تصویر خراب است."
 
 #: env2/Lib/site-packages/django/forms/fields.py:889
 #: env2/Lib/site-packages/django/forms/fields.py:975
 #: env2/Lib/site-packages/django/forms/models.py:1592
 #, python-format
 msgid "Select a valid choice. %(value)s is not one of the available choices."
-msgstr ""
+msgstr "یک انتخاب معتبر انتخاب کنید. %(value)s یکی از انتخاب‌های موجود نیست."
 
 #: env2/Lib/site-packages/django/forms/fields.py:977
 #: env2/Lib/site-packages/django/forms/fields.py:1096
 #: env2/Lib/site-packages/django/forms/models.py:1590
 msgid "Enter a list of values."
-msgstr ""
+msgstr "لیستی از مقادیر وارد کنید."
 
 #: env2/Lib/site-packages/django/forms/fields.py:1097
 msgid "Enter a complete value."
-msgstr ""
+msgstr "یک مقدار کامل وارد کنید."
 
 #: env2/Lib/site-packages/django/forms/fields.py:1339
 msgid "Enter a valid UUID."
-msgstr ""
+msgstr "یک UUID معتبر وارد کنید."
 
 #: env2/Lib/site-packages/django/forms/fields.py:1369
 msgid "Enter a valid JSON."
-msgstr ""
+msgstr "یک JSON معتبر وارد کنید."
 
 #. Translators: This is the default suffix added to form field labels
 #: env2/Lib/site-packages/django/forms/forms.py:97
 msgid ":"
-msgstr ""
+msgstr ":"
 
 #: env2/Lib/site-packages/django/forms/forms.py:239
 #, python-format
 msgid "(Hidden field %(name)s) %(error)s"
-msgstr ""
+msgstr "(فیلد پنهان %(name)s) %(error)s"
 
 #: env2/Lib/site-packages/django/forms/formsets.py:61
 #, python-format
@@ -929,39 +953,41 @@ msgid ""
 "ManagementForm data is missing or has been tampered with. Missing fields: "
 "%(field_names)s. You may need to file a bug report if the issue persists."
 msgstr ""
+"داده‌های ManagementForm گم‌شده یا دستکاری شده است. فیلدهای گم‌شده: "
+"%(field_names)s. اگر مشکل ادامه داشت، ممکن است نیاز به گزارش باگ داشته باشید."
 
 #: env2/Lib/site-packages/django/forms/formsets.py:65
 #, python-format
 msgid "Please submit at most %(num)d form."
 msgid_plural "Please submit at most %(num)d forms."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "لطفاً حداکثر %(num)d فرم ارسال کنید."
+msgstr[1] "لطفاً حداکثر %(num)d فرم ارسال کنید."
 
 #: env2/Lib/site-packages/django/forms/formsets.py:70
 #, python-format
 msgid "Please submit at least %(num)d form."
 msgid_plural "Please submit at least %(num)d forms."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "لطفاً حداقل %(num)d فرم ارسال کنید."
+msgstr[1] "لطفاً حداقل %(num)d فرم ارسال کنید."
 
 #: env2/Lib/site-packages/django/forms/formsets.py:484
 #: env2/Lib/site-packages/django/forms/formsets.py:491
 msgid "Order"
-msgstr ""
+msgstr "ترتیب"
 
 #: env2/Lib/site-packages/django/forms/formsets.py:499
 msgid "Delete"
-msgstr ""
+msgstr "حذف"
 
 #: env2/Lib/site-packages/django/forms/models.py:901
 #, python-format
 msgid "Please correct the duplicate data for %(field)s."
-msgstr ""
+msgstr "لطفاً داده‌های تکراری برای %(field)s را تصحیح کنید."
 
 #: env2/Lib/site-packages/django/forms/models.py:906
 #, python-format
 msgid "Please correct the duplicate data for %(field)s, which must be unique."
-msgstr ""
+msgstr "لطفاً داده‌های تکراری برای %(field)s را تصحیح کنید، که باید منحصر به فرد باشد."
 
 #: env2/Lib/site-packages/django/forms/models.py:913
 #, python-format
@@ -969,23 +995,24 @@ msgid ""
 "Please correct the duplicate data for %(field_name)s which must be unique "
 "for the %(lookup)s in %(date_field)s."
 msgstr ""
+"لطفاً داده‌های تکراری برای %(field_name)s را تصحیح کنید که باید برای %(lookup)s در %(date_field)s منحصر به فرد باشد."
 
 #: env2/Lib/site-packages/django/forms/models.py:922
 msgid "Please correct the duplicate values below."
-msgstr ""
+msgstr "لطفاً مقادیر تکراری زیر را تصحیح کنید."
 
 #: env2/Lib/site-packages/django/forms/models.py:1359
 msgid "The inline value did not match the parent instance."
-msgstr ""
+msgstr "مقدار درون‌خطی با نمونه والد مطابقت ندارد."
 
 #: env2/Lib/site-packages/django/forms/models.py:1450
 msgid "Select a valid choice. That choice is not one of the available choices."
-msgstr ""
+msgstr "یک انتخاب معتبر انتخاب کنید. آن انتخاب یکی از انتخاب‌های موجود نیست."
 
 #: env2/Lib/site-packages/django/forms/models.py:1594
 #, python-format
 msgid "“%(pk)s” is not a valid value."
-msgstr ""
+msgstr "“%(pk)s” مقدار معتبر نیست."
 
 #: env2/Lib/site-packages/django/forms/utils.py:229
 #, python-format
@@ -993,14 +1020,15 @@ msgid ""
 "%(datetime)s couldn’t be interpreted in time zone %(current_timezone)s; it "
 "may be ambiguous or it may not exist."
 msgstr ""
+"%(datetime)s نمی‌توان در منطقه زمانی %(current_timezone)s تفسیر کرد؛ ممکن است مبهم باشد یا وجود نداشته باشد."
 
 #: env2/Lib/site-packages/django/forms/widgets.py:527
 msgid "Clear"
-msgstr ""
+msgstr "پاک کردن"
 
 #: env2/Lib/site-packages/django/forms/widgets.py:528
 msgid "Currently"
-msgstr ""
+msgstr "در حال حاضر"
 
 #: env2/Lib/site-packages/django/forms/widgets.py:529
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/includes/grappelli_inline_tabular.html:32
@@ -1009,423 +1037,423 @@ msgstr ""
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/stacked.html:36
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/tabular.html:62
 msgid "Change"
-msgstr ""
+msgstr "تغییر"
 
 #: env2/Lib/site-packages/django/forms/widgets.py:866
 msgid "Unknown"
-msgstr ""
+msgstr "ناشناخته"
 
 #: env2/Lib/site-packages/django/forms/widgets.py:867
 msgid "Yes"
-msgstr ""
+msgstr "بله"
 
 #: env2/Lib/site-packages/django/forms/widgets.py:868
 msgid "No"
-msgstr ""
+msgstr "خیر"
 
 #. Translators: Please do not add spaces around commas.
 #: env2/Lib/site-packages/django/template/defaultfilters.py:873
 msgid "yes,no,maybe"
-msgstr ""
+msgstr "بله,خیر,شاید"
 
 #: env2/Lib/site-packages/django/template/defaultfilters.py:903
 #: env2/Lib/site-packages/django/template/defaultfilters.py:920
 #, python-format
 msgid "%(size)d byte"
 msgid_plural "%(size)d bytes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(size)d بایت"
+msgstr[1] "%(size)d بایت"
 
 #: env2/Lib/site-packages/django/template/defaultfilters.py:922
 #, python-format
 msgid "%s KB"
-msgstr ""
+msgstr "%s کیلوبایت"
 
 #: env2/Lib/site-packages/django/template/defaultfilters.py:924
 #, python-format
 msgid "%s MB"
-msgstr ""
+msgstr "%s مگابایت"
 
 #: env2/Lib/site-packages/django/template/defaultfilters.py:926
 #, python-format
 msgid "%s GB"
-msgstr ""
+msgstr "%s گیگابایت"
 
 #: env2/Lib/site-packages/django/template/defaultfilters.py:928
 #, python-format
 msgid "%s TB"
-msgstr ""
+msgstr "%s ترابایت"
 
 #: env2/Lib/site-packages/django/template/defaultfilters.py:930
 #, python-format
 msgid "%s PB"
-msgstr ""
+msgstr "%s پتابایت"
 
 #: env2/Lib/site-packages/django/utils/dateformat.py:74
 msgid "p.m."
-msgstr ""
+msgstr "ب.ظ."
 
 #: env2/Lib/site-packages/django/utils/dateformat.py:75
 msgid "a.m."
-msgstr ""
+msgstr "ق.ظ."
 
 #: env2/Lib/site-packages/django/utils/dateformat.py:80
 msgid "PM"
-msgstr ""
+msgstr "ب.ظ."
 
 #: env2/Lib/site-packages/django/utils/dateformat.py:81
 msgid "AM"
-msgstr ""
+msgstr "ق.ظ."
 
 #: env2/Lib/site-packages/django/utils/dateformat.py:153
 msgid "midnight"
-msgstr ""
+msgstr "نیمه‌شب"
 
 #: env2/Lib/site-packages/django/utils/dateformat.py:155
 msgid "noon"
-msgstr ""
+msgstr "ظهر"
 
 #: env2/Lib/site-packages/django/utils/dates.py:7
 msgid "Monday"
-msgstr ""
+msgstr "دوشنبه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:8
 msgid "Tuesday"
-msgstr ""
+msgstr "سه‌شنبه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:9
 msgid "Wednesday"
-msgstr ""
+msgstr "چهارشنبه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:10
 msgid "Thursday"
-msgstr ""
+msgstr "پنجشنبه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:11
 msgid "Friday"
-msgstr ""
+msgstr "جمعه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:12
 msgid "Saturday"
-msgstr ""
+msgstr "شنبه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:13
 msgid "Sunday"
-msgstr ""
+msgstr "یکشنبه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:16
 msgid "Mon"
-msgstr ""
+msgstr "دوشنبه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:17
 msgid "Tue"
-msgstr ""
+msgstr "سه‌شنبه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:18
 msgid "Wed"
-msgstr ""
+msgstr "چهارشنبه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:19
 msgid "Thu"
-msgstr ""
+msgstr "پنجشنبه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:20
 msgid "Fri"
-msgstr ""
+msgstr "جمعه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:21
 msgid "Sat"
-msgstr ""
+msgstr "شنبه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:22
 msgid "Sun"
-msgstr ""
+msgstr "یکشنبه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:25
 msgid "January"
-msgstr ""
+msgstr "ژانویه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:26
 msgid "February"
-msgstr ""
+msgstr "فوریه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:27
 msgid "March"
-msgstr ""
+msgstr "مارس"
 
 #: env2/Lib/site-packages/django/utils/dates.py:28
 msgid "April"
-msgstr ""
+msgstr "آوریل"
 
 #: env2/Lib/site-packages/django/utils/dates.py:29
 msgid "May"
-msgstr ""
+msgstr "مه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:30
 msgid "June"
-msgstr ""
+msgstr "ژوئن"
 
 #: env2/Lib/site-packages/django/utils/dates.py:31
 msgid "July"
-msgstr ""
+msgstr "جولای"
 
 #: env2/Lib/site-packages/django/utils/dates.py:32
 msgid "August"
-msgstr ""
+msgstr "اوت"
 
 #: env2/Lib/site-packages/django/utils/dates.py:33
 msgid "September"
-msgstr ""
+msgstr "سپتامبر"
 
 #: env2/Lib/site-packages/django/utils/dates.py:34
 msgid "October"
-msgstr ""
+msgstr "اکتبر"
 
 #: env2/Lib/site-packages/django/utils/dates.py:35
 msgid "November"
-msgstr ""
+msgstr "نوامبر"
 
 #: env2/Lib/site-packages/django/utils/dates.py:36
 msgid "December"
-msgstr ""
+msgstr "دسامبر"
 
 #: env2/Lib/site-packages/django/utils/dates.py:39
 msgid "jan"
-msgstr ""
+msgstr "ژانویه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:40
 msgid "feb"
-msgstr ""
+msgstr "فوریه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:41
 msgid "mar"
-msgstr ""
+msgstr "مارس"
 
 #: env2/Lib/site-packages/django/utils/dates.py:42
 msgid "apr"
-msgstr ""
+msgstr "آوریل"
 
 #: env2/Lib/site-packages/django/utils/dates.py:43
 msgid "may"
-msgstr ""
+msgstr "مه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:44
 msgid "jun"
-msgstr ""
+msgstr "ژوئن"
 
 #: env2/Lib/site-packages/django/utils/dates.py:45
 msgid "jul"
-msgstr ""
+msgstr "جولای"
 
 #: env2/Lib/site-packages/django/utils/dates.py:46
 msgid "aug"
-msgstr ""
+msgstr "اوت"
 
 #: env2/Lib/site-packages/django/utils/dates.py:47
 msgid "sep"
-msgstr ""
+msgstr "سپتامبر"
 
 #: env2/Lib/site-packages/django/utils/dates.py:48
 msgid "oct"
-msgstr ""
+msgstr "اکتبر"
 
 #: env2/Lib/site-packages/django/utils/dates.py:49
 msgid "nov"
-msgstr ""
+msgstr "نوامبر"
 
 #: env2/Lib/site-packages/django/utils/dates.py:50
 msgid "dec"
-msgstr ""
+msgstr "دسامبر"
 
 #: env2/Lib/site-packages/django/utils/dates.py:53
 msgctxt "abbrev. month"
 msgid "Jan."
-msgstr ""
+msgstr "ژانویه."
 
 #: env2/Lib/site-packages/django/utils/dates.py:54
 msgctxt "abbrev. month"
 msgid "Feb."
-msgstr ""
+msgstr "فوریه."
 
 #: env2/Lib/site-packages/django/utils/dates.py:55
 msgctxt "abbrev. month"
 msgid "March"
-msgstr ""
+msgstr "مارس"
 
 #: env2/Lib/site-packages/django/utils/dates.py:56
 msgctxt "abbrev. month"
 msgid "April"
-msgstr ""
+msgstr "آوریل"
 
 #: env2/Lib/site-packages/django/utils/dates.py:57
 msgctxt "abbrev. month"
 msgid "May"
-msgstr ""
+msgstr "مه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:58
 msgctxt "abbrev. month"
 msgid "June"
-msgstr ""
+msgstr "ژوئن"
 
 #: env2/Lib/site-packages/django/utils/dates.py:59
 msgctxt "abbrev. month"
 msgid "July"
-msgstr ""
+msgstr "جولای"
 
 #: env2/Lib/site-packages/django/utils/dates.py:60
 msgctxt "abbrev. month"
 msgid "Aug."
-msgstr ""
+msgstr "اوت."
 
 #: env2/Lib/site-packages/django/utils/dates.py:61
 msgctxt "abbrev. month"
 msgid "Sept."
-msgstr ""
+msgstr "سپتامبر."
 
 #: env2/Lib/site-packages/django/utils/dates.py:62
 msgctxt "abbrev. month"
 msgid "Oct."
-msgstr ""
+msgstr "اکتبر."
 
 #: env2/Lib/site-packages/django/utils/dates.py:63
 msgctxt "abbrev. month"
 msgid "Nov."
-msgstr ""
+msgstr "نوامبر."
 
 #: env2/Lib/site-packages/django/utils/dates.py:64
 msgctxt "abbrev. month"
 msgid "Dec."
-msgstr ""
+msgstr "دسامبر."
 
 #: env2/Lib/site-packages/django/utils/dates.py:67
 msgctxt "alt. month"
 msgid "January"
-msgstr ""
+msgstr "ژانویه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:68
 msgctxt "alt. month"
 msgid "February"
-msgstr ""
+msgstr "فوریه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:69
 msgctxt "alt. month"
 msgid "March"
-msgstr ""
+msgstr "مارس"
 
 #: env2/Lib/site-packages/django/utils/dates.py:70
 msgctxt "alt. month"
 msgid "April"
-msgstr ""
+msgstr "آوریل"
 
 #: env2/Lib/site-packages/django/utils/dates.py:71
 msgctxt "alt. month"
 msgid "May"
-msgstr ""
+msgstr "مه"
 
 #: env2/Lib/site-packages/django/utils/dates.py:72
 msgctxt "alt. month"
 msgid "June"
-msgstr ""
+msgstr "ژوئن"
 
 #: env2/Lib/site-packages/django/utils/dates.py:73
 msgctxt "alt. month"
 msgid "July"
-msgstr ""
+msgstr "جولای"
 
 #: env2/Lib/site-packages/django/utils/dates.py:74
 msgctxt "alt. month"
 msgid "August"
-msgstr ""
+msgstr "اوت"
 
 #: env2/Lib/site-packages/django/utils/dates.py:75
 msgctxt "alt. month"
 msgid "September"
-msgstr ""
+msgstr "سپتامبر"
 
 #: env2/Lib/site-packages/django/utils/dates.py:76
 msgctxt "alt. month"
 msgid "October"
-msgstr ""
+msgstr "اکتبر"
 
 #: env2/Lib/site-packages/django/utils/dates.py:77
 msgctxt "alt. month"
 msgid "November"
-msgstr ""
+msgstr "نوامبر"
 
 #: env2/Lib/site-packages/django/utils/dates.py:78
 msgctxt "alt. month"
 msgid "December"
-msgstr ""
+msgstr "دسامبر"
 
 #: env2/Lib/site-packages/django/utils/ipv6.py:20
 msgid "This is not a valid IPv6 address."
-msgstr ""
+msgstr "این آدرس IPv6 معتبر نیست."
 
 #: env2/Lib/site-packages/django/utils/text.py:76
 #, python-format
 msgctxt "String to return when truncating text"
 msgid "%(truncated_text)s…"
-msgstr ""
+msgstr "%(truncated_text)s…"
 
 #: env2/Lib/site-packages/django/utils/text.py:287
 msgid "or"
-msgstr ""
+msgstr "یا"
 
 #. Translators: This string is used as a separator between list elements
 #: env2/Lib/site-packages/django/utils/text.py:306
 #: env2/Lib/site-packages/django/utils/timesince.py:135
 msgid ", "
-msgstr ""
+msgstr "، "
 
 #: env2/Lib/site-packages/django/utils/timesince.py:8
 #, python-format
 msgid "%(num)d year"
 msgid_plural "%(num)d years"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(num)d سال"
+msgstr[1] "%(num)d سال"
 
 #: env2/Lib/site-packages/django/utils/timesince.py:9
 #, python-format
 msgid "%(num)d month"
 msgid_plural "%(num)d months"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(num)d ماه"
+msgstr[1] "%(num)d ماه"
 
 #: env2/Lib/site-packages/django/utils/timesince.py:10
 #, python-format
 msgid "%(num)d week"
 msgid_plural "%(num)d weeks"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(num)d هفته"
+msgstr[1] "%(num)d هفته"
 
 #: env2/Lib/site-packages/django/utils/timesince.py:11
 #, python-format
 msgid "%(num)d day"
 msgid_plural "%(num)d days"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(num)d روز"
+msgstr[1] "%(num)d روز"
 
 #: env2/Lib/site-packages/django/utils/timesince.py:12
 #, python-format
 msgid "%(num)d hour"
 msgid_plural "%(num)d hours"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(num)d ساعت"
+msgstr[1] "%(num)d ساعت"
 
 #: env2/Lib/site-packages/django/utils/timesince.py:13
 #, python-format
 msgid "%(num)d minute"
 msgid_plural "%(num)d minutes"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(num)d دقیقه"
+msgstr[1] "%(num)d دقیقه"
 
 #: env2/Lib/site-packages/django/views/csrf.py:29
 msgid "Forbidden"
-msgstr ""
+msgstr "ممنوع"
 
 #: env2/Lib/site-packages/django/views/csrf.py:30
 msgid "CSRF verification failed. Request aborted."
-msgstr ""
+msgstr "تأیید CSRF ناموفق بود. درخواست لغو شد."
 
 #: env2/Lib/site-packages/django/views/csrf.py:34
 msgid ""
@@ -1434,6 +1462,7 @@ msgid ""
 "required for security reasons, to ensure that your browser is not being "
 "hijacked by third parties."
 msgstr ""
+"شما این پیام را می‌بینید زیرا این سایت HTTPS به هدر “Referer” نیاز دارد که توسط مرورگر وب شما ارسال شود، اما هیچ‌کدام ارسال نشده است. این هدر برای دلایل امنیتی الزامی است تا اطمینان حاصل شود که مرورگر شما توسط اشخاص ثالث ربوده نشده است."
 
 #: env2/Lib/site-packages/django/views/csrf.py:40
 msgid ""
@@ -1441,6 +1470,7 @@ msgid ""
 "enable them, at least for this site, or for HTTPS connections, or for “same-"
 "origin” requests."
 msgstr ""
+"اگر مرورگر خود را برای غیرفعال کردن هدرهای “Referer” پیکربندی کرده‌اید، لطفاً آن‌ها را دوباره فعال کنید، حداقل برای این سایت، یا برای اتصالات HTTPS، یا برای درخواست‌های “same-origin”."
 
 #: env2/Lib/site-packages/django/views/csrf.py:45
 msgid ""
@@ -1450,6 +1480,7 @@ msgid ""
 "If you’re concerned about privacy, use alternatives like <a "
 "rel=\"noreferrer\" …> for links to third-party sites."
 msgstr ""
+"اگر از تگ <meta name=\"referrer\" content=\"no-referrer\"> استفاده می‌کنید یا هدر “Referrer-Policy: no-referrer” را شامل می‌شوید، لطفاً آن‌ها را حذف کنید. حفاظت CSRF به هدر “Referer” برای بررسی دقیق referer نیاز دارد. اگر نگران حریم خصوصی هستید، از جایگزین‌هایی مانند <a rel=\"noreferrer\" …> برای لینک‌ها به سایت‌های ثالث استفاده کنید."
 
 #: env2/Lib/site-packages/django/views/csrf.py:54
 msgid ""
@@ -1457,44 +1488,46 @@ msgid ""
 "submitting forms. This cookie is required for security reasons, to ensure "
 "that your browser is not being hijacked by third parties."
 msgstr ""
+"شما این پیام را می‌بینید زیرا این سایت هنگام ارسال فرم‌ها به کوکی CSRF نیاز دارد. این کوکی برای دلایل امنیتی الزامی است تا اطمینان حاصل شود که مرورگر شما توسط اشخاص ثالث ربوده نشده است."
 
 #: env2/Lib/site-packages/django/views/csrf.py:60
 msgid ""
 "If you have configured your browser to disable cookies, please re-enable "
 "them, at least for this site, or for “same-origin” requests."
 msgstr ""
+"اگر مرورگر خود را برای غیرفعال کردن کوکی‌ها پیکربندی کرده‌اید، لطفاً آن‌ها را دوباره فعال کنید، حداقل برای این سایت، یا برای درخواست‌های “same-origin”."
 
 #: env2/Lib/site-packages/django/views/csrf.py:66
 msgid "More information is available with DEBUG=True."
-msgstr ""
+msgstr "اطلاعات بیشتر با DEBUG=True در دسترس است."
 
 #: env2/Lib/site-packages/django/views/generic/dates.py:44
 msgid "No year specified"
-msgstr ""
+msgstr "سال مشخص نشده"
 
 #: env2/Lib/site-packages/django/views/generic/dates.py:64
 #: env2/Lib/site-packages/django/views/generic/dates.py:115
 #: env2/Lib/site-packages/django/views/generic/dates.py:214
 msgid "Date out of range"
-msgstr ""
+msgstr "تاریخ خارج از محدوده"
 
 #: env2/Lib/site-packages/django/views/generic/dates.py:94
 msgid "No month specified"
-msgstr ""
+msgstr "ماه مشخص نشده"
 
 #: env2/Lib/site-packages/django/views/generic/dates.py:147
 msgid "No day specified"
-msgstr ""
+msgstr "روز مشخص نشده"
 
 #: env2/Lib/site-packages/django/views/generic/dates.py:194
 msgid "No week specified"
-msgstr ""
+msgstr "هفته مشخص نشده"
 
 #: env2/Lib/site-packages/django/views/generic/dates.py:353
 #: env2/Lib/site-packages/django/views/generic/dates.py:384
 #, python-format
 msgid "No %(verbose_name_plural)s available"
-msgstr ""
+msgstr "هیچ %(verbose_name_plural)s در دسترس نیست"
 
 #: env2/Lib/site-packages/django/views/generic/dates.py:680
 #, python-format
@@ -1502,51 +1535,52 @@ msgid ""
 "Future %(verbose_name_plural)s not available because %(class_name)s."
 "allow_future is False."
 msgstr ""
+"%(verbose_name_plural)s آینده در دسترس نیست زیرا %(class_name)s.allow_future False است."
 
 #: env2/Lib/site-packages/django/views/generic/dates.py:720
 #, python-format
 msgid "Invalid date string “%(datestr)s” given format “%(format)s”"
-msgstr ""
+msgstr "رشته تاریخ نامعتبر “%(datestr)s” با فرمت “%(format)s” داده شده"
 
 #: env2/Lib/site-packages/django/views/generic/detail.py:56
 #, python-format
 msgid "No %(verbose_name)s found matching the query"
-msgstr ""
+msgstr "هیچ %(verbose_name)s مطابق با پرس‌وجو یافت نشد"
 
 #: env2/Lib/site-packages/django/views/generic/list.py:70
 msgid "Page is not “last”, nor can it be converted to an int."
-msgstr ""
+msgstr "صفحه “last” نیست و نمی‌توان آن را به int تبدیل کرد."
 
 #: env2/Lib/site-packages/django/views/generic/list.py:77
 #, python-format
 msgid "Invalid page (%(page_number)s): %(message)s"
-msgstr ""
+msgstr "صفحه نامعتبر (%(page_number)s): %(message)s"
 
 #: env2/Lib/site-packages/django/views/generic/list.py:173
 #, python-format
 msgid "Empty list and “%(class_name)s.allow_empty” is False."
-msgstr ""
+msgstr "لیست خالی و “%(class_name)s.allow_empty” False است."
 
 #: env2/Lib/site-packages/django/views/static.py:49
 msgid "Directory indexes are not allowed here."
-msgstr ""
+msgstr "فهرست‌های پوشه در اینجا مجاز نیستند."
 
 #: env2/Lib/site-packages/django/views/static.py:51
 #, python-format
 msgid "“%(path)s” does not exist"
-msgstr ""
+msgstr "“%(path)s” وجود ندارد"
 
 #: env2/Lib/site-packages/django/views/static.py:68
 #: env2/Lib/site-packages/django/views/templates/directory_index.html:8
 #: env2/Lib/site-packages/django/views/templates/directory_index.html:11
 #, python-format
 msgid "Index of %(directory)s"
-msgstr ""
+msgstr "فهرست %(directory)s"
 
 #: env2/Lib/site-packages/django/views/templates/default_urlconf.html:7
 #: env2/Lib/site-packages/django/views/templates/default_urlconf.html:204
 msgid "The install worked successfully! Congratulations!"
-msgstr ""
+msgstr "نصب با موفقیت انجام شد! تبریک!"
 
 #: env2/Lib/site-packages/django/views/templates/default_urlconf.html:206
 #, python-format
@@ -1554,6 +1588,8 @@ msgid ""
 "View <a href=\"https://docs.djangoproject.com/en/%(version)s/releases/\" "
 "target=\"_blank\" rel=\"noopener\">release notes</a> for Django %(version)s"
 msgstr ""
+"مشاهده <a href=\"https://docs.djangoproject.com/en/%(version)s/releases/\" "
+"target=\"_blank\" rel=\"noopener\">یادداشت‌های انتشار</a> برای Django %(version)s"
 
 #: env2/Lib/site-packages/django/views/templates/default_urlconf.html:208
 #, python-format
@@ -1563,74 +1599,77 @@ msgid ""
 "rel=\"noopener\">DEBUG=True</a> is in your settings file and you have not "
 "configured any URLs."
 msgstr ""
+"شما این صفحه را می‌بینید زیرا <a href=\"https://docs.djangoproject.com/en/"
+"%(version)s/ref/settings/#debug\" target=\"_blank\" "
+"rel=\"noopener\">DEBUG=True</a> در فایل تنظیمات شما است و هیچ URLی پیکربندی نکرده‌اید."
 
 #: env2/Lib/site-packages/django/views/templates/default_urlconf.html:217
 msgid "Django Documentation"
-msgstr ""
+msgstr "مستندات Django"
 
 #: env2/Lib/site-packages/django/views/templates/default_urlconf.html:218
 msgid "Topics, references, &amp; how-to’s"
-msgstr ""
+msgstr "موضوعات، مراجع و نحوه‌ها"
 
 #: env2/Lib/site-packages/django/views/templates/default_urlconf.html:226
 msgid "Tutorial: A Polling App"
-msgstr ""
+msgstr "آموزش: یک اپلیکیشن نظرسنجی"
 
 #: env2/Lib/site-packages/django/views/templates/default_urlconf.html:227
 msgid "Get started with Django"
-msgstr ""
+msgstr "شروع کار با Django"
 
 #: env2/Lib/site-packages/django/views/templates/default_urlconf.html:235
 msgid "Django Community"
-msgstr ""
+msgstr "جامعه Django"
 
 #: env2/Lib/site-packages/django/views/templates/default_urlconf.html:236
 msgid "Connect, get help, or contribute"
-msgstr ""
+msgstr "اتصال، دریافت کمک یا مشارکت"
 
 #: env2/Lib/site-packages/httplib2/__init__.py:406
 #, python-format
 msgid "Content purported to be compressed with %s but failed to decompress."
-msgstr ""
+msgstr "محتوا ادعا می‌کند با %s فشرده شده اما فشرده‌سازی ناموفق بود."
 
 #: env2/Lib/site-packages/httplib2/__init__.py:570
 #, python-format
 msgid "Unsupported value for qop: %s."
-msgstr ""
+msgstr "مقدار پشتیبانی‌نشده برای qop: %s."
 
 #: env2/Lib/site-packages/httplib2/__init__.py:574
 #: env2/Lib/site-packages/httplib2/__init__.py:652
 #, python-format
 msgid "Unsupported value for algorithm: %s."
-msgstr ""
+msgstr "مقدار پشتیبانی‌نشده برای الگوریتم: %s."
 
 #: env2/Lib/site-packages/httplib2/__init__.py:647
 msgid "The challenge doesn't contain a server nonce, or this one is empty."
-msgstr ""
+msgstr "چالش nonce سرور را شامل نمی‌شود یا خالی است."
 
 #: env2/Lib/site-packages/httplib2/__init__.py:657
 #, python-format
 msgid "Unsupported value for pw-algorithm: %s."
-msgstr ""
+msgstr "مقدار پشتیبانی‌نشده برای pw-algorithm: %s."
 
 #: env2/Lib/site-packages/httplib2/__init__.py:1466
 msgid "Redirected but the response is missing a Location: header."
-msgstr ""
+msgstr "هدایت شد اما پاسخ هدر Location را ندارد."
 
 #: env2/Lib/site-packages/kombu/transport/qpid.py:1311
 #, python-format
 msgid "Attempting to connect to qpid with SASL mechanism %s"
-msgstr ""
+msgstr "تلاش برای اتصال به qpid با مکانیسم SASL %s"
 
 #: env2/Lib/site-packages/kombu/transport/qpid.py:1316
 #, python-format
 msgid "Connected to qpid with SASL mechanism %s"
-msgstr ""
+msgstr "اتصال به qpid با مکانیسم SASL %s برقرار شد"
 
 #: env2/Lib/site-packages/kombu/transport/qpid.py:1334
 #, python-format
 msgid "Unable to connect to qpid with SASL mechanism %s"
-msgstr ""
+msgstr "نمی‌توان به qpid با مکانیسم SASL %s متصل شد"
 
 #: env2/Lib/site-packages/nested_admin/nested.py:172
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/grappelli_stacked.html:93
@@ -1641,18 +1680,18 @@ msgstr ""
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/tabular.html:125
 #, python-format
 msgid "Add another %(verbose_name)s"
-msgstr ""
+msgstr "افزودن %(verbose_name)s دیگر"
 
 #: env2/Lib/site-packages/nested_admin/nested.py:176
 #: templates/account/email.html:50
 msgid "Remove"
-msgstr ""
+msgstr "حذف"
 
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/includes/grappelli_inline_tabular.html:38
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/grappelli_stacked.html:50
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/polymorphic_grappelli_stacked.html:44
 msgid "Move Item"
-msgstr ""
+msgstr "انتقال آیتم"
 
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/includes/grappelli_inline_tabular.html:45
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/includes/grappelli_inline_tabular.html:52
@@ -1661,17 +1700,17 @@ msgstr ""
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/polymorphic_grappelli_stacked.html:51
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/polymorphic_grappelli_stacked.html:55
 msgid "Delete Item"
-msgstr ""
+msgstr "حذف آیتم"
 
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/grappelli_stacked.html:15
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/polymorphic_grappelli_stacked.html:14
 msgid "Open All Items"
-msgstr ""
+msgstr "باز کردن همه آیتم‌ها"
 
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/grappelli_stacked.html:16
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/polymorphic_grappelli_stacked.html:15
 msgid "Close All Items"
-msgstr ""
+msgstr "بستن همه آیتم‌ها"
 
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/grappelli_stacked.html:17
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/grappelli_stacked.html:97
@@ -1679,7 +1718,7 @@ msgstr ""
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/polymorphic_grappelli_stacked.html:16
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/polymorphic_grappelli_stacked.html:94
 msgid "Add Item"
-msgstr ""
+msgstr "افزودن آیتم"
 
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/grappelli_stacked.html:46
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/polymorphic_grappelli_stacked.html:40
@@ -1687,28 +1726,28 @@ msgstr ""
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/stacked.html:38
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/tabular.html:64
 msgid "View on site"
-msgstr ""
+msgstr "مشاهده در سایت"
 
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/grappelli_tabular.html:17
 msgid "Add Another"
-msgstr ""
+msgstr "افزودن دیگری"
 
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/stacked.html:36
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/tabular.html:62
 msgid "View"
-msgstr ""
+msgstr "مشاهده"
 
 #: env2/Lib/site-packages/nested_admin/templates/nesting/admin/inlines/tabular.html:36
 msgid "Delete?"
-msgstr ""
+msgstr "حذف؟"
 
 #: templates/account/account_inactive.html:19
 msgid "Account Inactive"
-msgstr ""
+msgstr "حساب غیرفعال"
 
 #: templates/account/account_inactive.html:20
 msgid "This account is inactive."
-msgstr ""
+msgstr "این حساب غیرفعال است."
 
 #: templates/account/account_inactive.html:21
 #: templates/account/verification_sent.html:12
@@ -1718,45 +1757,46 @@ msgid ""
 "your main inbox, check your spam folder. Please contact us if you do not "
 "receive the verification email within a few minutes."
 msgstr ""
+"ما ایمیلی برای تأیید به شما ارسال کرده‌ایم. لینک ارائه‌شده را دنبال کنید تا فرآیند ثبت‌نام را نهایی کنید. اگر ایمیل تأیید را در صندوق ورودی اصلی خود نمی‌بینید، پوشه اسپم را بررسی کنید. اگر ایمیل تأیید را در چند دقیقه دریافت نکردید، با ما تماس بگیرید."
 
 #: templates/account/base_confirm_code.html:31
 msgid "Submit"
-msgstr ""
+msgstr "ارسال"
 
 #: templates/account/base_reauthenticate.html:5
 #: templates/account/base_reauthenticate.html:9
 msgid "Confirm Access"
-msgstr ""
+msgstr "تأیید دسترسی"
 
 #: templates/account/base_reauthenticate.html:12
 msgid "Please reauthenticate to safeguard your account."
-msgstr ""
+msgstr "لطفاً برای حفاظت از حساب خود دوباره احراز هویت کنید."
 
 #: templates/account/base_reauthenticate.html:19
 msgid "Alternative options"
-msgstr ""
+msgstr "گزینه‌های جایگزین"
 
 #: templates/account/confirm_email_verification_code.html:5
 msgid "Email Verification"
-msgstr ""
+msgstr "تأیید ایمیل"
 
 #: templates/account/confirm_email_verification_code.html:8
 msgid "Enter Email Verification Code"
-msgstr ""
+msgstr "کد تأیید ایمیل را وارد کنید"
 
 #: templates/account/confirm_email_verification_code.html:16
 msgid "Use a different email address"
-msgstr ""
+msgstr "از آدرس ایمیل متفاوت استفاده کنید"
 
 #: templates/account/confirm_login_code.html:5
 #: templates/account/request_login_code.html:5
 #: templates/socialaccount/login.html:4 templates/socialaccount/login.html:11
 msgid "Sign In"
-msgstr ""
+msgstr "ورود"
 
 #: templates/account/confirm_login_code.html:8
 msgid "Enter Sign-In Code"
-msgstr ""
+msgstr "کد ورود را وارد کنید"
 
 #: templates/account/confirm_password_reset_code.html:5
 #: templates/account/email/password_reset_subject.txt:3
@@ -1767,64 +1807,64 @@ msgstr ""
 #: templates/account/password_reset_key_subject.html:4
 #: templates/account/password_reset_key_subject.html:12
 msgid "Password Reset"
-msgstr ""
+msgstr "بازنشانی رمز عبور"
 
 #: templates/account/confirm_password_reset_code.html:8
 msgid "Enter Password Reset Code"
-msgstr ""
+msgstr "کد بازنشانی رمز عبور را وارد کنید"
 
 #: templates/account/confirm_phone_verification_code.html:5
 msgid "Phone Verification"
-msgstr ""
+msgstr "تأیید تلفن"
 
 #: templates/account/confirm_phone_verification_code.html:8
 msgid "Enter Phone Verification Code"
-msgstr ""
+msgstr "کد تأیید تلفن را وارد کنید"
 
 #: templates/account/confirm_phone_verification_code.html:15
 msgid "Use a different phone number"
-msgstr ""
+msgstr "از شماره تلفن متفاوت استفاده کنید"
 
 #: templates/account/email.html:4 templates/account/email.html:8
 msgid "Email Addresses"
-msgstr ""
+msgstr "آدرس‌های ایمیل"
 
 #: templates/account/email.html:12
 msgid "The following email addresses are associated with your account:"
-msgstr ""
+msgstr "آدرس‌های ایمیل زیر با حساب شما مرتبط هستند:"
 
 #: templates/account/email.html:25
 msgid "Verified"
-msgstr ""
+msgstr "تأییدشده"
 
 #: templates/account/email.html:29
 msgid "Unverified"
-msgstr ""
+msgstr "تأییدنشده"
 
 #: templates/account/email.html:34
 msgid "Primary"
-msgstr ""
+msgstr "اصلی"
 
 #: templates/account/email.html:44
 msgid "Make Primary"
-msgstr ""
+msgstr "اصلی کردن"
 
 #: templates/account/email.html:47 templates/account/email_change.html:37
 #: templates/account/phone_change.html:24
 msgid "Re-send Verification"
-msgstr ""
+msgstr "ارسال مجدد تأیید"
 
 #: templates/account/email.html:59
 msgid "Add Email Address"
-msgstr ""
+msgstr "افزودن آدرس ایمیل"
 
 #: templates/account/email.html:70
 msgid "Add Email"
-msgstr ""
+msgstr "افزودن ایمیل"
 
 #: templates/account/email.html:80
 msgid "Do you really want to remove the selected email address?"
-msgstr ""
+msgstr "آیا واقعاً می‌خواهید آدرس ایمیل انتخاب‌شده را حذف کنید؟"
 
 #: templates/account/email/account_already_exists_message.txt:4
 #, python-format
@@ -1843,15 +1883,27 @@ msgid ""
 "\n"
 "%(password_reset_url)s"
 msgstr ""
+"شما این ایمیل را دریافت می‌کنید زیرا شما یا شخص دیگری سعی در ثبت‌نام برای "
+"حسابی با آدرس ایمیل:\n"
+"\n"
+"%(email)s\n"
+"\n"
+"کرده‌اید.\n"
+"\n"
+"با این حال، حسابی با آن آدرس ایمیل قبلاً وجود دارد. در صورتی که "
+"فراموش کرده‌اید، لطفاً از روش فراموشی رمز عبور برای بازیابی "
+"حساب خود استفاده کنید:\n"
+"\n"
+"%(password_reset_url)s"
 
 #: templates/account/email/account_already_exists_subject.txt:3
 msgid "Account Already Exists"
-msgstr ""
+msgstr "حساب قبلاً وجود دارد"
 
 #: templates/account/email/base_message.txt:1
 #, python-format
 msgid "Hello from %(site_name)s!"
-msgstr ""
+msgstr "سلام از %(site_name)s!"
 
 #: templates/account/email/base_message.txt:5
 #, python-format
@@ -1859,12 +1911,15 @@ msgid ""
 "Thank you for using %(site_name)s!\n"
 "%(site_domain)s"
 msgstr ""
+"از استفاده از %(site_name)s سپاسگزاریم!\n"
+"%(site_domain)s"
 
 #: templates/account/email/base_notification.txt:5
 msgid ""
 "You are receiving this mail because the following change was made to your "
 "account:"
 msgstr ""
+"شما این ایمیل را دریافت می‌کنید زیرا تغییر زیر در حساب شما انجام شده است:"
 
 #: templates/account/email/base_notification.txt:10
 #, python-format
@@ -1876,28 +1931,34 @@ msgid ""
 "- Browser: %(user_agent)s\n"
 "- Date: %(timestamp)s"
 msgstr ""
+"اگر این تغییر را نمی‌شناسید، لطفاً فوراً اقدامات امنیتی مناسب را انجام دهید. تغییر حساب شما از:\n"
+"\n"
+"- آدرس IP: %(ip)s\n"
+"- مرورگر: %(user_agent)s\n"
+"- تاریخ: %(timestamp)s\n"
+"منشأ می‌گیرد."
 
 #: templates/account/email/email_changed_message.txt:4
 #, python-format
 msgid "Your email has been changed from %(from_email)s to %(to_email)s."
-msgstr ""
+msgstr "ایمیل شما از %(from_email)s به %(to_email)s تغییر یافت."
 
 #: templates/account/email/email_changed_subject.txt:3
 msgid "Email Changed"
-msgstr ""
+msgstr "ایمیل تغییر یافت"
 
 #: templates/account/email/email_confirm_message.txt:4
 msgid "Your email has been confirmed."
-msgstr ""
+msgstr "ایمیل شما تأیید شد."
 
 #: templates/account/email/email_confirm_subject.txt:3
 msgid "Email Confirmation"
-msgstr ""
+msgstr "تأیید ایمیل"
 
 #: templates/account/email/email_confirmation_message.txt:6
 #: templates/account/email/email_confirmation_message.txt:13
 msgid "MiniTrello"
-msgstr ""
+msgstr "مینی‌ترلو"
 
 #: templates/account/email/email_confirmation_message.txt:6
 #, python-format
@@ -1905,6 +1966,7 @@ msgid ""
 "You're receiving this email because user %(user_display)s wanted to enable "
 "email authentication for their account at %(site_name)s."
 msgstr ""
+"شما این ایمیل را دریافت می‌کنید زیرا کاربر %(user_display)s می‌خواست احراز هویت ایمیل را برای حساب خود در %(site_name)s فعال کند."
 
 #: templates/account/email/email_confirmation_message.txt:8
 #, python-format
@@ -1913,6 +1975,8 @@ msgid ""
 "authentication for your account:\n"
 "%(confirmation_url)s"
 msgstr ""
+"لطفاً به صفحه زیر در مرورگر خود بروید تا احراز هویت ایمیل را برای حساب خود فعال کنید:\n"
+"%(confirmation_url)s"
 
 #: templates/account/email/email_confirmation_message.txt:11
 #, python-format
@@ -1920,6 +1984,8 @@ msgid ""
 "If confirming the email address doesn't work, please contact us "
 "(%(contact_email)s)."
 msgstr ""
+"اگر تأیید آدرس ایمیل کار نکرد، لطفاً با ما تماس بگیرید "
+"(%(contact_email)s)."
 
 #: templates/account/email/email_confirmation_message.txt:13
 #, python-format
@@ -1927,57 +1993,61 @@ msgid ""
 "Sincerely,\n"
 "The %(site_name)s Team"
 msgstr ""
+"با احترام،\n"
+"تیم %(site_name)s"
 
 #: templates/account/email/email_confirmation_message.txt:16
 msgid "If you didn't request this, ignore this email."
-msgstr ""
+msgstr "اگر این را درخواست نکرده‌اید، این ایمیل را نادیده بگیرید."
 
 #: templates/account/email/email_confirmation_subject.txt:3
 msgid "Please Confirm Your Email Address"
-msgstr ""
+msgstr "لطفاً آدرس ایمیل خود را تأیید کنید"
 
 #: templates/account/email/email_deleted_message.txt:4
 #, python-format
 msgid "Email address %(deleted_email)s has been removed from your account."
-msgstr ""
+msgstr "آدرس ایمیل %(deleted_email)s از حساب شما حذف شد."
 
 #: templates/account/email/email_deleted_subject.txt:3
 msgid "Email Removed"
-msgstr ""
+msgstr "ایمیل حذف شد"
 
 #: templates/account/email/login_code_message.txt:5
 msgid ""
 "Your sign-in code is listed below. Please enter it in your open browser "
 "window."
 msgstr ""
+"کد ورود شما در زیر فهرست شده است. لطفاً آن را در پنجره مرورگر باز خود وارد کنید."
 
 #: templates/account/email/login_code_message.txt:9
 #: templates/account/email/password_reset_code_message.txt:9
 #: templates/account/email/unknown_account_message.txt:6
 msgid "This mail can be safely ignored if you did not initiate this action."
-msgstr ""
+msgstr "اگر این عمل را شروع نکرده‌اید، می‌توانید این ایمیل را با خیال راحت نادیده بگیرید."
 
 #: templates/account/email/login_code_subject.txt:3
 msgid "Sign-In Code"
-msgstr ""
+msgstr "کد ورود"
 
 #: templates/account/email/password_changed_message.txt:4
 msgid "Your password has been changed."
-msgstr ""
+msgstr "رمز عبور شما تغییر یافت."
 
 #: templates/account/email/password_changed_subject.txt:3
 msgid "Password Changed"
-msgstr ""
+msgstr "رمز عبور تغییر یافت"
 
 #: templates/account/email/password_reset_code_message.txt:5
 msgid ""
 "Your password reset code is listed below. Please enter it in your open "
 "browser window."
 msgstr ""
+"کد بازنشانی رمز عبور شما در زیر فهرست شده است. لطفاً آن را در پنجره مرورگر باز خود وارد کنید."
 
 #: templates/account/email/password_reset_code_subject.txt:3
 msgid "Password Reset Code"
-msgstr ""
+msgstr "کد بازنشانی رمز عبور"
 
 #: templates/account/email/password_reset_key_message.txt:4
 msgid ""
@@ -1986,27 +2056,29 @@ msgid ""
 "It can be safely ignored if you did not request a password reset. Click the "
 "link below to reset your password."
 msgstr ""
+"شما این ایمیل را دریافت می‌کنید زیرا شما یا شخص دیگری درخواست بازنشانی رمز عبور برای حساب کاربری خود کرده‌اید.\n"
+"اگر درخواست بازنشانی رمز عبور نکرده‌اید، می‌توانید آن را با خیال راحت نادیده بگیرید. برای بازنشانی رمز عبور روی لینک زیر کلیک کنید."
 
 #: templates/account/email/password_reset_key_message.txt:9
 #, python-format
 msgid "In case you forgot, your username is %(username)s."
-msgstr ""
+msgstr "در صورتی که فراموش کرده‌اید، نام کاربری شما %(username)s است."
 
 #: templates/account/email/password_reset_key_subject.txt:3
 msgid "Password Reset Email"
-msgstr ""
+msgstr "ایمیل بازنشانی رمز عبور"
 
 #: templates/account/email/password_reset_message.txt:4
 msgid "Your password has been reset."
-msgstr ""
+msgstr "رمز عبور شما بازنشانی شد."
 
 #: templates/account/email/password_set_message.txt:4
 msgid "Your password has been set."
-msgstr ""
+msgstr "رمز عبور شما تنظیم شد."
 
 #: templates/account/email/password_set_subject.txt:3
 msgid "Password Set"
-msgstr ""
+msgstr "رمز عبور تنظیم شد"
 
 #: templates/account/email/unknown_account_message.txt:4
 #, python-format
@@ -2015,49 +2087,52 @@ msgid ""
 "an account with email %(email)s. However, we do not have any record of such "
 "an account in our database."
 msgstr ""
+"شما این ایمیل را دریافت می‌کنید زیرا شما یا شخص دیگری سعی در دسترسی به "
+"حسابی با ایمیل %(email)s کرده‌اید. با این حال، ما هیچ سابقه‌ای از چنین "
+"حسابی در پایگاه داده خود نداریم."
 
 #: templates/account/email/unknown_account_message.txt:8
 msgid "If it was you, you can sign up for an account using the link below."
-msgstr ""
+msgstr "اگر شما بودید، می‌توانید با استفاده از لینک زیر برای حساب ثبت‌نام کنید."
 
 #: templates/account/email/unknown_account_subject.txt:3
 msgid "Unknown Account"
-msgstr ""
+msgstr "حساب ناشناخته"
 
 #: templates/account/email_change.html:5 templates/account/email_change.html:9
 msgid "Email Address"
-msgstr ""
+msgstr "آدرس ایمیل"
 
 #: templates/account/email_change.html:21
 #: templates/account/email_change.html:29
 msgid "Current email"
-msgstr ""
+msgstr "ایمیل فعلی"
 
 #: templates/account/email_change.html:31
 msgid "Changing to"
-msgstr ""
+msgstr "تغییر به"
 
 #: templates/account/email_change.html:35
 msgid "Your email address is still pending verification."
-msgstr ""
+msgstr "آدرس ایمیل شما هنوز در انتظار تأیید است."
 
 #: templates/account/email_change.html:41
 msgid "Cancel Change"
-msgstr ""
+msgstr "لغو تغییر"
 
 #: templates/account/email_change.html:49
 #: templates/account/phone_change.html:32
 msgid "Change to"
-msgstr ""
+msgstr "تغییر به"
 
 #: templates/account/email_change.html:55
 msgid "Change Email"
-msgstr ""
+msgstr "تغییر ایمیل"
 
 #: templates/account/email_confirm.html:6
 #: templates/account/email_confirm.html:10
 msgid "Confirm Email Address"
-msgstr ""
+msgstr "تأیید آدرس ایمیل"
 
 #: templates/account/email_confirm.html:16
 #, python-format
@@ -2065,11 +2140,12 @@ msgid ""
 "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an email "
 "address for user %(user_display)s."
 msgstr ""
+"لطفاً تأیید کنید که <a href=\"mailto:%(email)s\">%(email)s</a> آدرس ایمیل برای کاربر %(user_display)s است."
 
 #: templates/account/email_confirm.html:24
 #: templates/account/reauthenticate.html:18
 msgid "Confirm"
-msgstr ""
+msgstr "تأیید"
 
 #: templates/account/email_confirm.html:30
 #, python-format
@@ -2077,6 +2153,7 @@ msgid ""
 "Unable to confirm %(email)s because it is already confirmed by a different "
 "account."
 msgstr ""
+"نمی‌توان %(email)s را تأیید کرد زیرا قبلاً توسط حساب دیگری تأیید شده است."
 
 #: templates/account/email_confirm.html:36
 #, python-format
@@ -2084,6 +2161,8 @@ msgid ""
 "This email confirmation link expired or is invalid. Please <a "
 "href=\"%(email_url)s\">issue a new email confirmation request</a>."
 msgstr ""
+"لینک تأیید ایمیل منقضی شده یا نامعتبر است. لطفاً <a "
+"href=\"%(email_url)s\">درخواست تأیید ایمیل جدید صادر کنید</a>."
 
 #: templates/account/password_change.html:4
 #: templates/account/password_change.html:8
@@ -2094,35 +2173,37 @@ msgstr ""
 #: templates/account/password_reset_from_key_done.html:5
 #: templates/account/password_reset_from_key_done.html:9
 msgid "Change Password"
-msgstr ""
+msgstr "تغییر رمز عبور"
 
 #: templates/account/password_change.html:22
 msgid "Forgot Password?"
-msgstr ""
+msgstr "رمز عبور را فراموش کرده‌اید؟"
 
 #: templates/account/password_reset.html:18
 #: templates/account/password_reset_key_subject.html:18
 msgid ""
 "Forgot your password? Enter your email address to receive a recovery link."
 msgstr ""
+"رمز عبور را فراموش کرده‌اید؟ آدرس ایمیل خود را وارد کنید تا لینک بازیابی دریافت کنید."
 
 #: templates/account/password_reset.html:38
 msgid "Reset My Password"
-msgstr ""
+msgstr "بازنشانی رمز عبور من"
 
 #: templates/account/password_reset.html:43
 msgid "Back to Login Page"
-msgstr ""
+msgstr "بازگشت به صفحه ورود"
 
 #: templates/account/password_reset_done.html:16
 msgid ""
 "We have sent you an email. If you have not received it please check your "
 "spam folder. Otherwise contact us if you do not receive it in a few minutes."
 msgstr ""
+"ما ایمیلی به شما ارسال کرده‌ایم. اگر آن را دریافت نکرده‌اید لطفاً پوشه اسپم را بررسی کنید. در غیر این صورت اگر در چند دقیقه دریافت نکردید با ما تماس بگیرید."
 
 #: templates/account/password_reset_from_key.html:10
 msgid "Bad Token"
-msgstr ""
+msgstr "توکن بد"
 
 #: templates/account/password_reset_from_key.html:18
 #, python-format
@@ -2131,156 +2212,157 @@ msgid ""
 "used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
 "a>."
 msgstr ""
+"لینک بازنشانی رمز عبور نامعتبر بود، احتمالاً زیرا قبلاً استفاده شده است. لطفاً <a href=\"%(passwd_reset_url)s\">درخواست بازنشانی رمز عبور جدید</a> کنید."
 
 #: templates/account/password_reset_from_key.html:33
 msgid "Cancel"
-msgstr ""
+msgstr "لغو"
 
 #: templates/account/password_reset_from_key_done.html:12
 msgid "Your password is now changed."
-msgstr ""
+msgstr "رمز عبور شما اکنون تغییر یافت."
 
 #: templates/account/password_reset_key_subject.html:26
 msgid "Reset password"
-msgstr ""
+msgstr "بازنشانی رمز عبور"
 
 #: templates/account/password_set.html:5 templates/account/password_set.html:9
 #: templates/account/password_set.html:21
 msgid "Set Password"
-msgstr ""
+msgstr "تنظیم رمز عبور"
 
 #: templates/account/phone_change.html:5 templates/account/phone_change.html:9
 msgid "Change Phone"
-msgstr ""
+msgstr "تغییر تلفن"
 
 #: templates/account/phone_change.html:18
 msgid "Current phone"
-msgstr ""
+msgstr "تلفن فعلی"
 
 #: templates/account/phone_change.html:22
 msgid "Your phone number is still pending verification."
-msgstr ""
+msgstr "شماره تلفن شما هنوز در انتظار تأیید است."
 
 #: templates/account/phone_change.html:38
 msgctxt "action"
 msgid "Change Phone"
-msgstr ""
+msgstr "تغییر تلفن"
 
 #: templates/account/reauthenticate.html:6
 msgid "Enter your password:"
-msgstr ""
+msgstr "رمز عبور خود را وارد کنید:"
 
 #: templates/account/request_login_code.html:9
 msgid "Send me a sign-in code"
-msgstr ""
+msgstr "کد ورود برای من ارسال کنید"
 
 #: templates/account/request_login_code.html:12
 msgid "You will receive a special code for a password-free sign-in."
-msgstr ""
+msgstr "شما کد خاصی برای ورود بدون رمز عبور دریافت خواهید کرد."
 
 #: templates/account/request_login_code.html:24
 msgid "Request Code"
-msgstr ""
+msgstr "درخواست کد"
 
 #: templates/account/request_login_code.html:30
 msgid "Other sign-in options"
-msgstr ""
+msgstr "گزینه‌های ورود دیگر"
 
 #: templates/account/signup_by_passkey.html:4
 msgid "Signup"
-msgstr ""
+msgstr "ثبت‌نام"
 
 #: templates/account/signup_by_passkey.html:8
 msgid "Passkey Sign Up"
-msgstr ""
+msgstr "ثبت‌نام با کلید عبور"
 
 #: templates/account/signup_by_passkey.html:17
 #, python-format
 msgid "Already have an account? Then please %(link)ssign in%(end_link)s."
-msgstr ""
+msgstr "حساب دارید؟ پس لطفاً %(link)sوارد شوید%(end_link)s."
 
 #: templates/account/signup_by_passkey.html:29
 msgid "Sign Up"
-msgstr ""
+msgstr "ثبت‌نام"
 
 #: templates/account/signup_by_passkey.html:36
 msgid "Other options"
-msgstr ""
+msgstr "گزینه‌های دیگر"
 
 #: templates/account/signup_closed.html:5
 #: templates/account/signup_closed.html:9
 msgid "Sign Up Closed"
-msgstr ""
+msgstr "ثبت‌نام بسته"
 
 #: templates/account/signup_closed.html:12
 msgid "We are sorry, but the sign up is currently closed."
-msgstr ""
+msgstr "متأسفیم، اما ثبت‌نام در حال حاضر بسته است."
 
 #: templates/account/verification_sent.html:5
 #: templates/account/verification_sent.html:9
 msgid "Verify Your Email Address"
-msgstr ""
+msgstr "آدرس ایمیل خود را تأیید کنید"
 
 #: templates/base.html:34
 msgid "Home"
-msgstr ""
+msgstr "خانه"
 
 #: templates/base.html:38
 msgid "Profile"
-msgstr ""
+msgstr "پروفایل"
 
 #: templates/base.html:41
 msgid "Boards"
-msgstr ""
+msgstr "بردها"
 
 #: templates/base.html:66
 msgid "Logout"
-msgstr ""
+msgstr "خروج"
 
 #: templates/base.html:70
 msgid "Login"
-msgstr ""
+msgstr "ورود"
 
 #: templates/base.html:73
 msgid "Register"
-msgstr ""
+msgstr "ثبت‌نام"
 
 #: templates/base.html:100
 msgid "All rights reserved."
-msgstr ""
+msgstr "تمام حقوق محفوظ است."
 
 #: templates/base.html:103
 msgid "Terms of Service"
-msgstr ""
+msgstr "شرایط خدمات"
 
 #: templates/base.html:104
 msgid "Privacy Policy"
-msgstr ""
+msgstr "سیاست حریم خصوصی"
 
 #: templates/base.html:105
 msgid "Contact Us"
-msgstr ""
+msgstr "تماس با ما"
 
 #: templates/socialaccount/login.html:15
 #, python-format
 msgid "Connect %(provider)s"
-msgstr ""
+msgstr "اتصال %(provider)s"
 
 #: templates/socialaccount/login.html:16
 #, python-format
 msgid "You are about to connect a new third-party account from %(provider)s."
-msgstr ""
+msgstr "شما در حال اتصال حساب ثالث جدید از %(provider)s هستید."
 
 #: templates/socialaccount/login.html:18
 #, python-format
 msgid "Sign In Via %(provider)s"
-msgstr ""
+msgstr "ورود از طریق %(provider)s"
 
 #: templates/socialaccount/login.html:19
 #, python-format
 msgid "You are about to sign in using a third-party account from %(provider)s."
-msgstr ""
+msgstr "شما در حال ورود با استفاده از حساب ثالث از %(provider)s هستید."
 
 #: templates/socialaccount/login.html:24
 msgid "Continue"
-msgstr ""
+msgstr "ادامه"
