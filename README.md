@@ -111,6 +111,7 @@ The `.env` file is crucial for configuring the application. It must be created f
 | `DJANGO_SETTINGS_MODULE` | Sets the settings file. Use `config.development` or `config.production`. | `config.development` |
 | `SECRET_KEY` | Django's secret key. **Generate a new one for production.** | `a-very-long-and-random-secret-string`|
 | `DEBUG` | Django's debug mode. `True` for dev, **`False` for production.** | `True` |
+| `PREFERRED_DB` | Preferred database engine. Options: 'sqlite' (dev, file-based) or 'postgresql' (prod, requires DB vars). Defaults to 'sqlite' if unset. | `postgresql` |
 | `DB_NAME` | Name of the PostgreSQL database. | `minitrello` |
 | `DB_USER` | Username for the PostgreSQL database. | `postgres` |
 | `DB_PASSWORD` | Password for the PostgreSQL database. | `postgres` |
