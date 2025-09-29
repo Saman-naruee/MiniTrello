@@ -1,6 +1,7 @@
 from pathlib import Path
 from decouple import config
 from datetime import timedelta
+from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # We need to go up one more level since settings is now in 'config/'
@@ -44,6 +45,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     "django_htmx.middleware.HtmxMiddleware",
@@ -176,3 +178,24 @@ CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://redis:6
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+
+
+# --- INTERNATIONALIZATION ---
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True
+
+
+# Define the languages your site will support
+LANGUAGES = [
+    ('en', _('English')),
+    ('fa', _('Persian')),
+    # ('es', _('Spanish')), # Add more languages as needed
+]
+
+# Set the path where translation files will be stored
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]

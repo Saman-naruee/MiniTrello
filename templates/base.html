@@ -1,3 +1,4 @@
+{# /c:/Users/Sun/Desktop/projects/MiniTrello/templates/base.html #}
 {% load static i18n %}
 <!DOCTYPE html>
 <html lang="{{ LANGUAGE_CODE|default:"en" }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
@@ -45,15 +46,22 @@
                 <div class="d-flex align-items-center">
                     <!-- Language Selector -->
                     <div class="dropdown me-3">
-                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-globe me-1"></i>
-                            <span>{{ LANGUAGE_CODE|default:"en"|upper }}</span>
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-globe me-1"></i> <span>{{ request.LANGUAGE_CODE|upper }}</span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-                             <li><button class="dropdown-item" hx-post="{% url 'set_language' %}" hx-vals='{"language": "en"}' hx-on::after-request="window.location.reload()">English</button></li>
-                             <li><button class="dropdown-item" hx-post="{% url 'set_language' %}" hx-vals='{"language": "fa"}' hx-on::after-request="window.location.reload()">فارسی</button></li>
-                             <li><button class="dropdown-item" hx-post="{% url 'set_language' %}" hx-vals='{"language": "fr"}' hx-on::after-request="window.location.reload()">Français</button></li>
-                             <li><button class="dropdown-item" hx-post="{% url 'set_language' %}" hx-vals='{"language": "es"}' hx-on::after-request="window.location.reload()">Español</button></li>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            {% get_current_language as CURRENT_LANGUAGE %}
+                            {% get_available_languages as AVAILABLE_LANGUAGES %}
+                            {% for lang_code, lang_name in AVAILABLE_LANGUAGES %}
+                                <li>
+                                    <button class="dropdown-item" 
+                                            hx-post="{% url 'set_language' %}" 
+                                            hx-vals='{"language": "{{ lang_code }}"}' 
+                                            hx-on::after-request="window.location.reload()">
+                                        {{ lang_name }}
+                                    </button>
+                                </li>
+                            {% endfor %}
                         </ul>
                     </div>
                     

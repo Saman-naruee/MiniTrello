@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 {% load board_extras %}
-{% block title %}{{ board.title }} - MiniTrello{% endblock %}
+{% block title %}{{ board.title }} - {% trans "MiniTrello" %}{% endblock %}
 
 {% block extra_head %}
 <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -67,11 +68,11 @@
          @show-message.window="show = true; message = $event.detail.message; setTimeout(() => show = false, 4000)">
         <div x-show="show" x-transition class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header bg-success text-white">
-                <strong class="me-auto">Success</strong>
+                <strong class="me-auto">{% trans "Success" %}</strong>
                 <button type="button" class="btn-close btn-close-white" @click="show = false"></button>
             </div>
             <div class="toast-body" x-text="message">
-                Notification message.
+                {% trans "Notification message." %}
             </div>
         </div>
     </div>
@@ -80,23 +81,23 @@
     <div class="board-header p-3 mb-3" style="background: linear-gradient(135deg, {{ board.color }}20, {{ board.color }}40); border-bottom: 3px solid {{ board.color }};">
         <div class="d-flex justify-content-between align-items-center">
             <div>
-                <a href="{% url 'boards:boards_list' %}" class="btn btn-sm btn-outline-secondary mb-2">← Back to Boards</a>
+                <a href="{% url 'boards:boards_list' %}" class="btn btn-sm btn-outline-secondary mb-2">← {% trans "Back to Boards" %}</a>
                 <div id="board-title-section-{{ board.id }}">
                     {% include 'boards/partials/board_title_section.html' %}
                 </div>
             </div>
             <div class="d-flex gap-2">
-                <button class="btn btn-sm btn-light" hx-get="{% url 'boards:create_list' board_id=board.id %}" hx-target="#generic-modal-content" data-bs-toggle="modal" data-bs-target="#genericModal">+ Add List</button>
-                <a href="{% url 'invitations:send_invitation' board_id=board.id %}" class="btn btn-sm btn-success">+ Add Member</a>
-                <button class="btn btn-sm btn-warning" hx-get="{% url 'boards:update_board' board.id %}" hx-target="#generic-modal-content" data-bs-toggle="modal" data-bs-target="#genericModal">Update</button>
-                <button class="btn btn-sm btn-danger" hx-get="{% url 'boards:delete_board' board.id %}" hx-target="#generic-modal-content" data-bs-toggle="modal" data-bs-target="#genericModal">Delete</button>
+                <button class="btn btn-sm btn-light" hx-get="{% url 'boards:create_list' board_id=board.id %}" hx-target="#generic-modal-content" data-bs-toggle="modal" data-bs-target="#genericModal">{% trans "+ Add List" %}</button>
+                <a href="{% url 'invitations:send_invitation' board_id=board.id %}" class="btn btn-sm btn-success">{% trans "+ Add Member" %}</a>
+                <button class="btn btn-sm btn-warning" hx-get="{% url 'boards:update_board' board.id %}" hx-target="#generic-modal-content" data-bs-toggle="modal" data-bs-target="#genericModal">{% trans "Update" %}</button>
+                <button class="btn btn-sm btn-danger" hx-get="{% url 'boards:delete_board' board.id %}" hx-target="#generic-modal-content" data-bs-toggle="modal" data-bs-target="#genericModal">{% trans "Delete" %}</button>
                 {# ❗❗❗ CORE FIX: Add the "View Members" button here ❗❗❗ #}
                 <button class="btn btn-sm btn-info"
                         hx-get="{% url 'boards:board_members' board_id=board.id %}"
                         hx-target="#generic-modal-content"
                         data-bs-toggle="modal"
                         data-bs-target="#genericModal">
-                    View Members
+                    {% trans "View Members" %}
                 </button>
             </div>
         </div>
@@ -134,13 +135,13 @@
             {% include "boards/partials/list_column.html" with list=list board=board %}
         {% empty %}
             <div class="w-100 text-center py-5">
-                <h4 class="text-muted">No lists yet.</h4>
+                <h4 class="text-muted">{% trans "No lists yet." %}</h4>
                 <button class="btn btn-primary mt-3"
                         hx-get="{% url 'boards:create_list' board_id=board.id %}"
                         hx-target="#generic-modal-content"
                         data-bs-toggle="modal"
                         data-bs-target="#genericModal">
-                    Create your first list
+                    {% trans "Create your first list" %}
                 </button>
             </div>
         {% endfor %}
@@ -237,7 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-
 
 
 
