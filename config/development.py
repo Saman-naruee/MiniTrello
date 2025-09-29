@@ -1,8 +1,10 @@
 from .base import * # Import all base settings
+from decouple import config
+from custom_tools.logger import custom_logger as print
 
 # --- DEVELOPMENT-SPECIFIC SETTINGS ---
 
-DEBUG = False
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
 
