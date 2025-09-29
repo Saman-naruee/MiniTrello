@@ -55,7 +55,7 @@ CELERY_TASK_EAGER_PROPAGATES = True
 BASE_URL = os.environ.get('BASE_URL', 'http://localhost:8000')
 
 # Email for dev (console logging; override in .env for SMTP)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'config.email_backend.GoogleOauth2EmailBackend'
 
 # CORS settings for local frontend development (e.g., React on port 3000)
 CORS_ALLOWED_ORIGINS = [
