@@ -148,7 +148,7 @@ Both features use the same **OAuth 2.0 Client ID**. Follow these steps carefully
 4.  Under **"Authorized redirect URIs"**, add the following two URIs:
     *   `http://localhost:8000/accounts/google/login/callback/` (for Social Login)
     *   `http://localhost:8080` (for the token generation script)
-5.  Click **"Create"**. You will now see your **`Client ID`** and **`Client secret`**.
+5.  Click **"Create"**. You will now see your **`Client ID`** and **`Client secret`**, Also can download them as a JSON file.
 
 ### Step 4: Generate the Refresh Token (One-time step)
 To send emails on your behalf without you having to log in every time, the application needs a long-lived `refresh_token`.
