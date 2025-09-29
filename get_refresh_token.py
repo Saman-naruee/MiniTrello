@@ -19,7 +19,7 @@ def get_client_config():
             "token_uri": config('GOOGLE_TOKEN_URI'),
             "auth_provider_x509_cert_url": config('GOOGLE_AUTH_PROVIDER_X509_CERT_URL'),
             "client_secret": config('GOOGLE_OAUTH_CLIENT_SECRET'),
-            "redirect_uris": ["http://localhost:8000/", "http://localhost:8000"]
+            "redirect_uris": ["http://localhost:8080/", "http://localhost:8001/"]
         }
     }
 
@@ -34,7 +34,7 @@ def main():
 
     # Run the flow, which will open a browser window for you to log in
     # and authorize the application.
-    credentials = flow.run_local_server(port=8000)
+    credentials = flow.run_local_server(port=8080)
 
     # Print the refresh token to the console
     print("\n--- Your Refresh Token ---")
