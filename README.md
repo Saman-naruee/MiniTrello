@@ -2,54 +2,37 @@
 
 A Trello-inspired project management and collaboration tool built with Django and HTMX. It features real-time updates (soon), role-based permissions, and a modern, responsive interface.
 
-[![CI/CD](https://github.com/Saman-naruee/MiniTrello/workflows/ci.yml/badge.svg)](https://github.com/Saman-naruee/MiniTrello/actions)
-<!-- [![Test Coverage](https://img.shields.io/badge/coverage-90%25-brightgreen)](https://github.com/Saman-naruee/MiniTrello) -->
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Django CI/CD](https://github.com/Saman-naruee/MiniTrello/actions/workflows/ci.yml/badge.svg)](https://github.com/Saman-naruee/MiniTrello/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
-![MiniTrello Board View](./documents/board_main_detail_page.png)
+<!-- Add a compelling screenshot of the main board view here -->
+![MiniTrello Board View](./docs/board_main_detail_page.png)
 
 ## Key Features
 
-- Board, List, and Card Management (CRUD operations)
-- Drag & Drop functionality for moving cards between lists
-- Role-Based Access Control (Owner, Admin, Member, Viewer)
-- Email-based Invitation System for adding new members
-- Flexible User Authentication (Username and Email) powered by `django-allauth`
-- Production-Ready Setup with Docker and split settings
-- Comprehensive Test Suite (>100 tests)
-- CI/CD pipeline with GitHub Actions
+- **Board, List, and Card Management:** Full CRUD operations for organizing your projects.
+- **Drag & Drop:** Intuitively move cards between lists to update their status.
+- **Role-Based Access Control:** Granular permissions with Owner, Admin, Member, and Viewer roles.
+- **Email Invitation System:** Securely invite new members to collaborate on boards.
+- **Flexible User Authentication:** Sign up and log in with either a username or an email, powered by `django-allauth`.
+- **Production-Ready Setup:** A professional structure with Docker, split settings, and environment variables.
+- **Comprehensive Test Suite:** Over 130 tests ensuring code quality and stability.
+- **CI/CD Pipeline:** Automated testing with GitHub Actions for every change.
 
 ## Tech Stack
 
-### Backend
-- Python
-- Django
-- Django REST Framework
-
-### Frontend
-- HTML
-- CSS
-- JavaScript
-- HTMX
-- Bootstrap
-
-### Database
-- PostgreSQL
-
-### Asynchronous Tasks
-- Celery
-- Redis
-
-### Testing
-- Django's `unittest`
-- `factory-boy` (soon)
-
-### Deployment
-- Docker
-- Docker Compose
-- Gunicorn
+| Category | Technology |
+| :--- | :--- |
+| **Backend** | Python, Django, Django REST Framework, Gunicorn |
+| **Frontend** | HTML, CSS, JavaScript, HTMX, Bootstrap |
+| **Database** | PostgreSQL |
+| **Async Tasks** | Celery, Redis |
+| **Testing** | Django's `unittest` |
+| **Deployment** | Docker, Docker Compose |
 
 ## Getting Started
+
+You can set up the project using Docker (recommended for a quick and consistent setup) or by installing dependencies locally.
 
 ### Method 1: Docker (Recommended)
 
@@ -58,180 +41,160 @@ A Trello-inspired project management and collaboration tool built with Django an
 - Docker Compose
 
 #### Installation Steps
-1. Clone the repository:
-   ```
-   git clone https://github.com/Saman-naruee/MiniTrello.git
-   ```
-2. Navigate to the project directory:
-   ```
-   cd MiniTrello
-   ```
-3. Copy the environment file and edit it with your secrets:
-   ```
-   cp .env.example .env
-   ```
-   **Note:** You MUST edit `.env` with your actual values before proceeding.
-4. Build and start the services in the background:
-   ```
-   docker-compose up --build -d
-   ```
-5. Run database migrations:
-   ```
-   docker-compose exec backend python manage.py migrate
-   ```
-6. Create a superuser:
-   ```
-   docker-compose exec backend python manage.py createsuperuser
-   ```
-7. The application is now running at `http://localhost:8000`.
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/Saman-naruee/MiniTrello.git
+    cd MiniTrello
+    ```
+2.  **Create and configure the environment file:**
+    ```bash
+    cp .env.example .env
+    ```
+    **Important:** You MUST open the `.env` file and fill in your actual secret values, especially for `SECRET_KEY` and the `GOOGLE_...` variables.
+3.  **Build and run the services:**
+    This command will start all services (backend, database, celery) in the background.
+    ```bash
+    docker-compose up --build -d
+    ```
+4.  **Run database migrations:**
+    ```bash
+    docker-compose exec backend python manage.py migrate
+    ```
+5.  **Create a superuser:**
+    ```bash
+    docker-compose exec backend python manage.py createsuperuser
+    ```
+6.  **Done!** The application is now running at `http://localhost:8000`.
 
 ### Method 2: Local Development (Without Docker)
 
 #### Prerequisites
 - Python 3.11+
-- PostgreSQL
-- Redis
+- PostgreSQL Server
+- Redis Server
 
 #### Installation Steps
-1. Clone the repository:
-   ```
-   git clone https://github.com/Saman-naruee/MiniTrello.git
-   ```
-2. Navigate to the project directory:
-   ```
-   cd MiniTrello
-   ```
-3. Create a virtual environment:
-   ```
-   python -m venv env
-   ```
-4. Activate the virtual environment:
-   - On Unix/macOS:
-     ```
-     source env/bin/activate
-     ```
-   - On Windows:
-     ```
-     .\env\Scripts\activate
-     ```
-5. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
-6. Copy the environment file and edit it with your secrets:
-   ```
-   cp .env.example .env
-   ```
-   **Note:** You MUST edit `.env` with your actual values before proceeding. Also, ensure your local PostgreSQL and Redis servers are running.
-7. Run database migrations:
-   ```
-   python manage.py makemigrations
-   ```
-   
-   ```
-   python manage.py migrate
-   ```
-8. Create a superuser:
-   ```
-   python manage.py createsuperuser
-   ```
-9. Start the development server (in one terminal):
-   ```
-   python manage.py runserver
-   ```
-10. Start the Celery worker (in a second terminal):
+1.  Clone the repository and navigate into the directory.
+2.  Create and activate a virtual environment:
+    ```bash
+    python -m venv env
+    source env/bin/activate  # On Windows: .\env\Scripts\activate
     ```
+3.  Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+4.  Create and configure the `.env` file from the example. Ensure your local PostgreSQL and Redis servers are running and the credentials in `.env` match.
+5.  Apply database migrations and create a superuser:
+    ```bash
+    python manage.py migrate
+    python manage.py createsuperuser
+    ```
+6.  Run the development server, Celery worker, and Celery Beat in **three separate terminals**:
+    ```bash
+    # Terminal 1: Django Server
+    python manage.py runserver
+
+    # Terminal 2: Celery Worker
     celery -A MiniTrello worker -l info
+
+    # Terminal 3: Celery Beat (for scheduled tasks)
+    celery -A MiniTrello beat -l info
     ```
 
 ## Environment Variables
 
-The `.env` file contains configuration variables. Copy `.env.example` to `.env` and fill in the values. **DO NOT commit this file with real values for sensitive variables like `SECRET_KEY` and `GOOGLE_CLIENT_SECRET`.**
+The `.env` file is crucial for configuring the application. It must be created from `.env.example`.
 
-| Variable              | Description                                                                 | Example                          |
-|-----------------------|-----------------------------------------------------------------------------|----------------------------------|
-| `SECRET_KEY`          | Django's secret key for cryptographic signing. Generate a secure one.       | `django-insecure-...`            |
-| `DEBUG`               | Set to `True` for development, `False` for production.                      | `True`                           |
-| `ALLOWED_HOSTS`       | Hosts/domains allowed to serve the app. Comma-separated.                    | `localhost,127.0.0.1,.example.com` |
-| `DATABASE_URL`        | PostgreSQL database connection URL.                                         | `postgresql://user:pass@localhost/dbname` |
-| `CELERY_BROKER_URL`   | Redis URL for Celery task broker.                                           | `redis://localhost:6379/0`       |
-| `GOOGLE_CLIENT_ID`    | Google OAuth client ID for social authentication.                           | `your-google-client-id.apps.googleusercontent.com` |
-| `GOOGLE_CLIENT_SECRET`| Google OAuth client secret. **DO NOT commit real values.**                  | `your-google-client-secret`      |
+| Variable | Description | Example (for Docker) |
+| :--- | :--- | :--- |
+| `DJANGO_SETTINGS_MODULE` | Sets the settings file. Use `config.development` or `config.production`. | `config.development` |
+| `SECRET_KEY` | Django's secret key. **Generate a new one for production.** | `a-very-long-and-random-secret-string`|
+| `DEBUG` | Django's debug mode. `True` for dev, **`False` for production.** | `True` |
+| `DB_NAME` | Name of the PostgreSQL database. | `minitrello` |
+| `DB_USER` | Username for the PostgreSQL database. | `postgres` |
+| `DB_PASSWORD` | Password for the PostgreSQL database. | `postgres` |
+| `DB_HOST` | Hostname of the database server. For Docker, this is the service name. | `db` |
+| `DB_PORT` | Port for the PostgreSQL database. | `5432` |
+| `CELERY_BROKER_URL` | Redis URL for Celery. For Docker, use the service name. | `redis://redis:6379/0` |
+| `GOOGLE_OAUTH_...` | See detailed setup guide below for these variables. | (values from Google Cloud) |
 
-## Setting up Google OAuth
+## Setting Up Google APIs for Authentication & Email
 
-To enable Google social authentication using django-allauth, follow these steps:
+This project uses Google for two distinct features:
+1.  **Social Login:** Allowing users to sign up/log in with their Google account (handled by `django-allauth`).
+2.  **Sending Real Emails:** Using the Gmail API to send transactional emails like invitations (handled by our custom email backend).
 
-### Prerequisites
-- A Google account.
-- Access to the [Google Cloud Console](https://console.cloud.google.com/).
+Both features use the same **OAuth 2.0 Client ID**. Follow these steps carefully.
 
-### Steps
-1. **Create a Google Cloud Project**:
-   - Go to the [Google Cloud Console](https://console.cloud.google.com/).
-   - Click on the project dropdown at the top and select "New Project" or choose an existing one.
+### Step 1: Configure the Google Cloud Project
+1.  Go to the [Google Cloud Console](https://console.cloud.google.com/) and create a new project.
+2.  Navigate to **"APIs & Services" -> "Library"**.
+3.  Search for and **enable** the **"Gmail API"**.
 
-2. **Enable the Google+ API** (if not already enabled):
-   - Navigate to "APIs & Services" > "Library".
-   - Search for "Google+ API" and enable it. (Note: For modern OAuth, you might use Google Identity services, but Google+ API is still used for profile/email scopes in allauth.)
+### Step 2: Configure the OAuth Consent Screen
+1.  In **"APIs & Services"**, go to the **"OAuth consent screen"**.
+2.  Choose **"External"** for User Type and click "Create".
+3.  Fill in the required app information (App name, User support email, Developer contact). Click "Save and Continue".
+4.  On the **Scopes** screen, click "Add or Remove Scopes". Search for `gmail.send` and add the `.../auth/gmail.send` scope. Click "Save and Continue".
+5.  On the **Test users** screen, click **"+ Add Users"** and add the Google email address you will use to authorize the application (e.g., your own personal Gmail address). Click "Save and Continue".
+6.  Review the summary and go back to the dashboard.
 
-3. **Create OAuth 2.0 Credentials**:
-   - Go to "APIs & Services" > "Credentials".
-   - Click "Create Credentials" > "OAuth client ID".
-   - Select "Web application" as the application type.
-   - Add the following under "Authorized JavaScript origins":
-     - `http://localhost:8000` (for development)
-     - Your production domain (e.g., `https://yourdomain.com`)
-   - Add the following under "Authorized redirect URIs":
-     - `http://localhost:8000/accounts/google/login/callback/` (for development)
-     - Your production callback URL (e.g., `https://yourdomain.com/accounts/google/login/callback/`)
-   - Click "Create".
+### Step 3: Create Credentials
+1.  Go to **"APIs & Services" -> "Credentials"**.
+2.  Click **"Create Credentials" -> "OAuth client ID"**.
+3.  Select **"Web application"**.
+4.  Under **"Authorized redirect URIs"**, add the following two URIs:
+    *   `http://localhost:8000/accounts/google/login/callback/` (for Social Login)
+    *   `http://localhost:8080` (for the token generation script)
+5.  Click **"Create"**. You will now see your **`Client ID`** and **`Client secret`**.
 
-4. **Obtain Client ID and Secret**:
-   - Copy the "Client ID" and "Client secret" from the created credentials.
-   - Also you can download the informations manually in json formatted file.
-   - Add them to your `.env` file:
-     ```
-     GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
-     GOOGLE_CLIENT_SECRET=your-client-secret
-     ```
+### Step 4: Generate the Refresh Token (One-time step)
+To send emails on your behalf without you having to log in every time, the application needs a long-lived `refresh_token`.
 
-5. **Configure django-allauth** (if needed):
-   - The project already includes the necessary allauth configuration in `config/base.py`.
-   - Ensure `SOCIALACCOUNT_PROVIDERS` is set for Google scopes (profile and email).
+1.  **Update your `.env` file** with the credentials from the previous step:
+    ```
+    GOOGLE_OAUTH_CLIENT_ID=your-client-id.apps.googleusercontent.com
+    GOOGLE_OAUTH_CLIENT_SECRET=your-client-secret
+    GOOGLE_OAUTH_SENDER_EMAIL=the-google-email-you-added-as-a-test-user
+    ```
+2.  **Run the token generation script** from your terminal:
+    ```bash
+    python get_refresh_token.py
+    ```
+3.  A browser window will open. **Log in with the same Google account** you added as a test user and grant the requested permissions.(remember to allow all requested scopes)
 
-6. **Test the Setup**:
-   - Restart your development server.
-   - Navigate to the login page (`http://localhost:8000/accounts/login/`).
-   - You should see a "Sign in with Google" option.
-   - Test the flow to ensure it redirects back correctly.
+Note: If you encounter any issues about authorization, ensure that change project status from testing to production:
+You can do this in the Google Cloud Console under "APIs & Services" -> "OAuth consent screen"/"Audience" (May differ based on docs version)
 
-**Note:** For production, update the origins and URIs to match your deployed domain. Also, verify the app in Google Console if required for sensitive scopes.
+4.  Once authorized, switch back to your terminal. A **`refresh_token`** will be printed.
+
+### Step 5: Final Configuration
+1.  Copy the generated `refresh_token` and add it to your `.env` file:
+    ```
+    GOOGLE_OAUTH_REFRESH_TOKEN=1//0g...
+    ```
+2.  To enable real email sending, set the settings module in your `.env` file to production:
+    ```
+    DJANGO_SETTINGS_MODULE=config.production
+    ```
+3.  Restart your application: `docker-compose up --build`. Your application will now send real emails via your Google account.
 
 ## Running Tests
 
-To run the test suite:
-
-- All tests:
-  ```
-  python manage.py test
-  ```
-
-- Tests for a specific app (e.g., boards):
-  ```
-  python manage.py test apps.boards
-  ```
-
-- Tests for a specific file:
-  ```
-  python manage.py test apps.boards.tests.views.test_card_views
-  ```
+-   Run all tests:
+    ```bash
+    python manage.py test
+    ```
+-   Run tests for a specific app:
+    ```bash
+    python manage.py test apps.boards
+    ```
 
 ## Contributing
 
-Contributions are welcome! Please open an issue to discuss your idea, then submit a pull request with your changes. Ensure your code follows PEP 8 and includes tests.
+Contributions are welcome! Please open an issue to discuss your idea, then submit a pull request.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for details.
